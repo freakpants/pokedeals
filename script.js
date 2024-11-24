@@ -1,3 +1,21 @@
+// Fetch products from your Laravel API
+const API_URL = 'https://pokeapi.freakpants.ch/api/products';
+
+async function fetchProducts() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const products = await response.json();
+        renderProducts(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        const productList = document.getElementById('product-list');
+        productList.textContent = 'Failed to load products.';
+    }
+}
+
 function renderProducts(products) {
     const productList = document.getElementById('product-list');
     productList.innerHTML = ''; // Clear the loading message or previous content
@@ -70,3 +88,7 @@ function renderProducts(products) {
         productList.appendChild(productCard);
     });
 }
+
+
+// Initialize the app
+fetchProducts();
