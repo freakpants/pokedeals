@@ -23,6 +23,11 @@ class PokemonProduct extends Model
     protected $casts = [
         'images' => 'array', // Cast the JSON field to an array
     ];
+
+    public function matches()
+    {
+        return $this->hasMany(ProductMatch::class, 'local_sku', 'sku');
+    }
 }
 
 ?>
