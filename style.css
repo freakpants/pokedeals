@@ -11,192 +11,126 @@ h1 {
     margin: 20px 0;
 }
 
+/* Updated product list for better spacing and layout */
 #product-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted min size */
+    gap: 16px; /* Spacing between items */
     padding: 20px;
 }
 
+/* Product card styling */
 .product-card {
-    background: white;
     border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    overflow: hidden;
-    text-align: center;
+    border-radius: 8px;
+    padding: 12px; /* Reduced padding for compactness */
+    width: auto; /* Adapt to grid */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    font-size: 0.9em; /* Reduce font size globally for compact design */
 }
 
+/* Updated image styling for better fit */
 .product-card img {
-    width: 100%;
-    height: auto;
+    width: 100%; /* Ensure it fills the card */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 150px; /* Limit height for uniform display */
+    object-fit: contain; /* Prevent distortion */
 }
 
+/* Headings and text adjustments */
 .product-card h2 {
-    font-size: 1.2em;
+    font-size: 1em; /* Reduced size */
     margin: 10px 0;
 }
 
 .product-card p {
-    margin: 10px 0;
+    margin: 8px 0; /* Slightly reduced margin */
     color: #555;
+    font-size: 0.9em; /* Smaller text */
 }
 
+/* Links in product cards */
 .product-card a {
     display: inline-block;
-    margin: 10px 0;
-    padding: 10px 15px;
+    margin: 8px 0; /* Reduced margin */
+    padding: 8px 12px; /* Smaller padding */
     background: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 5px;
+    font-size: 0.85em; /* Smaller link text */
 }
 
 .product-card a:hover {
     background: #0056b3;
 }
 
+/* Updated image container for proper alignment */
 .image-container {
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px; /* Reduced margin for compactness */
 }
 
 .main-image {
-    width: 150px;
-    height: auto;
+    width: 100%; /* Ensure image fits the container */
+    max-height: 120px; /* Limit size */
+    object-fit: contain; /* Prevent distortion */
     border-radius: 8px;
     transition: transform 0.3s ease;
 }
 
 .main-image:hover {
-    transform: scale(1.1); /* Slight zoom effect on hover */
+    transform: scale(1.05); /* Subtle zoom effect */
 }
 
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-}
-
+/* Match list and shop offers adjustments */
 .matches ul {
     list-style-type: none;
     padding: 0;
-}
-
-.matches ul li {
-    display: flex;
-    justify-content: space-between;
-    margin: 4px 0;
-}
-
-
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-}
-
-.image-container {
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-.main-image {
-    width: 150px;
-    height: auto;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-.main-image:hover {
-    transform: scale(1.1); /* Slight zoom effect on hover */
-}
-
-.matches ul {
-    list-style-type: none;
-    padding: 0;
+    margin: 0;
 }
 
 .matches ul li {
     display: flex;
     align-items: center;
-    margin: 4px 0;
+    margin: 4px 0; /* Reduced margin for compactness */
+    font-size: 0.85em; /* Slightly smaller font */
 }
 
-.shop-logo {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-    vertical-align: middle;
-}
-
-.match-link {
-    text-decoration: none;
-    color: #007bff;
-}
-
-.match-link:hover {
-    text-decoration: underline;
-}
-
-/* General Styles */
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-}
-
-.image-container {
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-.main-image {
-    width: 150px;
-    height: auto;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-.main-image:hover {
-    transform: scale(1.1); /* Slight zoom effect on hover */
-}
-
-/* Match List Styles */
-.matches ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.matches ul li {
-    display: flex;
-    align-items: center;
-    margin: 8px 0;
-}
-
+/* Updated shop logo size and alignment */
 .shop-logo.shop-logo {
-    width: 60px;
-    height: 60px;
-    margin-right: 8px;
-    vertical-align: middle;
-    display: inline-block;
+    width: 24px; /* Correct size */
+    height: 24px;
+    margin-right: 8px; /* Space between logo and text */
+    vertical-align: middle; /* Align with text */
+    flex-shrink: 0; /* Prevent resizing */
 }
 
+.shop-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px; /* Reduced spacing between groups */
+}
+
+.shop-header {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjusted spacing between elements */
+    margin-bottom: 8px;
+}
+
+.shop-group ul li {
+    margin: 4px 0; /* Space between shop offers */
+    font-size: 0.85em; /* Slightly smaller font */
+}
+
+/* Match link styling */
 .match-link {
     text-decoration: none;
     color: #007bff;
     display: inline-block;
+    font-size: 0.85em; /* Smaller link text */
 }
 
 .match-link:hover {

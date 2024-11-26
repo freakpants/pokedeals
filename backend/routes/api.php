@@ -3,9 +3,12 @@
 use App\Http\Controllers\Api\PokemonProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ShopController;
+use App\Http\Controllers\Api\SetController;
 
 Route::get('/products', [PokemonProductController::class, 'index']);
 Route::get('/shops', [ShopController::class, 'index']);
+
+Route::get('/sets', [SetController::class, 'index']);
 
 
 ?>

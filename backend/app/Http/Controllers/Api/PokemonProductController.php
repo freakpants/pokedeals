@@ -9,12 +9,14 @@ class PokemonProductController extends Controller
 {
     public function index()
     {
+
         // Fetch products that have matches in the external_products table
         $products = DB::table('pokemon_products as pp')
             ->join('external_products as ep', function ($join) {
                 $join->on('pp.type', '=', 'ep.type')
-                     ->on('pp.set_identifier', '=', 'ep.set_identifier');
+                    ->on('pp.set_identifier', '=', 'ep.set_identifier');
             })
+            ->leftJoin('pokemon_sets as ps', 'pp.set_identifier', '=', 'ps.set_identifier')
             ->select(
                 'pp.sku',
                 'pp.title',
@@ -24,11 +26,13 @@ class PokemonProductController extends Controller
                 'ep.shop_id',
                 'ep.title as match_title',
                 'ep.price as match_price',
-                'ep.url as match_url'
+                'ep.url as match_url',
+                'ps.release_date'
             )
             ->where('pp.type', '<>', 'Other')
             ->where('ep.stock', '>', 0)
             ->whereNotNull('pp.set_identifier')
+            ->orderBy('ps.release_date', 'desc')
             ->get();
 
         // Transform the products into the expected structure

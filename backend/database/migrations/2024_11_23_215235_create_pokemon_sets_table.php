@@ -8,15 +8,17 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('pokemon_sets', function (Blueprint $table) {
-            $table->id();
-            $table->string('identifier')->unique(); // Generic identifier (e.g., 'surging_sparks')
-            $table->string('title_en')->default('');             // English title
-            $table->string('title_de')->default(''); ;             // German title
-            $table->string('title_jp')->default(''); ;             // Japanese title
-            $table->string('shortcode')->default('')->unique();  // Shortcode (e.g., 'sv08')
-            $table->string('card_code_en')->default(''); ;         // Card code for English (e.g., 'SSP')
-            $table->string('card_code_de')->default(''); ;         // Card code for German
-            $table->string('card_code_jp')->default(''); ;         // Card code for Japanese
+            // set identifier is the primary key, its a string
+            $table->string('set_identifier')->primary();
+            // id is the tcgdex id, its a string
+            $table->string('id');
+            // title_de is the german title, its a string
+            $table->string('title_de');
+            // title_en is the english title, its a string
+            $table->string('title_en');
+            // release_date is the date the set was released, its a date
+            $table->date('release_date');
+
         });
     }
 

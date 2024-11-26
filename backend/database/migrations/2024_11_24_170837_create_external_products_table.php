@@ -22,7 +22,7 @@ class CreateExternalProductsTable extends Migration
             // a foreign key to the pokemon_sets table
             $table->string('set_identifier')->nullable();
             // create the relationship to the pokemon_sets table
-            $table->foreign('set_identifier')->references('identifier')->on('pokemon_sets')->onDelete('set null');
+            $table->foreign('set_identifier')->references('set_identifier')->on('pokemon_sets')->onDelete('set null');
 
             $table->json('metadata')->nullable(); // For additional data like tags or images
             $table->foreign('shop_id')->references('id')->on('external_shops')->onDelete('cascade');

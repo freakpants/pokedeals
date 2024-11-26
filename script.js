@@ -37,7 +37,7 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const productList = document.getElementById('product-list');
-    productList.innerHTML = ''; // Clear the loading message or previous content
+    productList.innerHTML = ''; // Clear previous content
 
     if (products.length === 0) {
         productList.textContent = 'No products found.';
@@ -48,7 +48,6 @@ function renderProducts(products) {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
 
-        // Create a container for the main image
         const imageContainer = document.createElement('div');
         imageContainer.className = 'image-container';
 
@@ -56,65 +55,61 @@ function renderProducts(products) {
         mainImage.src = product.images[0] || '';
         mainImage.alt = product.title;
         mainImage.className = 'main-image';
-
-        // Handle hover to cycle through images
-        let currentImageIndex = 0;
-        let hoverInterval;
-
-        imageContainer.addEventListener('mouseenter', () => {
-            if (product.images.length > 1) {
-                hoverInterval = setInterval(() => {
-                    currentImageIndex = (currentImageIndex + 1) % product.images.length;
-                    mainImage.src = product.images[currentImageIndex];
-                }, 1000); // Change image every 1 second
-            }
-        });
-
-        imageContainer.addEventListener('mouseleave', () => {
-            clearInterval(hoverInterval);
-            currentImageIndex = 0;
-            mainImage.src = product.images[0]; // Reset to the first image
-        });
-
         imageContainer.appendChild(mainImage);
 
-        // Add the rest of the product details
         productCard.innerHTML += `
             <h2>${product.title}</h2>
             <p>Pokemon Center UK Price: ${product.price || 'Price not available'}</p>
             <a href="${product.product_url}" target="_blank">View Product</a>
-            <div class="matches">
-                <h3>Matches:</h3>
-                <ul>
-                    ${
-                        product.matches && product.matches.length > 0
-                            ? product.matches
-                                  .map(match => {
-                                      const shop = shops[match.shop_id] || {};
-                                      return `
-                                          <li>
-                                          <div>
-                                              <img src="assets/images/shop-logos/${shop.image || ''}" 
-                                                   alt="${shop.name || 'Shop'} Logo" 
-                                                   class="shop-logo"></br>
-                                                   ${shop.name}
-                                              <a href="${match.external_product.url}" target="_blank" class="match-link">
-                                                  ${match.title}: ${match.price || 'Price not available'}
-                                              </a>
-                                              </div>
-                                          </li>`;
-                                  })
-                                  .join('')
-                            : '<li>No matches found</li>'
-                    }
-                </ul>
-            </div>
         `;
 
-        productCard.prepend(imageContainer); // Add the image container at the top
+        const shopGroups = product.matches.reduce((groups, match) => {
+            const shop = shops[match.shop_id] || {};
+            if (!groups[shop.id]) groups[shop.id] = [];
+            groups[shop.id].push(match);
+            return groups;
+        }, {});
+
+        const matchesContainer = document.createElement('div');
+        matchesContainer.className = 'matches';
+        matchesContainer.innerHTML = '<h3>Offers:</h3>';
+
+        Object.keys(shopGroups).forEach(shopId => {
+            const shop = shops[shopId] || {};
+            const offers = shopGroups[shopId];
+
+            const shopGroup = document.createElement('div');
+            shopGroup.className = 'shop-group';
+
+            const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
+                                    alt="${shop.name || 'Shop'} Logo" 
+                                    class="shop-logo">`;
+
+            shopGroup.innerHTML = `
+                <div class="shop-header">
+                    ${shopLogo}
+                    <strong>${shop.name}</strong>
+                </div>
+                <ul>
+                    ${offers
+                        .map(offer => `
+                            <li>
+                                <a href="${offer.external_product.url}" target="_blank" class="match-link">
+                                    ${offer.title}: ${offer.price || 'Price not available'}
+                                </a>
+                            </li>`)
+                        .join('')}
+                </ul>
+            `;
+            matchesContainer.appendChild(shopGroup);
+        });
+
+        productCard.appendChild(imageContainer);
+        productCard.appendChild(matchesContainer);
         productList.appendChild(productCard);
     });
 }
+
 
 
 

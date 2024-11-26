@@ -37,11 +37,23 @@ class SaveExternalProducts extends Command
 
             $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader'];
 
+            $fails_array = [];
             do {
-                $response = Http::get("$baseUrl/products.json", [
+                try{
+                    $response = Http::get("$baseUrl/products.json", [
                     'page' => $page,
                     'limit' => $perPage,
                 ]);
+                } catch (\Exception $e) {
+                    $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
+                    // remember the details of the failed page, so we can retry after all other pages
+                    // to fails array
+                    $fails[] = [
+                        'shop' => $shop,
+                        'page' => $page
+                    ];
+                    break;
+                }
 
                 if ($response->failed()) {
                     $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
