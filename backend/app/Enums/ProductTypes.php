@@ -16,13 +16,17 @@ enum ProductTypes: string
     case StackingTin = 'stacking_tin';
     case ThemeDeck = 'theme_deck';
     case SingleCard = 'single_card';
-    case Other = 'other';
     case CollectionBox = 'collection_box';
     case CollectorChest = 'collector_chest';
     case PencilCase = 'pencil_case';
     case Tin = 'tin';
     case MiniTin = 'mini_tin';
     case PokeBallTin = 'poke_ball_tin';
+    case UltraPremiumCollection = 'ultra_premium_collection';
+    case PremiumCollection = 'premium_collection';
+    case BuildBattleStadium = 'build_battle_stadium';
+    case BuildBattleBox = 'build_battle_box';
+    case Other = 'other';
 
 
     public static function getValues(): array

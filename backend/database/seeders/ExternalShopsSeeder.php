@@ -40,6 +40,11 @@ class ExternalShopsSeeder extends Seeder
                 'base_url' => 'https://ryu.land/',
                 'image' => 'ryuland.png',
             ],
+            [
+                'name' => 'Poké Swiss',
+                'base_url' => 'https://poke-swiss.ch/',
+                'image' => 'pokeswiss.png',
+            ]
         ]);
     }
 }

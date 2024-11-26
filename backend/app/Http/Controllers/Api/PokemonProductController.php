@@ -20,12 +20,14 @@ class PokemonProductController extends Controller
             ->select(
                 'pp.sku',
                 'pp.title',
+                'pp.set_identifier',
                 'pp.price',
                 'pp.product_url',
                 'pp.images',
                 'ep.shop_id',
                 'ep.title as match_title',
                 'ep.price as match_price',
+                'ep.language as match_language',
                 'ep.url as match_url',
                 'ps.release_date'
             )
@@ -45,6 +47,7 @@ class PokemonProductController extends Controller
                     'shop_id' => $match->shop_id,
                     'title' => $match->match_title,
                     'price' => $match->match_price,
+                    'language' => $match->match_language,
                     'external_product' => [
                         'url' => $match->match_url,
                     ],
@@ -54,6 +57,7 @@ class PokemonProductController extends Controller
             return [
                 'title' => $product->title,
                 'price' => $product->price,
+                'set_identifier' => $product->set_identifier,
                 'product_url' => $product->product_url,
                 'images' => json_decode($product->images, true) ?? [], // Decode JSON images
                 'matches' => $matches,

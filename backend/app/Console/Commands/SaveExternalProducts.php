@@ -25,42 +25,62 @@ class SaveExternalProducts extends Command
             $perPage = 250; // Max limit
             $newProducts = 0;
 
-            $this->info("Fetching external products from {$shop->name}...");
+            $this->info("Processing {$shop->name}...");
 
             // try to detect the type of product
             $possible_product_types = [
             'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'disney lorcana', "weiss schwarz", "plushy", "psa 10", "mystery",
             'union arena', "accessory", "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case', 
             'Magnetic Holder','Card Holder','Battle Spirits','Build Divide','Funko Pop','Gundam','Panini','Naruto','Bandai','Yu-Gi-Oh',
-            'Versandkosten', 'Penny Sleeves', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro','Star Wars','Acryl Case','PRO-BINDER','KEYCHAIN'
+            'Versandkosten', 'Penny Sleeves', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro','Star Wars','Acryl Case','PRO-BINDER','KEYCHAIN',
+            'Dragon Shield', 'Store Card', 'Duskmourn'
             ];
 
             $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader'];
 
             $fails_array = [];
             do {
-                try{
-                    $response = Http::get("$baseUrl/products.json", [
-                    'page' => $page,
-                    'limit' => $perPage,
-                ]);
-                } catch (\Exception $e) {
-                    $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
-                    // remember the details of the failed page, so we can retry after all other pages
-                    // to fails array
-                    $fails[] = [
-                        'shop' => $shop,
-                        'page' => $page
-                    ];
-                    break;
+                // check if we have a json for this page and shop
+                $shop_short = str_replace('.png', '', $shop->image);
+                $json_dir = '/home/freakpants/pokedeals/backend/storage/shops/' . $shop_short;
+                $json_file = storage_path('/shops/' . $shop_short . '/products_page_' . $page . '.json');
+                if (file_exists($json_file)) {
+                    $this->info("Using cached products for {$shop->name} (Page: $page).");
+                    $products = json_decode(file_get_contents($json_file), true);
+
+                } else {
+                    try{
+                        $this->info("Fetching products from {$shop->name} (Page: $page)...");
+                        $response = Http::get("$baseUrl/products.json", [
+                        'page' => $page,
+                        'limit' => $perPage,
+                    ]);
+                    } catch (\Exception $e) {
+                        $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
+                        // remember the details of the failed page, so we can retry after all other pages
+                        // to fails array
+                        $fails[] = [
+                            'shop' => $shop,
+                            'page' => $page
+                        ];
+                        break;
+                    }
+                    if ($response->failed()) {
+                        $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
+                        break;
+                    }
+    
+                    $products = $response->json()['products'] ?? [];
+                    // save to json, create if not exists
+                    // Check if the directory exists, if not, create it
+                    if (!is_dir($json_dir)) {
+                        mkdir($json_dir, 0755, true); // Create the directory with recursive flag
+                    }
+                    file_put_contents($json_file, json_encode($products));
+
                 }
 
-                if ($response->failed()) {
-                    $this->error("Failed to fetch products from {$shop->name} (Page: $page).");
-                    break;
-                }
-
-                $products = $response->json()['products'] ?? [];
+            
                 if (empty($products)) {
                     $this->info("No more products found on Page $page.");
                     break;
@@ -95,10 +115,6 @@ class SaveExternalProducts extends Command
                         continue;
                     }
 
-                    
-
-
-
                     $url = "$baseUrl/products/{$product['handle']}";
                     $metadata = json_encode($product);
 
@@ -129,7 +145,7 @@ class SaveExternalProducts extends Command
 
                             $set_identifier = $details['set_identifier'];
                             $product_type = $details['product_type'];
-
+                            $language = $details['language'];
 
                     
 
@@ -148,6 +164,7 @@ class SaveExternalProducts extends Command
                                     'url' => $variant_url,
                                     'type' => $product_type,
                                     'set_identifier' => $set_identifier,
+                                    'language' => $language,
                                     'metadata' => $variant_metadata
                                 ]
                             );
@@ -163,10 +180,10 @@ class SaveExternalProducts extends Command
                 $page++;
 
                 // For subsequent runs, break after the first page if there are no new products
-                if ($page === 2 && $newProducts === 0) {
+                /* if ($page === 2 && $newProducts === 0) {
                     $this->info("No new products found for {$shop->name}. Stopping.");
                     break;
-                }
+                } */
             } while (!empty($products));
 
             $this->info("Finished processing {$shop->name}. Total new products added: $newProducts.");
