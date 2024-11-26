@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\ProductTypes;
+
 class CreateExternalProductsTable extends Migration
 {
     public function up()
@@ -14,10 +16,15 @@ class CreateExternalProductsTable extends Migration
             $table->string('external_id')->unique(); // External product ID or SKU
             $table->string('title');
             $table->string('price')->nullable();
+            $table->integer('stock')->nullable();
             $table->string('url')->nullable();
-            $table->json('metadata')->nullable(); // For additional data like tags or images
-            $table->timestamps();
+            $table->enum('type', ProductTypes::getValues())->default(ProductTypes::Other->value);
+            // a foreign key to the pokemon_sets table
+            $table->string('set_identifier')->nullable();
+            // create the relationship to the pokemon_sets table
+            $table->foreign('set_identifier')->references('identifier')->on('pokemon_sets')->onDelete('set null');
 
+            $table->json('metadata')->nullable(); // For additional data like tags or images
             $table->foreign('shop_id')->references('id')->on('external_shops')->onDelete('cascade');
         });
     }

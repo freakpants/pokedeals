@@ -12,7 +12,7 @@ class CreateExternalShopsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('base_url')->unique();
-            $table->timestamps();
+            $table->string('image')->nullable();
         });
     }
 

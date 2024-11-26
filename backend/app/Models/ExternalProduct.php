@@ -14,9 +14,14 @@ class ExternalProduct extends Model
         'external_id',
         'title',
         'price',
+        'type',
+        'set_identifier',
         'url',
         'metadata',
     ];
+
+    // disable timestamps
+    public $timestamps = false;
 
     protected $casts = [
         'metadata' => 'array', // Automatically handle JSON as an array
@@ -28,5 +33,10 @@ class ExternalProduct extends Model
     public function shop()
     {
         return $this->belongsTo(ExternalShop::class);
+    }
+
+    public function productMatch()
+    {
+        return $this->hasOne(ProductMatch::class, 'external_id', 'external_id');
     }
 }

@@ -15,7 +15,6 @@ class CreateProductMatchesTable extends Migration
             $table->string('title');
             $table->string('price')->nullable();
             $table->unsignedBigInteger('shop_id')->nullable(); // Add shop info if needed
-            $table->timestamps();
 
             $table->unique(['local_sku', 'external_id']);
         });

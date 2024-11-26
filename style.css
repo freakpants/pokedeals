@@ -93,3 +93,112 @@ h1 {
     justify-content: space-between;
     margin: 4px 0;
 }
+
+
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.image-container {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.main-image {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.matches ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.matches ul li {
+    display: flex;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.shop-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.match-link {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.match-link:hover {
+    text-decoration: underline;
+}
+
+/* General Styles */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.image-container {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.main-image {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+/* Match List Styles */
+.matches ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.matches ul li {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.shop-logo.shop-logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 8px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.match-link {
+    text-decoration: none;
+    color: #007bff;
+    display: inline-block;
+}
+
+.match-link:hover {
+    text-decoration: underline;
+}

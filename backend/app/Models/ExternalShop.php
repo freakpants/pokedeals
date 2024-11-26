@@ -12,7 +12,11 @@ class ExternalShop extends Model
     protected $fillable = [
         'name',
         'base_url',
+        'image'
     ];
+
+    // disable timestamps
+    public $timestamps = false;
 
     /**
      * Define the relationship with external products.

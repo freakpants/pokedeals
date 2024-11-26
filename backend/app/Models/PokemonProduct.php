@@ -12,10 +12,15 @@ class PokemonProduct extends Model
     public $incrementing = false; // Disable auto-incrementing since SKU is a string
     protected $keyType = 'string'; // Specify the primary key type
 
+    // disable timestamps
+    public $timestamps = false;
+
     protected $fillable = [
         'title',
         'sku',
         'price',
+        'type',
+        'set_identifier',
         'product_url',
         'images',
     ];

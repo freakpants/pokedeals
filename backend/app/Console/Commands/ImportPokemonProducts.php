@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\PokemonProduct;
 use Illuminate\Support\Facades\File;
 
+use App\Helpers\PokemonHelper;
 class ImportPokemonProducts extends Command
 {
     protected $signature = 'pokemon:import {file}';
@@ -28,12 +29,22 @@ class ImportPokemonProducts extends Command
             return Command::FAILURE;
         }
 
+
+
         foreach ($products as $product) {
+
+            $details = PokemonHelper::determineProductDetails($product['title']);
+
+            $set_identifier = $details['set_identifier'];
+            $product_type = $details['product_type'];
+
             PokemonProduct::updateOrCreate(
                 ['sku' => $product['sku']], // Use SKU as the primary key and unique constraint
                 [
                     'title' => $product['title'] ?? 'Unknown Title',
                     'price' => $product['price'] ?? null,
+                    'type' => $product_type,
+                    'set_identifier' => $set_identifier,
                     'product_url' => $product['productUrl'] ?? 'N/A', // Map productUrl to product_url
                     'images' => $product['images'] ?? [], // Default images (empty array)
                 ]

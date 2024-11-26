@@ -1,11 +1,30 @@
-// Fetch products from your Laravel API
-const API_URL = 'https://pokeapi.freakpants.ch/api/products';
+// Fetch products and shops from the Laravel API
+const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
+const SHOPS_API_URL = 'https://pokeapi.freakpants.ch/api/shops';
+
+let shops = {}; // To store shop data for quick lookup
+
+async function fetchShops() {
+    try {
+        const response = await fetch(SHOPS_API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error fetching shops! Status: ${response.status}`);
+        }
+        const shopData = await response.json();
+        shops = shopData.reduce((map, shop) => {
+            map[shop.id] = shop;
+            return map;
+        }, {});
+    } catch (error) {
+        console.error('Error fetching shops:', error);
+    }
+}
 
 async function fetchProducts() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(PRODUCTS_API_URL);
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error fetching products! Status: ${response.status}`);
         }
         const products = await response.json();
         renderProducts(products);
@@ -70,13 +89,21 @@ function renderProducts(products) {
                     ${
                         product.matches && product.matches.length > 0
                             ? product.matches
-                                  .map(
-                                      match =>
-                                          `<li>
-                                              <span>${match.title}:</span>
-                                              <span>${match.price || 'Price not available'}</span>
-                                          </li>`
-                                  )
+                                  .map(match => {
+                                      const shop = shops[match.shop_id] || {};
+                                      return `
+                                          <li>
+                                          <div>
+                                              <img src="assets/images/shop-logos/${shop.image || ''}" 
+                                                   alt="${shop.name || 'Shop'} Logo" 
+                                                   class="shop-logo"></br>
+                                                   ${shop.name}
+                                              <a href="${match.external_product.url}" target="_blank" class="match-link">
+                                                  ${match.title}: ${match.price || 'Price not available'}
+                                              </a>
+                                              </div>
+                                          </li>`;
+                                  })
                                   .join('')
                             : '<li>No matches found</li>'
                     }
@@ -90,5 +117,9 @@ function renderProducts(products) {
 }
 
 
+
 // Initialize the app
-fetchProducts();
+(async function initialize() {
+    await fetchShops(); // Fetch shops first to have the data ready
+    await fetchProducts();
+})();

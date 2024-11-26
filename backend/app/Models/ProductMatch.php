@@ -14,10 +14,11 @@ class ProductMatch extends Model
         'external_id',
         'title',
         'price',
-        'shop_id',
-        'created_at',
-        'updated_at',
+        'shop_id'
     ];
+
+    // disable timestamps
+    public $timestamps = false;
 
     /**
      * Relationship: Match belongs to a Pokémon product.
@@ -32,7 +33,7 @@ class ProductMatch extends Model
      */
     public function externalProduct()
     {
-        return $this->belongsTo(ExternalProduct::class);
+        return $this->belongsTo(ExternalProduct::class, 'external_id', 'external_id');
     }
 
     /**

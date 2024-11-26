@@ -1,19 +1,61 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
-use App\Models\PokemonProduct;
-use App\Models\ProductMatch;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class PokemonProductController extends Controller
 {
     public function index()
     {
-        // Load products with their matches, filtering out those without matches
-        $productsWithMatches = PokemonProduct::whereHas('matches')
-            ->with('matches')
+        // Fetch products that have matches in the external_products table
+        $products = DB::table('pokemon_products as pp')
+            ->join('external_products as ep', function ($join) {
+                $join->on('pp.type', '=', 'ep.type')
+                     ->on('pp.set_identifier', '=', 'ep.set_identifier');
+            })
+            ->select(
+                'pp.sku',
+                'pp.title',
+                'pp.price',
+                'pp.product_url',
+                'pp.images',
+                'ep.shop_id',
+                'ep.title as match_title',
+                'ep.price as match_price',
+                'ep.url as match_url'
+            )
+            ->where('pp.type', '<>', 'Other')
+            ->where('ep.stock', '>', 0)
+            ->whereNotNull('pp.set_identifier')
             ->get();
 
-        return response()->json($productsWithMatches);
+        // Transform the products into the expected structure
+        $groupedProducts = $products->groupBy('sku')->map(function ($productGroup) {
+            $product = $productGroup->first();
+
+            // Extract matches for this product
+            $matches = $productGroup->map(function ($match) {
+                return [
+                    'shop_id' => $match->shop_id,
+                    'title' => $match->match_title,
+                    'price' => $match->match_price,
+                    'external_product' => [
+                        'url' => $match->match_url,
+                    ],
+                ];
+            })->toArray();
+
+            return [
+                'title' => $product->title,
+                'price' => $product->price,
+                'product_url' => $product->product_url,
+                'images' => json_decode($product->images, true) ?? [], // Decode JSON images
+                'matches' => $matches,
+            ];
+        })->values(); // Re-index the collection
+
+        return response()->json($groupedProducts);
     }
 }
