@@ -10,6 +10,36 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [   
+                'name' => 'Laschocards',
+                'base_url' => 'https://laschocards.ch/',
+                'image' => 'laschocards.png',
+            ],
+            [   
+                'name' => 'Card maniac',
+                'base_url' => 'https://www.cardmaniac.ch',
+                'image' => 'cardmaniac.png',
+            ],
+            [   
+                'name' => 'Royal Cards',
+                'base_url' => 'https://www.royalcards.ch',
+                'image' => 'royalcards.png',
+            ],
+            [   
+                'name' => 'TradingCardCave',
+                'base_url' => 'https://www.tradingcardcave.ch',
+                'image' => 'tradingcardcave.png',
+            ],
+            [
+                'name' => 'Sparkleaf TCG',
+                'base_url' => 'https://www.sparkleaf.ch',
+                'image' => 'sparkleaf.png'
+            ],
+            [
+                'name' => 'Wild-Cards',
+                'base_url' => 'https://www.wild-cards.ch',
+                'image' => 'wildcards.png',
+            ],
             [
                 'name' => 'Skyspell',
                 'base_url' => 'https://www.skyspell.ch',
