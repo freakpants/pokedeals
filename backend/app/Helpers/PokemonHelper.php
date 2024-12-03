@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Enums\ProductTypes;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 
 
@@ -79,6 +78,8 @@ class PokemonHelper{
         $titleParts = preg_split('/[:-]/', $normalizedTitle);
         $specificPart = trim(end($titleParts)); // Focus on the most specific part
 
+
+
         $potentialMatches = [];
 
         foreach ($sets as $set) {
@@ -104,6 +105,14 @@ class PokemonHelper{
                 // Fall back to general matching
                 if (stripos($normalizedTitle, $set_title_en) !== false || 
                     stripos($normalizedVariantTitle, $set_title_en) !== false) {
+                    if($set->set_identifier === 'evolutions') {
+                        // manually check the title for prismatic evolutions
+                        if (stripos($normalizedTitle, 'prismatic evolutions') !== false || 
+                            stripos($normalizedVariantTitle, 'prismatic evolutions') !== false) {
+                                
+                                return 'prismatic_evolutions';
+                            }
+                    }   
                     $potentialMatches[] = $set->set_identifier;
                 }
             }
@@ -133,16 +142,16 @@ class PokemonHelper{
     {
         // Map of product types to their associated keywords
         $productTypeKeywords = [
-            ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb'],
-            ProductTypes::ThreePackBlister->value => ['3 Booster Packs', '3-Pack Blister'],
+            ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Top Trainer Box', 'Elite-Trainer-Box'],
+            ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs','display'],
             ProductTypes::HalfBoosterBox->value => ['half booster box'],
             ProductTypes::BoosterBundle->value => ['booster bundle'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case'],
             ProductTypes::SleevedBooster->value => ['sleeved booster'],
-            ProductTypes::SingleBlister->value => ['checklane blister'],
-            ProductTypes::BoosterPack->value => ['booster pack', 'single pack'],
-            ProductTypes::CollectorChest->value => ['collector chest'],
+            ProductTypes::SingleBlister->value => ['checklane blister', 'blister', 'premium checklane'],
+            ProductTypes::BoosterPack->value => ['booster pack', 'single pack', 'booster'],
+            ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer'],
             ProductTypes::PencilCase->value => ['pencil case'],
             ProductTypes::MiniTin->value => ['mini tin'],
             ProductTypes::PokeBallTin->value => ['ball tin'],
@@ -150,8 +159,17 @@ class PokemonHelper{
             ProductTypes::Tin->value => ['tin'],
             ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection'],
             ProductTypes::PremiumCollection->value => ['premium collection'],
-            ProductTypes::BuildBattleStadium->value => ['build & battle stadium'],  
-            ProductTypes::BuildBattleBox->value => ['build & battle box'],
+            ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],  
+            ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit','battle box'],
+            ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
+            ProductTypes::PosterCollection->value => ['poster collection'],
+            ProductTypes::BinderCollection->value => ['binder collection'],
+            ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion'],
+            ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box'],
+            ProductTypes::TechStickerCollection->value => 
+            ['tech sticker collection', 'Tech Sticker Glaceon Collection', 'Tech Sticker Leafon Collection',
+            'Tech Sticker Leafeon Collection', 'Tech Sticker Sylveon Collection'],
+            ProductTypes::SurpriseBox->value => ['surprise box'],
         ];
 
         // Normalize titles for consistent matching

@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "nyholm/psr7": "^1.8",
         "symfony/cache": "^7.1",
+        "symfony/dom-crawler": "^7.2",
         "tcgdex/sdk": "^2.1"
     },
     "require-dev": {

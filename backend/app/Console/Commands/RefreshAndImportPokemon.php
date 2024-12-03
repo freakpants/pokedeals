@@ -42,7 +42,6 @@ class RefreshAndImportPokemon extends Command
             storage_path('pokemon3.json'),
             storage_path('pokemon4.json'),
             storage_path('pokemon5.json'),
-            storage_path('pokemon6.json'),
         ];
 
         foreach ($filePaths as $filePath) {
