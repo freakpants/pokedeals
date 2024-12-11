@@ -206,8 +206,9 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                         .map(offer => `
                             <li>
                                 <a href="${offer.external_product.url}" target="_blank" class="match-link">
-                                    ${offer.title}: ${offer.price || 'Price not available'}
+                                    ${offer.title}
                                 </a>
+                                <span class="product-price">CHF ${offer.price || 'Price not available'}</span>
                             </li>`).join('')}
                 </ul>
             `;

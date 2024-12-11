@@ -28,6 +28,14 @@ h1 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 16px;
     font-size: 0.9em; /* Reduce font size globally for compact design */
+    background-color: white;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #007bff;
+    margin: 8px 0;
+    font-size: large;
 }
 
 /* Updated image styling for better fit */
@@ -93,6 +101,7 @@ h1 {
 
 .matches ul li {
     display: flex;
+    flex-direction: column;
     align-items: center;
     margin: 4px 0; /* Reduced margin for compactness */
     font-size: 0.85em; /* Slightly smaller font */
