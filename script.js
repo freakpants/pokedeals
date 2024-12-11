@@ -208,7 +208,8 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                                 <a href="${offer.external_product.url}" target="_blank" class="match-link">
                                     ${offer.title}
                                 </a>
-                                <span class="product-price">CHF ${offer.price || 'Price not available'}</span>
+                                <span class="product-price">CHF ${offer.price || 'Price not available'}</span>              
+                                <span class="price-per-pack">(~${(offer.price / product.pack_count).toFixed(2) || 'Price per pack not available'} per pack)</span>
                             </li>`).join('')}
                 </ul>
             `;

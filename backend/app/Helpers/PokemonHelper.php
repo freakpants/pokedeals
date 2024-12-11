@@ -21,8 +21,8 @@ class PokemonHelper{
         
         // Language-specific strings with priority matches
         $highPriority = [
-            'fr' => ['français', 'francais', 'angl.', 'anglais'],
-            'en' => ['english', 'anglais', 'anglais:'],
+            'fr' => ['français', 'francais', 'french', 'französisch'],
+            'en' => ['english', 'anglais', 'anglais:', 'englisch'],
             'de' => ['deutsch', 'german', 'allemand'],
         ];
 

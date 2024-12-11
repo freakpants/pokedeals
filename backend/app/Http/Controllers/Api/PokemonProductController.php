@@ -10,6 +10,7 @@ class PokemonProductController extends Controller
     public function index()
     {
 
+
         // Fetch products that have matches in the external_products table
         $products = DB::table('pokemon_products as pp')
             ->join('external_products as ep', function ($join) {
@@ -17,6 +18,8 @@ class PokemonProductController extends Controller
                     ->on('pp.set_identifier', '=', 'ep.set_identifier');
             })
             ->leftJoin('pokemon_sets as ps', 'pp.set_identifier', '=', 'ps.set_identifier')
+            // join the amonunt of packs from the product_types table
+            ->leftJoin('product_types as pt', 'pp.type', '=', 'pt.product_type')
             ->select(
                 'pp.sku',
                 'pp.title',
@@ -29,7 +32,8 @@ class PokemonProductController extends Controller
                 'ep.price as match_price',
                 'ep.language as match_language',
                 'ep.url as match_url',
-                'ps.release_date'
+                'ps.release_date',
+                'pt.pack_count'
             )
             ->where('pp.type', '<>', 'Other')
             ->where('ep.stock', '>', 0)
@@ -57,6 +61,7 @@ class PokemonProductController extends Controller
             return [
                 'title' => $product->title,
                 'price' => $product->price,
+                'pack_count' => $product->pack_count,
                 'set_identifier' => $product->set_identifier,
                 'product_url' => $product->product_url,
                 'images' => json_decode($product->images, true) ?? [], // Decode JSON images
