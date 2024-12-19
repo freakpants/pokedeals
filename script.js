@@ -264,7 +264,8 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             // toggle all shop groups inside this product
             toggleButton.addEventListener('click', event => {
                 const productId = event.target.dataset.productId;
-                const shopGroups = document.querySelectorAll(`.product-card[data-product-id="${productId}"] .shop-group`);
+                const productCard = event.target.closest('.product-card');
+                const shopGroups = productCard.querySelectorAll('.shop-group');
                 let first = true;
                 shopGroups.forEach(shopGroup => {
                     // only toggle the shop group if it is not the first one
@@ -280,7 +281,6 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 
         // Add the product id to the product card
         productCard.dataset.productId = product.id;
-        
 
         if (Object.keys(shopGroups).length > 0) {
             productCard.appendChild(imageContainer);
