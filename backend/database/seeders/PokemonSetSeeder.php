@@ -60,6 +60,7 @@ class PokemonSetSeeder extends Seeder
         $sets->push([
             'id' => 'sv8a',
             'set_identifier' => 'terastal_festival',
+            'series' => 'sv',
             'title_de' => '',
             'title_en' => 'Terastal Festival',
             'title_ja' => 'Terastal Fest ex',

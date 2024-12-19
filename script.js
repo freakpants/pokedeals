@@ -108,6 +108,13 @@ function applyFilters() {
         return languageMatch && setMatch;
     });
 
+    // also amend the url
+    const url = new URL(window.location.href);
+    url.searchParams.set('language', language);
+    url.searchParams.set('set', setIdentifier);
+
+    window.history.pushState({}, '', url);
+
 
     renderProducts(filteredProducts, language, setIdentifier);
 }
@@ -140,6 +147,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         productCard.innerHTML += `
             <h2>${product.title}</h2>
             <p>Pokemon Center Price: ${product.price || 'Price not available'}</p>
+            <p>Pack Count: ${product.pack_count}</p>
             <a href="${product.product_url}" target="_blank">View Product</a>
         `;
 
@@ -170,6 +178,22 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             }
         });
 
+        // determine cheapest offer in each shop, then sort the shopgroups by their cheapest offer
+        Object.keys(shopGroups).forEach(shopId => {
+            // determine which of the offers of the shop is the cheapest
+            const offers = shopGroups[shopId];
+            const cheapestOffer = offers.reduce((cheapest, offer) => {
+                return offer.price < cheapest.price ? offer : cheapest;
+            }, { price: Infinity });
+
+            shopGroups[shopId] = offers;
+            shopGroups[shopId].cheapestOffer = cheapestOffer;
+        });
+
+        // sort the shopgroups by their cheapest offer
+        const sortedShopGroups = Object.entries(shopGroups).sort((a, b) => {
+            return a[1].cheapestOffer.price - b[1].cheapestOffer.price;
+        });
 
 
         const matchesContainer = document.createElement('div');
@@ -177,9 +201,10 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         matchesContainer.innerHTML = '<h3>Offers:</h3>';
 
         // Render only shops with filtered offers
-        Object.keys(shopGroups).forEach(shopId => {
+        let first = true;
+        sortedShopGroups.forEach(([shopId, currentShopGroup]) => {
             const shop = shops[shopId] || {};
-            const offers = shopGroups[shopId].filter(match => {
+            const offers = currentShopGroup.filter(match => {
                 // Filter matches by the selected language during rendering
                 console.log(match.language);
                 console.log(filterLanguage);
@@ -188,6 +213,9 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             });
         
             if (offers.length === 0) return; // Skip shops with no valid offers
+
+            // sort the offers inside the shop group too
+            offers.sort((a, b) => a.price - b.price);
         
             const shopGroup = document.createElement('div');
             shopGroup.className = 'shop-group';
@@ -196,6 +224,9 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                                         alt="${shop.name || 'Shop'} Logo" 
                                         class="shop-logo">`;
         
+            
+                                        
+                     
             shopGroup.innerHTML = `
                 <div class="shop-header">
                     ${shopLogo}
@@ -208,14 +239,48 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                                 <a href="${offer.external_product.url}" target="_blank" class="match-link">
                                     ${offer.title}
                                 </a>
-                                <span class="product-price">CHF ${offer.price || 'Price not available'}</span>              
+                                <span class="product-price">CHF ${offer.price.toFixed(2) || 'Price not available'}</span>              
                                 <span class="price-per-pack">(~${(offer.price / product.pack_count).toFixed(2) || 'Price per pack not available'} per pack)</span>
                             </li>`).join('')}
                 </ul>
             `;
+
+            // only show the shop group initially if it is the first one
+            if (!first) {
+                shopGroup.style.display = 'none';
+            }
+            first = false;
+
+
             matchesContainer.appendChild(shopGroup);
         });
-        
+
+        // Add a button to show/hide the other shop groups
+        if (sortedShopGroups.length > 1) {
+            const toggleButton = document.createElement('button');
+            toggleButton.textContent = 'Show/Hide Other Offers';
+            toggleButton.className = 'toggle-button';
+            // remember the product id to toggle the shop groups
+            toggleButton.dataset.productId = product.id;
+            // toggle all shop groups inside this product
+            toggleButton.addEventListener('click', event => {
+                const productId = event.target.dataset.productId;
+                const shopGroups = document.querySelectorAll(`.product-card[data-product-id="${productId}"] .shop-group`);
+                let first = true;
+                shopGroups.forEach(shopGroup => {
+                    // only toggle the shop group if it is not the first one
+                    if (!first) {
+                        shopGroup.style.display = shopGroup.style.display === 'none' ? 'block' : 'none';
+                    }
+                    first = false;
+                });
+            });
+
+            matchesContainer.appendChild(toggleButton);
+        }
+
+        // Add the product id to the product card
+        productCard.dataset.productId = product.id;
         
 
         if (Object.keys(shopGroups).length > 0) {

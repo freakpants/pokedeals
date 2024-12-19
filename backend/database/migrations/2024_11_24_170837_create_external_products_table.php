@@ -15,7 +15,7 @@ class CreateExternalProductsTable extends Migration
             $table->unsignedBigInteger('shop_id'); // Foreign key to external_shops
             $table->string('external_id')->unique(); // External product ID or SKU
             $table->string('title');
-            $table->string('price')->nullable();
+            $table->float('price')->nullable();
             $table->integer('stock')->nullable();
             $table->integer('multiplier')->default(1);
             $table->string('url')->nullable();

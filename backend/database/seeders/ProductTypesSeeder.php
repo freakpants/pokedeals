@@ -71,6 +71,7 @@ class ProductTypesSeeder extends Seeder
             'product_type' => 'elite_trainer_box',
             'pack_count' => 9,
             'mixed_sets' => false,
+            'swh_modifier' => -1,
         ]);
 
         DB::table('product_types')->insert([

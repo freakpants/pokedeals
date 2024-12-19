@@ -16,6 +16,7 @@ class PokemonProductController extends Controller
             ->join('external_products as ep', function ($join) {
                 $join->on('pp.type', '=', 'ep.type')
                     ->on('pp.set_identifier', '=', 'ep.set_identifier');
+
             })
             ->leftJoin('pokemon_sets as ps', 'pp.set_identifier', '=', 'ps.set_identifier')
             // join the amonunt of packs from the product_types table
@@ -33,17 +34,24 @@ class PokemonProductController extends Controller
                 'ep.language as match_language',
                 'ep.url as match_url',
                 'ps.release_date',
-                'pt.pack_count'
+                'ps.series',
+                'pt.pack_count',
+                'pt.swh_modifier'
             )
             ->where('pp.type', '<>', 'Other')
             ->where('ep.stock', '>', 0)
             ->whereNotNull('pp.set_identifier')
-            ->orderBy('ps.release_date', 'desc')
+            ->orderBy('ps.release_date', 'desc')   
             ->get();
 
         // Transform the products into the expected structure
         $groupedProducts = $products->groupBy('sku')->map(function ($productGroup) {
             $product = $productGroup->first();
+
+            // change the pack count if the product is from the sword and shield set
+            if ($product->swh_modifier && $product->series === 'swsh') {
+                $product->pack_count += $product->swh_modifier;
+            }
 
             // Extract matches for this product
             $matches = $productGroup->map(function ($match) {
@@ -60,6 +68,7 @@ class PokemonProductController extends Controller
 
             return [
                 'title' => $product->title,
+                'id' => $product->sku,
                 'price' => $product->price,
                 'pack_count' => $product->pack_count,
                 'set_identifier' => $product->set_identifier,

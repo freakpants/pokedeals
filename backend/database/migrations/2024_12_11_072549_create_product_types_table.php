@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('pack_count')->nullable();
             // flag for whether the product can contain packs of different sets
             $table->boolean('mixed_sets')->default(false);
+            // swh modifier => etbs in swh have -1 pack
+            $table->integer('swh_modifier')->nullable();
         });
     }
 
