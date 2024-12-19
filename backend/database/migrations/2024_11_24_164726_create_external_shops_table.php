@@ -14,6 +14,7 @@ class CreateExternalShopsTable extends Migration
             $table->string('name')->unique();
             $table->string('base_url')->unique();
             $table->enum('shop_type', ShopTypes::getValues())->default(ShopTypes::Other->value);
+            $table->integer('previous_last_page')->default(1);
             // category url (can be empty)
             $table->json('category_urls')->nullable();
             $table->string('image')->nullable();

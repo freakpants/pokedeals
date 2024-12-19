@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
+use App\Enums\ProductTypes;
 
 use App\Helpers\PokemonHelper;
 
@@ -44,28 +45,74 @@ class SaveExternalProducts extends Command
 
         $products = [];
 
-        // try to detect the type of product
-        $possible_product_types = [
-            'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'disney lorcana', "weiss schwarz",  "psa 10", "mystery",
-            'union arena', "accessory", "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case', 
-            'Magnetic Holder','Card Holder','Battle Spirits','Build Divide','Funko Pop','Gundam','Panini','Naruto','Bandai','Yu-Gi-Oh',
-            'Versandkosten', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro','Star Wars','Acryl Case','PRO-BINDER','KEYCHAIN',
-            'Dragon Shield', 'Store Card', 'Duskmourn', 'Van Gogh', 'Plush', 'Sleeves','Gutschein', 'Attack On Titan', 'Bleach', 'Digimon',
-            'Sidewinder 100+', 'Spendenaktion', 'ZipFolio', 'Sleeves', 'Altered TCG', 'Card Preserver','Flip\'n\'Tray', 'Nanoblock',
-            'PSA Card','XenoSkin','Ultra Clear','gamegenic', 'ultimate guard', 'into the inklands', 'the first chapter'
-            ];
-    
         $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader', 'sleeves'];
+
+
 
         // check if we have a json for this page and shop
         $shop_short = str_replace('.png', '', $shop->image);
         $json_dir = '/home/freakpants/pokedeals/backend/storage/shops/' . $shop_short;
         $json_file = storage_path('/shops/' . $shop_short . '/products_page_' . $page . '.json');
         if (file_exists($json_file)) {
-            $this->info("Using cached products for {$shop->name} (Page: $page).");
-            $products = json_decode(file_get_contents($json_file), true);
+            // check on the first page of the shop, if there are any products we dont have yet
+            if ($shop->shop_type === 'shopify') {
+                $page = $shop->previous_last_page;
+                $response = Http::get("$baseUrl/products.json", [
+                    'page' => $page,
+                    'limit' => $perPage,
+                ]);
+                $newProductsArray = $response->json()['products'] ?? [];
+                $newProducts = 0;
+                foreach ($newProductsArray as $product) {
+                    $externalId = $product['id'] ?? null;
 
+                    // if there are variants, use that id
+                    if (count($product['variants']) > 0) {
+                        $externalId = $product['variants'][0]['id'];
+                    }
+
+                    $title = $product['title'] ?? 'Unknown Title';
+                    $existingProduct = DB::table('external_products')
+                        ->where('external_id', $externalId)
+                        ->where('shop_id', $shopId)
+                        ->first();
+                    if (!$existingProduct) {
+                        // determine if this would be saved
+                        $product_type = PokemonHelper::determineProductCategory($product);
+
+
+
+                        // continue if its not a unknown or pokemon product, and not something like
+                        if (($product_type === 'pokemon' || $product_type === 'unknown') &&
+                        !in_array(strtolower($product_type), $continue_types)
+                        ) {
+                            $newProducts++;
+                        } else {
+                            // also check against the specific pokemon product type
+                            $details = PokemonHelper::determineProductDetails($product_type);
+                            if($details['product_type'] !== ProductTypes::Other){
+                                $newProducts++;
+                            }
+                        }
+                    }
+                }
+                
+                if(!$newProducts){
+                    $this->info("No new products found on page $page.");
+                    $this->info("Using cached products for {$shop->name} (Page: $page).");
+                    $products = json_decode(file_get_contents($json_file), true);
+                } else {
+                    $this->info("Found $newProducts new products on page $page.");
+                }
+            }
         } else {
+            // nothing is cached, so we need to fetch the products
+            $this->info("No cached products found for {$shop->name} (Page: $page).");
+
+        } 
+        
+        // if there are new products, run the rest of the process
+        if(!file_exists($json_file) || $newProducts){
             if ($shop->shop_type === 'websell') {
                 $productInfoUrl = $baseUrl  . 'store/ajax/productinfo.nsc';
                 $categoryUrls = json_decode($shop->category_urls);
@@ -161,14 +208,13 @@ class SaveExternalProducts extends Command
                     $newProductsArray = $response->json()['products'] ?? [];
         
                     $products = array_merge($products, $newProductsArray);
-                    $page++;
-                    $this->info("Processed Page $page with " . count($products) . " products.");
-
-                    if (empty($products)) {
+                    $this->info("Processed Page $page with " . count($newProductsArray) . " products.");
+                    
+                    if (empty($newProductsArray)) {
                         $this->info("No more products found on Page $page.");
                         break;
                     }
-        
+                    $page++;
 
                 } while (!empty($newProductsArray));
             }
@@ -185,30 +231,35 @@ class SaveExternalProducts extends Command
             $externalId = $product['id'] ?? null;
             $title = $product['title'] ?? 'Unknown Title';
 
-            $product_type = 'unknown';
-            foreach ($possible_product_types as $type) {
-                if (stripos($title, $type) !== false) {
-                    $product_type = $type;
-                    break;
-                }
-            }
+            // Check if the product already exists in the database
+            $existingProduct = DB::table('external_products')
+                ->where('external_id', $externalId)
+                ->where('shop_id', $shopId)
+                ->first();
 
-            // continue if its not a unknown or pokemon product
-            if ($product_type !== 'pokemon' && $product_type !== 'unknown') {
-                // $this->warn("Skipping product with type: $product_type" . " - " . $title);
+            if ($existingProduct) {
+                $this->info("Product already exists: $title (ID: $externalId)");
                 continue;
             }
 
-            // also check the product type reported by the store
-            if (isset($product['product_type'])) {
-                $product_type = $product['product_type'];
+            $product_type = PokemonHelper::determineProductCategory($product);
+
+            // continue if its not a unknown or pokemon product
+            if ($product_type !== 'pokemon' && $product_type !== 'unknown') {
+                // check against the specific pokemon product types
+                $details = PokemonHelper::determineProductDetails($product_type);
+                if($details['product_type'] === ProductTypes::Other){
+                    // cant determine product type this way either - skip
+                    continue;
+                }
             }
 
             // continue if the product type is singles or graded cards or playmat
             if (in_array(strtolower($product_type), $continue_types)) {
-                // $this->warn("Skipping product with type: $product_type" . " - " . $title);
                 continue;
             }
+
+
 
             if($shop->shop_type === 'websell'){
                 $url = $shop->base_url . 'store/product/' . $product['item_id'];
@@ -220,6 +271,7 @@ class SaveExternalProducts extends Command
                 // $this->warn("Skipping product with missing ID: $title");
                 continue;
             }
+
 
             // if there are variants, also loop them and add the variant name to the title
             if (count($product['variants']) > 0) {
@@ -244,11 +296,12 @@ class SaveExternalProducts extends Command
                     $set_identifier = $details['set_identifier'];
                     $product_type = $details['product_type'];
                     $language = $details['language'];
+                    $multiplier = $details['multiplier'];
 
                     // Insert or update the product - only include the variant title if it isnt "Default Title"
                     $inserted = DB::table('external_products')->updateOrInsert(
                         [
-                            'external_id' => $variant_id,
+                            'external_id' =>  $variant_id,
                             'shop_id' => $shopId,
                         ],
                         [
@@ -256,6 +309,7 @@ class SaveExternalProducts extends Command
                             'price' => $variant_price,
                             'stock' => $variant_stock,
                             'url' => $variant_url,
+                            'multiplier' => $multiplier,
                             'type' => $product_type,
                             'set_identifier' => $set_identifier,
                             'language' => $language,

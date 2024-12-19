@@ -11,11 +11,13 @@ class PokemonHelper{
     // class variable for saving the product type
     private static ProductTypes $product_type = ProductTypes::Other;
     private static string $language = '';
+    private static int $multiplier = 1;
 
     public static function determineProductDetails(string $title, ?string $variant_title = null): array{
         // make sure the static variables dont have anything saved
         self::$product_type = ProductTypes::Other;
         self::$language = '';
+        self::$multiplier = 1;
 
         self::determineProductType($title, $variant_title);
         
@@ -24,6 +26,7 @@ class PokemonHelper{
             'fr' => ['français', 'francais', 'french', 'französisch'],
             'en' => ['english', 'anglais', 'anglais:', 'englisch'],
             'de' => ['deutsch', 'german', 'allemand'],
+            'ja' => ['japanese', 'japonais', 'japanisch'],
         ];
 
         // High-priority matches (case-insensitive)
@@ -41,6 +44,8 @@ class PokemonHelper{
             if (strpos($title, 'DE') !== false) self::$language = 'de';
             if (strpos($title, 'EN') !== false) self::$language = 'en';
             if (strpos($title, 'FR') !== false) self::$language = 'fr';
+            if (strpos($title, 'JP') !== false) self::$language = 'ja';
+            if (strpos($title, 'JPN') !== false) self::$language = 'ja';
         }
 
         // Normalize titles for broader matches
@@ -62,10 +67,21 @@ class PokemonHelper{
         $sets = DB::table('pokemon_sets')->get();
         $set_identifier = self::determineSetIdentifier($title, $variant_title, $sets);
 
+        // if the language is japanese, and the type is booster box, it should be a japanese booster box
+        if (self::$product_type === 'display_box' && self::$language === 'ja') {
+            self::$product_type  = 'japanese_display_box';
+        }
+
+        // check if title contains numberx 
+        if (preg_match('/\d+x/', $title, $matches)) {
+            self::$multiplier = (int) $matches[0];
+        }
+
         return [
             'product_type' => self::$product_type,
             'set_identifier' => $set_identifier,
-            'language' => self::$language
+            'language' => self::$language,
+            'multiplier' => self::$multiplier
         ];
     }
     private static function determineSetIdentifier(string $title, ?string $variant_title, $sets): ?string
@@ -85,6 +101,7 @@ class PokemonHelper{
         foreach ($sets as $set) {
             $set_title_en = self::normalizeDashes($set->title_en ?? '');
             $set_title_de = self::normalizeDashes($set->title_de ?? '');
+            $set_title_jp = self::normalizeDashes($set->title_ja ?? '');
 
             if (!empty($set_title_en)) {
                 // Prioritize matches with the specific part of the title
@@ -128,6 +145,21 @@ class PokemonHelper{
                     $potentialMatches[] = $set->set_identifier;
                 }
             }
+
+            // Check for a match with the Japanese title
+            if (!empty($set->title_ja)) {
+                $set_title_ja = self::normalizeDashes($set->title_ja);
+                if (stripos($specificPart, $set_title_ja) !== false) {
+                    self::$language = 'ja';
+
+                    return $set->set_identifier;
+                }
+
+                if (stripos($normalizedTitle, $set_title_ja) !== false || 
+                    stripos($normalizedVariantTitle, $set_title_ja) !== false) {
+                    $potentialMatches[] = $set->set_identifier;
+                }
+            }
         }
 
         // Return the first potential match if no exact match found
@@ -146,6 +178,7 @@ class PokemonHelper{
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs','display'],
             ProductTypes::HalfBoosterBox->value => ['half booster box'],
+            ProductTypes::JapaneseDisplayBox->value => ['Box - Japanese', 'Booster Box (JPN)'],
             ProductTypes::BoosterBundle->value => ['booster bundle'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case'],
             ProductTypes::SleevedBooster->value => ['sleeved booster'],
@@ -189,6 +222,37 @@ class PokemonHelper{
         // Default to "Other" if no match is found
         self::$product_type = ProductTypes::Other;
     }
+
+    public static function determineProductCategory($product): string
+    {
+            // try to detect the type of product
+            $possible_product_types = [
+                'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'disney lorcana', "weiss schwarz",  "psa 10", "mystery",
+                'union arena', "accessory", "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case', 
+                'Magnetic Holder','Card Holder','Battle Spirits','Build Divide','Funko Pop','Gundam','Panini','Naruto','Bandai','Yu-Gi-Oh',
+                'Versandkosten', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro','Star Wars','Acryl Case','PRO-BINDER','KEYCHAIN',
+                'Dragon Shield', 'Store Card', 'Duskmourn', 'Van Gogh', 'Plush', 'Sleeves','Gutschein', 'Attack On Titan', 'Bleach', 'Digimon',
+                'Sidewinder 100+', 'Spendenaktion', 'ZipFolio', 'Sleeves', 'Altered TCG', 'Card Preserver','Flip\'n\'Tray', 'Nanoblock',
+                'PSA Card','XenoSkin','Ultra Clear','gamegenic', 'ultimate guard', 'into the inklands', 'the first chapter'
+                ];
+        
+            $title = $product['title'];    
+
+            foreach ($possible_product_types as $type) {
+                if (stripos($title, $type) !== false) {
+                    return $type;     
+                }
+            }
+
+            // also check the product type reported by the store
+            if (isset($product['product_type'])) {
+                return $product['product_type'];
+            }
+            // if we matched nothing it COULD be pokemon
+            return 'unknown';
+
+        }
+
 
     private static function normalizeDashes(string $input): string
     {

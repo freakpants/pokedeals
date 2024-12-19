@@ -17,6 +17,7 @@ class CreateExternalProductsTable extends Migration
             $table->string('title');
             $table->string('price')->nullable();
             $table->integer('stock')->nullable();
+            $table->integer('multiplier')->default(1);
             $table->string('url')->nullable();
             $table->enum('type', ProductTypes::getValues())->default(ProductTypes::Other->value);
             // a foreign key to the pokemon_sets table
