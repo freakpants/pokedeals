@@ -17,9 +17,11 @@ return new class extends Migration {
             $table->string('series');
 
             // title_de is the german title, its a string
-            $table->string('title_de');
+            $table->string('title_de')->nullable();
             // title_en is the english title, its a string
-            $table->string('title_en');
+            $table->string('title_en')->nullable();
+            // title_ja is the japanese title, its a string
+            $table->string('title_ja')->nullable();
             // release_date is the date the set was released, its a date
             $table->date('release_date');
 

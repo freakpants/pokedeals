@@ -26,6 +26,12 @@ class ProductTypesSeeder extends Seeder
         ]);
 
         DB::table('product_types')->insert([
+            'product_type' => 'japanese_display_box',
+            'pack_count' => 10,
+            'mixed_sets' => false,
+        ]);
+
+        DB::table('product_types')->insert([
             'product_type' => 'booster_bundle',
             'pack_count' => 6,
             'mixed_sets' => false,

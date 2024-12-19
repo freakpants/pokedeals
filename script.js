@@ -139,7 +139,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 
         productCard.innerHTML += `
             <h2>${product.title}</h2>
-            <p>Pokemon Center UK Price: ${product.price || 'Price not available'}</p>
+            <p>Pokemon Center Price: ${product.price || 'Price not available'}</p>
             <a href="${product.product_url}" target="_blank">View Product</a>
         `;
 

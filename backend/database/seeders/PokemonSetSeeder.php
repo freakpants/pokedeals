@@ -56,6 +56,16 @@ class PokemonSetSeeder extends Seeder
             'release_date' => '2025-01-17',
         ]);
 
+        // manually add terastal festival
+        $sets->push([
+            'id' => 'sv8a',
+            'set_identifier' => 'terastal_festival',
+            'title_de' => '',
+            'title_en' => 'Terastal Festival',
+            'title_ja' => 'Terastal Fest ex',
+            'release_date' => '2024-12-6',
+        ]);
+
         // fetch the japanese sets
         $tcgdex = new TCGdex("ja");
         $ja_sets = $tcgdex->fetchSets();
