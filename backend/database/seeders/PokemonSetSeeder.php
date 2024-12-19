@@ -36,6 +36,7 @@ class PokemonSetSeeder extends Seeder
                 return [
                     'id' => $set->id,
                     'set_identifier' => $set_identifier,
+                    'series' => $en_set->serie->id,
                     'title_de' => $set->name,
                     'title_en' => $en_set->name,    
                     'release_date' => $en_set->releaseDate,
@@ -48,6 +49,7 @@ class PokemonSetSeeder extends Seeder
         // manually add prismatic evolutions
         $sets->push([
             'id' => 'sv08.5',
+            'series' => 'sv',
             'set_identifier' => 'prismatic_evolutions',
             'title_de' => 'Prismatische Evolutionen',
             'title_en' => 'Prismatic Evolutions',
@@ -116,6 +118,7 @@ class PokemonSetSeeder extends Seeder
             $sets->push([
                 'id' => $set->id,
                 'set_identifier' => $set_identifier,
+                'series' => $set->serie->id,
                 'title_de' => $set->name,
                 'title_en' => $set->name,
                 'release_date' => $set->releaseDate,

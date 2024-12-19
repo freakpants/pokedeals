@@ -32,7 +32,7 @@ class RefreshAndImportPokemon extends Command
         $this->call('migrate', ['--force' => true]);
 
         $this->info('Seeding the database...');
-        $this->call('db:seed', ['--force' => true]);
+        $this->call('db:seed', ['--force' => true]); 
 
         $this->info('Importing Pokémon products...');
         // Define the files to import
@@ -41,7 +41,7 @@ class RefreshAndImportPokemon extends Command
             storage_path('pokemon2.json'),
             storage_path('pokemon3.json'),
             storage_path('pokemon4.json'),
-            storage_path('pokemon5.json'),
+            storage_path('pokemon5.json'), 
         ];
 
         foreach ($filePaths as $filePath) {

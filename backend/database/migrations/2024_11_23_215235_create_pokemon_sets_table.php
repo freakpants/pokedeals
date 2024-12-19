@@ -12,6 +12,10 @@ return new class extends Migration {
             $table->string('set_identifier')->primary();
             // id is the tcgdex id, its a string
             $table->string('id');
+
+            // series is the generation the set belongs to, its a string
+            $table->string('series');
+
             // title_de is the german title, its a string
             $table->string('title_de');
             // title_en is the english title, its a string
