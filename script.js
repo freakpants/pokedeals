@@ -71,6 +71,10 @@ async function initializeFilters(products) {
         });
     });
 
+    // add japanese manually
+    languages.add('ja');
+
+
     // Populate the language filter
     languageFilter.innerHTML = `
         <option value="">All Languages</option>
@@ -79,12 +83,22 @@ async function initializeFilters(products) {
 
     // Fetch sets and populate the set filter with English names in reverse order
     const setData = await fetchSets();
-    const setOptions = setData
+
+
+    // filter out japanese sets unless the language is set to japanese
+    // japanese sets DONT have title_ja set to null
+    const setDataFiltered = setData.filter(set => set.title_ja === null && language !== 'ja');
+
+    // save the unfiltered sets in a global variable
+    window.allSets = setData;
+
+    const setOptions = setDataFiltered
         .reverse() // Reverse the sets array
         .map(set => ({
             value: set.set_identifier,
             label: set.title_en || set.set_identifier // Use English name or fall back to identifier
         }));
+
 
     setFilter.innerHTML = `
         <option value="">All Sets</option>
@@ -112,6 +126,41 @@ async function applyFilters() {
         const setMatch = !setIdentifier || product.set_identifier === setIdentifier;
         return languageMatch && setMatch;
     });
+
+    // if the language is ja, show only ja sets
+    if(language === 'ja') {
+        const setData = window.allSets;
+        const setDataFiltered = setData.filter(set => set.title_ja !== null);
+        const setOptions = setDataFiltered
+            .reverse() // Reverse the sets array
+            .map(set => ({
+                value: set.set_identifier,
+                label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+            }));
+
+        const setFilter = document.getElementById('set-filter');
+        setFilter.innerHTML = `
+            <option value="">All Sets</option>
+            ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+        `;
+    } else {
+        const setData = window.allSets;
+        const setDataFiltered = setData.filter(set => set.title_ja === null);
+        const setOptions = setDataFiltered
+            .reverse() // Reverse the sets array
+            .map(set => ({
+                value: set.set_identifier,
+                label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+            }));
+
+        const setFilter = document.getElementById('set-filter');
+        setFilter.innerHTML = `
+            <option value="">All Sets</option>
+            ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+        `;
+        
+    }
+
 
     // also amend the url
     const url = new URL(window.location.href);
@@ -148,7 +197,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         productCard.innerHTML += `
             <h2>${product.title}</h2>
             <p>Pokemon Center Price: ${product.price || 'Price not available'}</p>
-            <p>Pack Count: ${product.pack_count}</p>
+            <p>Packs in product: ${product.pack_count}</p>
             <a href="${product.product_url}" target="_blank">View Product</a>
         `;
 

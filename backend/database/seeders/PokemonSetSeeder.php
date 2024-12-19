@@ -130,8 +130,8 @@ class PokemonSetSeeder extends Seeder
                 'id' => $set->id,
                 'set_identifier' => $set_identifier,
                 'series' => $set->serie->id,
-                'title_de' => $set->name,
-                'title_en' => $set->name,
+                'title_en' => $title_en,
+                'title_ja' => $set->name,
                 'release_date' => $set->releaseDate,
             ]);
         }

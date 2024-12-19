@@ -7,19 +7,28 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Console\Input\InputOption;
 use App\Enums\ProductTypes;
 
 use App\Helpers\PokemonHelper;
 
 class SaveExternalProducts extends Command
 {
-    protected $signature = 'products:save-external';
+    protected $signature = 'products:save-external {--force-refresh}';
     protected $description = 'Save external products to the database';
 
     public function handle()
     {
         $shops = DB::table('external_shops')->get(); 
         $totalNewProducts = 0; // Track total new products across all shops
+
+        $forceRefresh = $this->option('force-refresh') ?? false;
+        if($forceRefresh){
+            $this->info("Force refresh enabled. All shops will be queried for new products...");
+
+        } else {
+            $this->info("Using cache for this run.");
+        }
 
         foreach ($shops as $shop) {
             $totalNewProducts = $this->processShop($shop, $totalNewProducts);
@@ -43,17 +52,18 @@ class SaveExternalProducts extends Command
         $perPage = 250; // Max limit
         $newProducts = 0;
 
+        $forceRefresh = $this->option('force-refresh') ?? false;
+
         $products = [];
 
         $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader', 'sleeves'];
-
-
 
         // check if we have a json for this page and shop
         $shop_short = str_replace('.png', '', $shop->image);
         $json_dir = '/home/freakpants/pokedeals/backend/storage/shops/' . $shop_short;
         $json_file = storage_path('/shops/' . $shop_short . '/products_page_' . $page . '.json');
-        if (file_exists($json_file)) {
+        if (file_exists($json_file) && !$forceRefresh) {
+            $products = json_decode(file_get_contents($json_file), true);
             // check on the first page of the shop, if there are any products we dont have yet
             if ($shop->shop_type === 'shopify') {
                 $page = $shop->previous_last_page;
@@ -100,7 +110,6 @@ class SaveExternalProducts extends Command
                 if(!$newProducts){
                     $this->info("No new products found on page $page.");
                     $this->info("Using cached products for {$shop->name} (Page: $page).");
-                    $products = json_decode(file_get_contents($json_file), true);
                 } else {
                     $this->info("Found $newProducts new products on page $page.");
                 }
@@ -108,11 +117,10 @@ class SaveExternalProducts extends Command
         } else {
             // nothing is cached, so we need to fetch the products
             $this->info("No cached products found for {$shop->name} (Page: $page).");
-
         } 
         
         // if there are new products, run the rest of the process
-        if(!file_exists($json_file) || $newProducts){
+        if((!file_exists($json_file) || $newProducts) && $forceRefresh){
             if ($shop->shop_type === 'websell') {
                 $productInfoUrl = $baseUrl  . 'store/ajax/productinfo.nsc';
                 $categoryUrls = json_decode($shop->category_urls);
@@ -220,12 +228,6 @@ class SaveExternalProducts extends Command
             }
         }
 
-        // save to json, create if not exists
-        // Check if the directory exists, if not, create it
-        if (!is_dir($json_dir)) {
-            mkdir($json_dir, 0755, true); // Create the directory with recursive flag
-        }
-        file_put_contents($json_file, json_encode($products));
 
         foreach ($products as $product) {
             $externalId = $product['id'] ?? null;
@@ -323,6 +325,14 @@ class SaveExternalProducts extends Command
                 }
             } 
         }
+
+        
+        // save to json, create if not exists
+        // Check if the directory exists, if not, create it
+        if (!is_dir($json_dir)) {
+            mkdir($json_dir, 0755, true); // Create the directory with recursive flag
+        }
+        file_put_contents($json_file, json_encode($products));
 
         $this->info("Processing {$shop->name}...");
 
