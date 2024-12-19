@@ -30,7 +30,7 @@ async function fetchProducts() {
         }
         const products = await response.json();
         allProducts = products; // Store all products for filtering
-        initializeFilters(products);
+        await initializeFilters(products);
         renderProducts(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -54,7 +54,11 @@ async function fetchSets() {
     }
 }
 
-function initializeFilters(products) {
+async function initializeFilters(products) {
+    const url = new URL(window.location.href);
+    const language = url.searchParams.get('language');
+    const set = url.searchParams.get('set');
+
     const languageFilter = document.getElementById('language-filter');
     const setFilter = document.getElementById('set-filter');
 
@@ -74,31 +78,32 @@ function initializeFilters(products) {
     `;
 
     // Fetch sets and populate the set filter with English names in reverse order
-    fetchSets().then(setData => {
-        const setOptions = setData
-            .reverse() // Reverse the sets array
-            .map(set => ({
-                value: set.set_identifier,
-                label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-            }));
+    const setData = await fetchSets();
+    const setOptions = setData
+        .reverse() // Reverse the sets array
+        .map(set => ({
+            value: set.set_identifier,
+            label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+        }));
 
-        setFilter.innerHTML = `
-            <option value="">All Sets</option>
-            ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-        `;
+    setFilter.innerHTML = `
+        <option value="">All Sets</option>
+        ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+    `;
 
-        setFilter.addEventListener('change', () => {
-            const setIdentifier = setFilter.value;
-            applyFilters('', setIdentifier); // Explicitly pass setIdentifier to applyFilters
-        });
+    // Set the filter values from the URL parameters after the options are populated
+    if (language) {
+        languageFilter.value = language;
+    }
+    if (set) {
+        setFilter.value = set;
+    }
 
-
-    });
-
+    setFilter.addEventListener('change', applyFilters);
     languageFilter.addEventListener('change', applyFilters);
 }
 
-function applyFilters() {
+async function applyFilters() {
     const language = document.getElementById('language-filter').value;
     const setIdentifier = document.getElementById('set-filter').value;
 
@@ -115,16 +120,12 @@ function applyFilters() {
 
     window.history.pushState({}, '', url);
 
-
     renderProducts(filteredProducts, language, setIdentifier);
 }
-
-
 
 function renderProducts(products, filterLanguage = '', filterSetIdentifier = '') {
     const productList = document.getElementById('product-list');
     productList.innerHTML = ''; // Clear previous content
-
 
     if (products.length === 0) {
         productList.textContent = 'No products found.';
@@ -206,8 +207,6 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             const shop = shops[shopId] || {};
             const offers = currentShopGroup.filter(match => {
                 // Filter matches by the selected language during rendering
-                console.log(match.language);
-                console.log(filterLanguage);
                 return !filterLanguage || match.language === filterLanguage;
                 
             });
@@ -294,5 +293,16 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 // Initialize the app
 (async function initialize() {
     await fetchShops(); // Fetch shops first to have the data ready
-    await fetchProducts();
+    await fetchProducts().then(() => {
+        const url = new URL(window.location.href);
+        const language = url.searchParams.get('language');
+        const set = url.searchParams.get('set');
+        if (language) {
+            document.getElementById('language-filter').value = language;
+        }
+        if (set) {
+            document.getElementById('set-filter').value = set;
+        }
+        applyFilters(); // Apply filters after setting the filter values
+    });
 })();
