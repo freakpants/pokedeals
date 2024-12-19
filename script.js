@@ -87,7 +87,12 @@ async function initializeFilters(products) {
 
     // filter out japanese sets unless the language is set to japanese
     // japanese sets DONT have title_ja set to null
-    const setDataFiltered = setData.filter(set => set.title_ja === null && language !== 'ja');
+    let setDataFiltered;
+    if(language === 'ja') {
+        setDataFiltered = setData.filter(set => set.title_ja !== null);
+    } else {
+        setDataFiltered = setData.filter(set => set.title_ja === null);
+    }
 
     // save the unfiltered sets in a global variable
     window.allSets = setData;
@@ -141,7 +146,7 @@ async function applyFilters() {
                 .reverse() // Reverse the sets array
                 .map(set => ({
                     value: set.set_identifier,
-                    label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+                    label: `${set.title_en}`
                 }));
     
             
