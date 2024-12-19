@@ -77,7 +77,7 @@ async function initializeFilters(products) {
 
     // Populate the language filter
     languageFilter.innerHTML = `
-        <option value="">All Languages</option>
+        <option value="">Western Languages</option>
         ${[...languages].map(lang => `<option value="${lang}">${lang}</option>`).join('')}
     `;
 
@@ -127,40 +127,52 @@ async function applyFilters() {
         return languageMatch && setMatch;
     });
 
+    const setData = window.allSets;
     // if the language is ja, show only ja sets
     if(language === 'ja') {
-        const setData = window.allSets;
-        const setDataFiltered = setData.filter(set => set.title_ja !== null);
-        const setOptions = setDataFiltered
-            .reverse() // Reverse the sets array
-            .map(set => ({
-                value: set.set_identifier,
-                label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-            }));
-
         const setFilter = document.getElementById('set-filter');
-        setFilter.innerHTML = `
-            <option value="">All Sets</option>
-            ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-        `;
+        const firstSet = setFilter.options[1].value;
+        // select that set from the setData
+        const set = setData.find(set => set.set_identifier === firstSet);
+        // check if that set has title_ja set to null
+        if(set.title_ja === null) {
+            const setDataFiltered = setData.filter(set => set.title_ja !== null);
+            const setOptions = setDataFiltered
+                .reverse() // Reverse the sets array
+                .map(set => ({
+                    value: set.set_identifier,
+                    label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+                }));
+    
+            
+            setFilter.innerHTML = `
+                <option value="">All Sets</option>
+                ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+            `;
+        }
+
     } else {
-        const setData = window.allSets;
-        const setDataFiltered = setData.filter(set => set.title_ja === null);
-        const setOptions = setDataFiltered
-            .reverse() // Reverse the sets array
-            .map(set => ({
-                value: set.set_identifier,
-                label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-            }));
-
         const setFilter = document.getElementById('set-filter');
-        setFilter.innerHTML = `
-            <option value="">All Sets</option>
-            ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-        `;
-        
+        const firstSet = setFilter.options[1].value;
+        // select that set from the setData
+        const set = setData.find(set => set.set_identifier === firstSet);
+        // check if that set has title_ja set to null
+        if(set.title_ja !== null) {
+            const setDataFiltered = setData.filter(set => set.title_ja === null);
+            const setOptions = setDataFiltered
+                .reverse() // Reverse the sets array
+                .map(set => ({
+                    value: set.set_identifier,
+                    label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+                }));
+    
+            
+            setFilter.innerHTML = `
+                <option value="">All Sets</option>
+                ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+            `;
+        }
     }
-
 
     // also amend the url
     const url = new URL(window.location.href);
