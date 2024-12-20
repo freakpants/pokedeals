@@ -2,6 +2,7 @@
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
 const SHOPS_API_URL = 'https://pokeapi.freakpants.ch/api/shops';
 const SETS_API_URL = 'https://pokeapi.freakpants.ch/api/sets';
+const SERIES_API_URL = 'https://pokeapi.freakpants.ch/api/series';
 
 let shops = {}; // To store shop data for quick lookup
 let allProducts = []; // To store all fetched products
@@ -53,6 +54,23 @@ async function fetchSets() {
         return [];
     }
 }
+
+async function fetchSeries() {
+    try {
+        const response = await fetch(SERIES_API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error fetching sets! Status: ${response.status}`);
+        }
+        const series = await response.json();
+        // save to window
+        window.series = series;
+    }
+    catch (error) {
+        console.error('Error fetching sets:', error);
+        return [];
+    }
+}
+
 
 async function initializeFilters(products) {
     const url = new URL(window.location.href);
@@ -144,25 +162,53 @@ async function applyFilters() {
     renderProducts(filteredProducts, language, setIdentifier);
 }
 
-function createSetFilter(japanese = false){
+function createSetFilter(japanese = false) {
     const setData = window.allSets;
     const setFilter = document.getElementById('set-filter');
     let setDataFiltered;
-    if(japanese) {
+
+    if (japanese) {
         setDataFiltered = setData.filter(set => set.title_ja !== null);
     } else {
         setDataFiltered = setData.filter(set => set.title_ja === null);
     }
-    const setOptions = setDataFiltered
-        .reverse() // Reverse the sets array
-        .map(set => ({
-            value: set.set_identifier,
-            label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-        }));
-    setFilter.innerHTML = `
-        <option value="">All Sets</option>
-        ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-    `;
+
+    // Sort sets by release_date in descending order
+    setDataFiltered.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+
+    // Group sets by series
+    const setsBySeries = setDataFiltered.reduce((groups, set) => {
+        const series = set.series_id || 'Other';
+        if (!groups[series]) {
+            groups[series] = [];
+        }
+        groups[series].push(set);
+        return groups;
+    }, {});
+
+    // Populate the set filter with optgroups for each series
+    setFilter.innerHTML = '<option value="">All Sets</option>';
+    Object.keys(setsBySeries).forEach(series => {
+        const optgroup = document.createElement('optgroup');
+        // lookup the english title in the series object
+        const seriesObject = window.series.find(s => s.id === series);
+        console.log(seriesObject);
+        optgroup.label = seriesObject ? seriesObject.name_en : series;
+        setsBySeries[series].forEach(set => {
+            const option = document.createElement('option');
+            option.value = set.set_identifier;
+            option.textContent = set.title_en || set.set_identifier;
+            optgroup.appendChild(option);
+        });
+        setFilter.appendChild(optgroup);
+    });
+
+    // Set the filter value from the URL parameter if available
+    const url = new URL(window.location.href);
+    const set = url.searchParams.get('set');
+    if (set) {
+        setFilter.value = set;
+    }
 }
 
 function renderProducts(products, filterLanguage = '', filterSetIdentifier = '') {
@@ -335,6 +381,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 // Initialize the app
 (async function initialize() {
     await fetchShops(); // Fetch shops first to have the data ready
+    await fetchSeries();
     await fetchProducts().then(() => {
         const url = new URL(window.location.href);
         const language = url.searchParams.get('language');

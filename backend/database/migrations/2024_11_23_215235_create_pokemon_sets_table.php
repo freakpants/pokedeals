@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('id');
 
             // series is the generation the set belongs to, its a string
-            $table->string('series');
+            $table->string('series_id');
 
             // title_de is the german title, its a string
             $table->string('title_de')->nullable();

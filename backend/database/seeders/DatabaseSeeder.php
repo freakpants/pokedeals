@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ExternalShopsSeeder::class,
             PokemonSetSeeder::class,
+            PokemonSeriesSeeder::class,
             ProductTypesSeeder::class,
         ]);
 

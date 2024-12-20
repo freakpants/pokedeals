@@ -34,7 +34,7 @@ class PokemonProductController extends Controller
                 'ep.language as match_language',
                 'ep.url as match_url',
                 'ps.release_date',
-                'ps.series',
+                'ps.series_id',
                 'pt.pack_count',
                 'pt.swh_modifier'
             )
@@ -49,7 +49,7 @@ class PokemonProductController extends Controller
             $product = $productGroup->first();
 
             // change the pack count if the product is from the sword and shield set
-            if ($product->swh_modifier && $product->series === 'swsh') {
+            if ($product->swh_modifier && $product->series_id === 'swsh') {
                 $product->pack_count += $product->swh_modifier;
             }
 
