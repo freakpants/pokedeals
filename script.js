@@ -84,31 +84,11 @@ async function initializeFilters(products) {
     // Fetch sets and populate the set filter with English names in reverse order
     const setData = await fetchSets();
 
-
-    // filter out japanese sets unless the language is set to japanese
-    // japanese sets DONT have title_ja set to null
-    let setDataFiltered;
-    if(language === 'ja') {
-        setDataFiltered = setData.filter(set => set.title_ja !== null);
-    } else {
-        setDataFiltered = setData.filter(set => set.title_ja === null);
-    }
-
     // save the unfiltered sets in a global variable
     window.allSets = setData;
 
-    const setOptions = setDataFiltered
-        .reverse() // Reverse the sets array
-        .map(set => ({
-            value: set.set_identifier,
-            label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-        }));
-
-
-    setFilter.innerHTML = `
-        <option value="">All Sets</option>
-        ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-    `;
+    // filter out japanese sets unless the language is set to japanese
+    createSetFilter(language === 'ja');
 
     // Set the filter values from the URL parameters after the options are populated
     if (language) {
@@ -133,49 +113,24 @@ async function applyFilters() {
     });
 
     const setData = window.allSets;
+    const setFilter = document.getElementById('set-filter');
+    const firstSet = setFilter.options[1].value;
+    // select that set from the setData
+    const set = setData.find(set => set.set_identifier === firstSet);
+    // check if that set has title_ja set to null
+    const currentlyJapanese = set.title_ja !== null;
+
     // if the language is ja, show only ja sets
     if(language === 'ja') {
-        const setFilter = document.getElementById('set-filter');
-        const firstSet = setFilter.options[1].value;
-        // select that set from the setData
-        const set = setData.find(set => set.set_identifier === firstSet);
-        // check if that set has title_ja set to null
-        if(set.title_ja === null) {
-            const setDataFiltered = setData.filter(set => set.title_ja !== null);
-            const setOptions = setDataFiltered
-                .reverse() // Reverse the sets array
-                .map(set => ({
-                    value: set.set_identifier,
-                    label: `${set.title_en}`
-                }));
-    
-            
-            setFilter.innerHTML = `
-                <option value="">All Sets</option>
-                ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-            `;
+        console.log('we are switching to japanese');
+        if(!currentlyJapanese) {
+            createSetFilter(true);
         }
 
     } else {
-        const setFilter = document.getElementById('set-filter');
-        const firstSet = setFilter.options[1].value;
-        // select that set from the setData
-        const set = setData.find(set => set.set_identifier === firstSet);
-        // check if that set has title_ja set to null
-        if(set.title_ja !== null) {
-            const setDataFiltered = setData.filter(set => set.title_ja === null);
-            const setOptions = setDataFiltered
-                .reverse() // Reverse the sets array
-                .map(set => ({
-                    value: set.set_identifier,
-                    label: set.title_en || set.set_identifier // Use English name or fall back to identifier
-                }));
-    
-            
-            setFilter.innerHTML = `
-                <option value="">All Sets</option>
-                ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
-            `;
+        console.log('we are switching to western');
+        if(currentlyJapanese) {
+            createSetFilter(false);
         }
     }
 
@@ -187,6 +142,27 @@ async function applyFilters() {
     window.history.pushState({}, '', url);
 
     renderProducts(filteredProducts, language, setIdentifier);
+}
+
+function createSetFilter(japanese = false){
+    const setData = window.allSets;
+    const setFilter = document.getElementById('set-filter');
+    let setDataFiltered;
+    if(japanese) {
+        setDataFiltered = setData.filter(set => set.title_ja !== null);
+    } else {
+        setDataFiltered = setData.filter(set => set.title_ja === null);
+    }
+    const setOptions = setDataFiltered
+        .reverse() // Reverse the sets array
+        .map(set => ({
+            value: set.set_identifier,
+            label: set.title_en || set.set_identifier // Use English name or fall back to identifier
+        }));
+    setFilter.innerHTML = `
+        <option value="">All Sets</option>
+        ${setOptions.map(set => `<option value="${set.value}">${set.label}</option>`).join('')}
+    `;
 }
 
 function renderProducts(products, filterLanguage = '', filterSetIdentifier = '') {
