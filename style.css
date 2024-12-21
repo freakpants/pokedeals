@@ -6,10 +6,6 @@ body {
     color: #333;
 }
 
-h1 {
-    text-align: center;
-    margin: 20px 0;
-}
 
 /* Updated product list for better spacing and layout */
 #product-list {
@@ -214,4 +210,27 @@ h1 {
     #filters label {
         margin: 0;
     }
+}
+
+.text-arc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto; /* Center the SVG horizontally */
+    width: 100%; /* Ensure it scales responsively */
+    max-width: 800px; /* Optional: Restrict the width */
+}
+
+svg {
+    width: 100%; /* Make the SVG responsive */
+    height: auto; /* Maintain aspect ratio */
+}
+
+text {
+    font-weight: bold;
+    text-shadow: 
+        -4px -4px 0 #3b4cca,
+         4px -4px 0 #3b4cca,
+        -4px  4px 0 #3b4cca,
+         4px  4px 0 #3b4cca;
 }
