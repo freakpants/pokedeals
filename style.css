@@ -152,27 +152,26 @@ h1 {
 
 #filters {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 15px;
     padding: 20px;
     background: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+    max-width: 800px;
     margin: auto;
     font-family: 'Arial', sans-serif;
 }
 
 #filters label {
     font-weight: bold;
-    margin-bottom: 5px;
     font-size: 14px;
     color: #333;
+    margin-right: 10px;
 }
 
 #filters select {
-    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -202,4 +201,17 @@ h1 {
 #filters option {
     padding: 10px;
     font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    #filters {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #filters label {
+        margin: 0;
+    }
 }
