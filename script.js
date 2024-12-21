@@ -242,7 +242,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         mainImage.className = 'main-image';
         imageContainer.appendChild(mainImage);
 
-        // replace Pokémon TCG: in the title with nothing
+        // Replace "Pokémon TCG:" in the title
         product.title = product.title.replace('Pokémon TCG: ', '');
 
         productCard.innerHTML += `
@@ -252,144 +252,103 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             <a href="${product.product_url}" target="_blank">View on Pokemon Center</a>
         `;
 
+        const matchesContainer = document.createElement('div');
+        matchesContainer.className = 'matches';
+        matchesContainer.innerHTML = '<h3>Offers:</h3>';
+
         // Filter matches strictly by the selected language
         const filteredMatches = product.matches.filter(match => {
             return !filterLanguage || match.language === filterLanguage;
         });
 
-        // Only include shops with matches in the correct language
-        const shopGroups = filteredMatches.reduce((groups, match) => {
-            const shop = shops[match.shop_id] || {};
-            if (!groups[shop.id]) groups[shop.id] = [];
-        
-            // Only add matches that pass the language filter
-            const languageMatch = !filterLanguage || match.language === filterLanguage;
-            if (languageMatch) {
-                groups[shop.id].push(match);
-            }
-        
-            return groups;
-        }, {});
-        
+        // Sort all matches by price (regardless of shop)
+        filteredMatches.sort((a, b) => a.price - b.price);
 
-        // Remove empty shops (i.e., those with no matches after filtering)
-        Object.keys(shopGroups).forEach(shopId => {
-            if (shopGroups[shopId].length === 0) {
-                delete shopGroups[shopId];
-            }
-        });
-
-        // determine cheapest offer in each shop, then sort the shopgroups by their cheapest offer
-        Object.keys(shopGroups).forEach(shopId => {
-            // determine which of the offers of the shop is the cheapest
-            const offers = shopGroups[shopId];
-            const cheapestOffer = offers.reduce((cheapest, offer) => {
-                return offer.price < cheapest.price ? offer : cheapest;
-            }, { price: Infinity });
-
-            shopGroups[shopId] = offers;
-            shopGroups[shopId].cheapestOffer = cheapestOffer;
-        });
-
-        // sort the shopgroups by their cheapest offer
-        const sortedShopGroups = Object.entries(shopGroups).sort((a, b) => {
-            return a[1].cheapestOffer.price - b[1].cheapestOffer.price;
-        });
-
-
-        const matchesContainer = document.createElement('div');
-        matchesContainer.className = 'matches';
-        matchesContainer.innerHTML = '<h3>Offers:</h3>';
-
-        // Render only shops with filtered offers
-        let first = true;
-        sortedShopGroups.forEach(([shopId, currentShopGroup]) => {
-            const shop = shops[shopId] || {};
-            const offers = currentShopGroup.filter(match => {
-                // Filter matches by the selected language during rendering
-                return !filterLanguage || match.language === filterLanguage;
-                
-            });
-        
-            if (offers.length === 0) return; // Skip shops with no valid offers
-
-            // sort the offers inside the shop group too
-            offers.sort((a, b) => a.price - b.price);
-        
-            const shopGroup = document.createElement('div');
-            shopGroup.className = 'shop-group';
-        
+        // Display the cheapest offer
+        if (filteredMatches.length > 0) {
+            const cheapestMatch = filteredMatches[0];
+            const shop = shops[cheapestMatch.shop_id] || {};
             const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
-                                        alt="${shop.name || 'Shop'} Logo" 
-                                        class="shop-logo">`;
-        
-            
-                                        
-                     
-            shopGroup.innerHTML = `
-                <div class="shop-header">
+                              alt="${shop.name || 'Shop'} Logo" 
+                              class="shop-logo">`;
+
+            const cheapestOfferElement = document.createElement('div');
+            cheapestOfferElement.className = 'offer cheapest-offer';
+
+            cheapestOfferElement.innerHTML = `
+                <div class="shop-info">
                     ${shopLogo}
-                    <strong>${shop.name}</strong>
+                    <strong>${shop.name || 'Unknown Shop'}</strong>
                 </div>
-                <ul>
-                    ${offers
-                        .map(offer => `
-                            <li>
-                                <a href="${offer.external_product.url}" target="_blank" class="match-link">
-                                    ${offer.title}
-                                </a>
-                                <span class="flag-icon flag-icon-${languageToCountryCode[offer.language] || 'unknown'} product-language-flag"></span>
-                                <span class="product-price">CHF ${offer.price.toFixed(2) || 'Price not available'}</span>              
-                                <span class="price-per-pack">(~${(offer.price / product.pack_count).toFixed(2) || 'Price per pack not available'} per pack)</span>
-                            </li>`).join('')}
-                </ul>
+                <a href="${cheapestMatch.external_product.url}" target="_blank" class="match-link">
+                    ${cheapestMatch.title}
+                </a>
+                <span class="flag-icon flag-icon-${languageToCountryCode[cheapestMatch.language] || 'unknown'} product-language-flag"></span>
+                <span class="product-price">CHF ${cheapestMatch.price.toFixed(2)}</span>
+                <span class="price-per-pack">(~${(cheapestMatch.price / product.pack_count).toFixed(2)} per pack)</span>
             `;
 
-            // only show the shop group initially if it is the first one
-            if (!first) {
-                shopGroup.style.display = 'none';
-            }
-            first = false;
+            matchesContainer.appendChild(cheapestOfferElement);
+        }
 
+        // Create a collapsible section for all other offers
+        if (filteredMatches.length > 1) {
+            const toggleContainer = document.createElement('div');
+            toggleContainer.className = 'toggle-container';
 
-            matchesContainer.appendChild(shopGroup);
-        });
-
-        // Add a button to show/hide the other shop groups
-        if (sortedShopGroups.length > 1) {
             const toggleButton = document.createElement('button');
-            toggleButton.textContent = 'Show/Hide Other Offers';
             toggleButton.className = 'toggle-button';
-            // remember the product id to toggle the shop groups
-            toggleButton.dataset.productId = product.id;
-            // toggle all shop groups inside this product
-            toggleButton.addEventListener('click', event => {
-                const productId = event.target.dataset.productId;
-                const productCard = event.target.closest('.product-card');
-                const shopGroups = productCard.querySelectorAll('.shop-group');
-                let first = true;
-                shopGroups.forEach(shopGroup => {
-                    // only toggle the shop group if it is not the first one
-                    if (!first) {
-                        shopGroup.style.display = shopGroup.style.display === 'none' ? 'block' : 'none';
-                    }
-                    first = false;
-                });
+            toggleButton.textContent = 'Show More Offers';
+
+            const otherOffersContainer = document.createElement('div');
+            otherOffersContainer.className = 'other-offers';
+            otherOffersContainer.style.display = 'none'; // Hidden by default
+
+            filteredMatches.slice(1).forEach(match => {
+                const shop = shops[match.shop_id] || {};
+                const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
+                                  alt="${shop.name || 'Shop'} Logo" 
+                                  class="shop-logo">`;
+
+                const offerElement = document.createElement('div');
+                offerElement.className = 'offer';
+
+                offerElement.innerHTML = `
+                    <div class="shop-info">
+                        ${shopLogo}
+                        <strong>${shop.name || 'Unknown Shop'}</strong>
+                    </div>
+                    <a href="${match.external_product.url}" target="_blank" class="match-link">
+                        ${match.title}
+                    </a>
+                    <span class="flag-icon flag-icon-${languageToCountryCode[match.language] || 'unknown'} product-language-flag"></span>
+                    <span class="product-price">CHF ${match.price.toFixed(2)}</span>
+                    <span class="price-per-pack">(~${(match.price / product.pack_count).toFixed(2)} per pack)</span>
+                `;
+
+                otherOffersContainer.appendChild(offerElement);
             });
 
-            matchesContainer.appendChild(toggleButton);
+            toggleButton.addEventListener('click', () => {
+                const isHidden = otherOffersContainer.style.display === 'none';
+                otherOffersContainer.style.display = isHidden ? 'block' : 'none';
+                toggleButton.textContent = isHidden ? 'Show Fewer Offers' : 'Show More Offers';
+            });
+
+            toggleContainer.appendChild(toggleButton);
+            toggleContainer.appendChild(otherOffersContainer);
+            matchesContainer.appendChild(toggleContainer);
         }
 
-        // Add the product id to the product card
-        productCard.dataset.productId = product.id;
+        // Add the product details and offers to the product card
+        productCard.appendChild(imageContainer);
+        productCard.appendChild(matchesContainer);
 
-        if (Object.keys(shopGroups).length > 0) {
-            productCard.appendChild(imageContainer);
-            productCard.appendChild(matchesContainer);
-            productList.appendChild(productCard);
-        }
+        productList.appendChild(productCard);
     });
 }
+
+
 
 // Initialize the app
 (async function initialize() {

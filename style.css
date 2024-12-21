@@ -15,59 +15,12 @@ body {
     padding: 20px;
 }
 
-/* Product card styling */
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px; /* Reduced padding for compactness */
-    width: auto; /* Adapt to grid */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-    font-size: 0.9em; /* Reduce font size globally for compact design */
-    background-color: white;
-}
 
 .product-price {
     font-weight: bold;
     color: #007bff;
     margin: 8px 0;
     font-size: large;
-}
-
-/* Updated image styling for better fit */
-.product-card img {
-    width: 100%; /* Ensure it fills the card */
-    height: auto; /* Maintain aspect ratio */
-    max-height: 150px; /* Limit height for uniform display */
-    object-fit: contain; /* Prevent distortion */
-}
-
-/* Headings and text adjustments */
-.product-card h2 {
-    font-size: 1em; /* Reduced size */
-    margin: 10px 0;
-}
-
-.product-card p {
-    margin: 8px 0; /* Slightly reduced margin */
-    color: #555;
-    font-size: 0.9em; /* Smaller text */
-}
-
-/* Links in product cards */
-.product-card a {
-    display: inline-block;
-    margin: 8px 0; /* Reduced margin */
-    padding: 8px 12px; /* Smaller padding */
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 0.85em; /* Smaller link text */
-}
-
-.product-card a:hover {
-    background: #0056b3;
 }
 
 /* Updated image container for proper alignment */
@@ -86,21 +39,6 @@ body {
 
 .main-image:hover {
     transform: scale(1.05); /* Subtle zoom effect */
-}
-
-/* Match list and shop offers adjustments */
-.matches ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.matches ul li {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 4px 0; /* Reduced margin for compactness */
-    font-size: 0.85em; /* Slightly smaller font */
 }
 
 /* Updated shop logo size and alignment */
@@ -259,5 +197,61 @@ body {
     #filters select {
         width: 100%; /* Ensure full width on small screens */
     }
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.matches {
+    margin-top: 15px;
+}
+
+.offer {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.cheapest-offer {
+    font-weight: bold;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.toggle-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.toggle-button:hover {
+    background-color: #0056b3;
+}
+
+.other-offers {
+    margin-top: 10px;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+h2 {
+    display: -webkit-box; /* Enables multi-line ellipsis */
+    -webkit-line-clamp: 2; /* Limits to two lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden; /* Prevents overflow beyond two lines */
+    text-align: center; /* Centers text horizontally */
+    vertical-align: middle; /* Centers text vertically */
+    font-size: calc(0.35vw + 1rem); /* Scales font size with viewport width */
+    line-height: 1.4; /* Adjust line spacing for readability */
 }
 
