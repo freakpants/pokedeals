@@ -211,6 +211,15 @@ function createSetFilter(japanese = false) {
     }
 }
 
+// Mapping of languages to country codes
+const languageToCountryCode = {
+    en: 'gb', // UK
+    de: 'de', // Germany
+    fr: 'fr', // France
+    ja: 'jp', // Japan
+    // Add more languages and their respective country codes here
+};
+
 function renderProducts(products, filterLanguage = '', filterSetIdentifier = '') {
     const productList = document.getElementById('product-list');
     productList.innerHTML = ''; // Clear previous content
@@ -233,11 +242,14 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         mainImage.className = 'main-image';
         imageContainer.appendChild(mainImage);
 
+        // replace Pokémon TCG: in the title with nothing
+        product.title = product.title.replace('Pokémon TCG: ', '');
+
         productCard.innerHTML += `
             <h2>${product.title}</h2>
             <p>Pokemon Center Price: ${product.price || 'Price not available'}</p>
             <p>Packs in product: ${product.pack_count}</p>
-            <a href="${product.product_url}" target="_blank">View Product</a>
+            <a href="${product.product_url}" target="_blank">View on Pokemon Center</a>
         `;
 
         // Filter matches strictly by the selected language
@@ -326,6 +338,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                                 <a href="${offer.external_product.url}" target="_blank" class="match-link">
                                     ${offer.title}
                                 </a>
+                                <span class="flag-icon flag-icon-${languageToCountryCode[offer.language] || 'unknown'} product-language-flag"></span>
                                 <span class="product-price">CHF ${offer.price.toFixed(2) || 'Price not available'}</span>              
                                 <span class="price-per-pack">(~${(offer.price / product.pack_count).toFixed(2) || 'Price per pack not available'} per pack)</span>
                             </li>`).join('')}

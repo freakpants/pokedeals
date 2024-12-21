@@ -14,7 +14,7 @@ h1 {
 /* Updated product list for better spacing and layout */
 #product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted min size */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Adjusted min size */
     gap: 16px; /* Spacing between items */
     padding: 20px;
 }
