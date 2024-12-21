@@ -313,7 +313,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 
             toggleButton.addEventListener('click', () => {
                 const isHidden = otherOffersContainer.style.display === 'none';
-                otherOffersContainer.style.display = isHidden ? 'block' : 'none';
+                otherOffersContainer.style.display = isHidden ? 'flex' : 'none';
                 toggleButton.textContent = isHidden ? 'Show Fewer Offers' : 'Show More Offers';
             });
 
