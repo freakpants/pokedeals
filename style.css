@@ -308,3 +308,7 @@ h3 {
     margin-top: 20px;
     font-style: italic;
 }
+
+.flag-icon{
+    min-width: 24px;
+}

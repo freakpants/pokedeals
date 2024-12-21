@@ -275,7 +275,9 @@ async function applyFilters() {
 
     // Filter products based on active filters
     const filteredProducts = allProducts.filter(product => {
-        const languageMatch = !language || product.matches.some(match => match.language === language);
+        const languageMatch = language === ''
+            ? product.matches.some(match => ['de', 'en', 'fr'].includes(match.language))
+            : product.matches.some(match => match.language === language);    
         const setMatch = !setIdentifier || product.set_identifier === setIdentifier;
         const typeMatch = !productType || product.product_type === productType;
         return languageMatch && setMatch && typeMatch;
@@ -431,7 +433,7 @@ function renderProducts(products) {
         matchesContainer.innerHTML = '<h3>Offers:</h3>';
 
         const filteredMatches = product.matches.filter(match => {
-            return !filterLanguage || match.language === filterLanguage;
+            return !filterLanguage && ['de', 'en', 'fr'].includes(match.language) || match.language === filterLanguage;
         });
 
         filteredMatches.sort((a, b) => a.price - b.price);
