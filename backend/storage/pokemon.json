@@ -1913,5 +1913,19 @@
     "images": [
       "https://www.pokemoncenter-online.com/static/product_image/4521329424828/4521329424828.jpg"
     ]
+  },
+  {
+    "title": "Pokémon TCG: Combined Powers Premium Collection",
+    "sku": "290-85595",
+    "price": "£51.99",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/290-85595/pokemon-tcg-combined-powers-premium-collection",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_05.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9741_290-85595_06.jpg"
+    ]
   }
 ]

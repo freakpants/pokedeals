@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PokemonSetSeeder::class,
             PokemonSeriesSeeder::class,
             ProductTypesSeeder::class,
+            ProductVariantsSeeder::class,
         ]);
 
     }

@@ -26,6 +26,8 @@ class CreateExternalProductsTable extends Migration
             $table->foreign('set_identifier')->references('set_identifier')->on('pokemon_sets')->onDelete('set null');
             // language is a 2 letter code
             $table->string('language')->nullable();
+            // variant 
+            $table->string('variant')->nullable();
             $table->json('metadata')->nullable(); // For additional data like tags or images
             $table->foreign('shop_id')->references('id')->on('external_shops')->onDelete('cascade');
         });

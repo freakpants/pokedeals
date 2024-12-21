@@ -12,6 +12,7 @@ enum ProductTypes: string
     case SleevedBoosterCase = 'sleeved_booster_case';
     case SleevedBooster = 'sleeved_booster';
     case SingleBlister = 'single_blister';
+    case DoubleBlister = 'double_blister';
     case ThreePackBlister = 'three_pack_blister';
     case EliteTrainerBox = 'elite_trainer_box';
     case StackingTin = 'stacking_tin';

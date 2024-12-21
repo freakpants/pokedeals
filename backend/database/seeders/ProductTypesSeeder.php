@@ -110,11 +110,11 @@ class ProductTypesSeeder extends Seeder
         //     'mixed_sets' => false,
         // ]);
 
-        // DB::table('product_types')->insert([
-        //     'product_type' => 'premium_collection',
-        //     'pack_count' => 1,
-        //     'mixed_sets' => false,
-        // });
+        DB::table('product_types')->insert([
+            'product_type' => 'premium_collection',
+            'pack_count' => 5,
+            'mixed_sets' => false,
+        ]);
 
         DB::table('product_types')->insert([
             'product_type' => 'build_battle_stadium',

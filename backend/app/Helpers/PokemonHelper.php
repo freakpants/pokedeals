@@ -77,7 +77,46 @@ class PokemonHelper{
             self::$multiplier = (int) $matches[0];
         }
 
+        // match variant from a list of variants
+        // lookup variants for this product type
+        $variants = DB::table('pokemon_product_variants')->where('product_type', self::$product_type)->get();
+        $variant = 'other';
+        foreach($variants as $v) {
+            // check if en_matches is inside our title
+            $en_strings = json_decode($v->en_strings);
+            $de_strings = json_decode($v->de_strings);
+            
+            foreach($en_strings as $string) {
+                if($string === ""){
+                    continue;
+                }
+                if (stripos($title, $string) !== false) {
+                    if(self::$language === '') {
+                        self::$language = 'en';
+                    }
+                    $variant = $v->en_short;
+                    break 2;
+                }
+            }
+
+            foreach($de_strings as $string) {
+                if($string === "") {
+                    continue;
+                }
+                if (stripos($title, $string) !== false) {
+                    if(self::$language === '') {
+                        self::$language = 'de';
+                    }
+                    $variant = $v->en_short;
+                    break 2;
+                }
+            }
+        }
+
+    
+
         return [
+            'variant' => $variant,
             'product_type' => self::$product_type,
             'set_identifier' => $set_identifier,
             'language' => self::$language,
@@ -163,7 +202,7 @@ class PokemonHelper{
         }
 
         // Return the first potential match if no exact match found
-        return $potentialMatches[0] ?? null;
+        return isset($potentialMatches) && count($potentialMatches) > 0 ? $potentialMatches[0] : 'other';
     }
 
 
@@ -183,6 +222,7 @@ class PokemonHelper{
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case'],
             ProductTypes::SleevedBooster->value => ['sleeved booster'],
             ProductTypes::SingleBlister->value => ['checklane blister', 'blister', 'premium checklane'],
+            ProductTypes::DoubleBlister->value => ['2 booster packs'],
             ProductTypes::BoosterPack->value => ['booster pack', 'single pack', 'booster'],
             ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer'],
             ProductTypes::PencilCase->value => ['pencil case'],
@@ -190,7 +230,7 @@ class PokemonHelper{
             ProductTypes::PokeBallTin->value => ['ball tin'],
             ProductTypes::StackingTin->value => ['stacking tin'],
             ProductTypes::Tin->value => ['tin'],
-            ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection'],
+            ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection', 'ultra premium collection'],
             ProductTypes::PremiumCollection->value => ['premium collection'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],  
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit','battle box'],
@@ -210,13 +250,25 @@ class PokemonHelper{
         $normalizedVariantTitle = $variant_title ? strtolower($variant_title) : '';
 
         // Check each product type and its keywords
+        $match = false;
         foreach ($productTypeKeywords as $productType => $keywords) {
             foreach ($keywords as $keyword) {
                 if (stripos($normalizedTitle, $keyword) !== false || stripos($normalizedVariantTitle, $keyword) !== false) {
                     self::$product_type = ProductTypes::from($productType);
-                    return;
+                    $match = true;
+                    break 2;
+                } else {
+                    // we are running a command, inform the command line of whats going on
+                    // echo "No match found for $keyword in $title\n";
                 }
             }
+            if($match) {
+                break;
+            }
+        }
+
+        if($match) {
+            return;
         }
 
         // Default to "Other" if no match is found

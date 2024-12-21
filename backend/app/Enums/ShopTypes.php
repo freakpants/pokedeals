@@ -9,6 +9,7 @@ enum ShopTypes: string
     case PrestaShop = 'prestashop';
     case Ecwid = 'ecwid';
     case WooCommerce = 'woocommerce';
+    case Shopware = 'shopware';
     case Other = 'other';
 
 

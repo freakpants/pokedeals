@@ -51,7 +51,7 @@ class PokemonSetSeeder extends Seeder
             'id' => 'sv08.5',
             'series_id' => 'sv',
             'set_identifier' => 'prismatic_evolutions',
-            'title_de' => 'Prismatische Evolutionen',
+            'title_de' => 'Prismatische Entwicklungen',
             'title_en' => 'Prismatic Evolutions',
             'release_date' => '2025-01-17',
         ]);
@@ -65,6 +65,16 @@ class PokemonSetSeeder extends Seeder
             'title_en' => 'Terastal Festival',
             'title_ja' => 'Terastal Fest ex',
             'release_date' => '2024-12-6',
+        ]);
+
+        // manually add an other set
+        $sets->push([
+            'id' => 'other',
+            'set_identifier' => 'other',
+            'series_id' => 'other',
+            'title_de' => 'Andere',
+            'title_en' => 'Other',
+            'release_date' => '2099-01-01',
         ]);
 
         // fetch the japanese sets

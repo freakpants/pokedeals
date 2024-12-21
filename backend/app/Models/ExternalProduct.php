@@ -16,6 +16,8 @@ class ExternalProduct extends Model
         'price',
         'type',
         'set_identifier',
+        'language',
+        'variant',
         'url',
         'metadata',
     ];

@@ -41,7 +41,7 @@ class SaveExternalProducts extends Command
     private function processShop($shop, $totalNewProducts)
     {
         // output info and skip if the shop type is neither websell nor shopify
-        if ($shop->shop_type !== 'websell' && $shop->shop_type !== 'shopify') {
+        if ($shop->shop_type !== 'websell' && $shop->shop_type !== 'shopify' && $shop->shop_type !== 'shopware') {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
             return $totalNewProducts;
         }
@@ -120,8 +120,69 @@ class SaveExternalProducts extends Command
         } 
         
         // if there are new products, run the rest of the process
-        if((!file_exists($json_file) || $newProducts) && $forceRefresh){
-            if ($shop->shop_type === 'websell') {
+        if((!file_exists($json_file) || $newProducts) || $forceRefresh){
+            if($shop->shop_type === 'shopware'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $allCodes = [];
+                $this->info("Starting HTML parsing for Shopware...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        $paginatedUrl = $categoryUrl . '?p=' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.product-box')->each(function (Crawler $node) use ($shop) {
+                            $product = json_decode($node->attr('data-product-information')); 
+                            // turn it into an array
+                            $product = (array) $product;
+                            // find the product-price element
+                            $price = $node->filter('.product-price')->text();
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+                            // find the product-variant-characteristics-text element
+                            $variant = $node->filter('.product-variant-characteristics-text')->text();
+                            $product['title'] = $product['name'] . ' - ' . $variant;
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        
+
+
+                        // Check if a "next page" button exists
+                        $hasMorePages = $crawler->filter('.page-item.page-next.disabled')->count() < 1;
+                        $page++;
+                    }
+                }
+                
+            }
+            else if ($shop->shop_type === 'websell') {
                 $productInfoUrl = $baseUrl  . 'store/ajax/productinfo.nsc';
                 $categoryUrls = json_decode($shop->category_urls);
     
@@ -148,10 +209,21 @@ class SaveExternalProducts extends Command
                         // Parse HTML to extract product codes
                         $crawler = new Crawler($html);
         
-        
-                        $codes = $crawler->filter('article.product-card')->each(function (Crawler $node) {
+                        $out_of_stock_codes = [];
+
+                        $codes = $crawler->filter('article.product-card')->each(function (Crawler $node) use (&$out_of_stock_codes) {
+                            // check if there is a out-of-stock class on this element
+                            // get the classname of the element
+                            $class = $node->attr('class');
+                            // check if the string contains out-of-stock
+                            if(strpos($class, 'out-of-stock') !== false){
+                                // if it does, add the data-sku to the out of stock array
+                                $out_of_stock_codes[] = $node->attr('data-sku');
+                            }
                             return $node->attr('data-sku'); // Extract the data-sku attribute
                         });
+
+                        
                             
         
                         if (!empty($codes)) {
@@ -177,7 +249,12 @@ class SaveExternalProducts extends Command
                     $product['title'] = $product['item_name'] ?? 'Unknown Title';
                     $product['price'] = $product['price'];
                     $product['url'] = $shop->base_url;
-                    $product['stock'] = 1;
+                    // if the product is in the out of stock array, set stock to 0
+                    if(in_array($product['id'], $out_of_stock_codes)){
+                        $product['stock'] = 0;
+                    } else {
+                        $product['stock'] = 1;
+                    }
                     $product['variants'] = [
                         [
                             'id' => $product['id'],
@@ -265,6 +342,8 @@ class SaveExternalProducts extends Command
 
             if($shop->shop_type === 'websell'){
                 $url = $shop->base_url . 'store/product/' . $product['item_id'];
+            } else if($shop->shop_type === 'shopware'){
+                $url = $shop->base_url . $product['handle'];
             } else {
                 $url = "$baseUrl/products/{$product['handle']}";
             }
@@ -281,16 +360,23 @@ class SaveExternalProducts extends Command
                     $variant_title = $variant['title'];               
                     $variant_price = $variant['price'];
 
+
+                    $variant_stock = $variant['stock'] ?? 1;
                     // if price is "0.00" or available is false, this variant doesnt have stock
                     if ($variant_price === "0.00" || $variant['available'] === false) {
                         $variant_stock = 0;
-                    } else {
-                        $variant_stock = 1;
                     }
 
                     $variant_id = $variant['id'];
                     // ?variant=49311955910942
-                    $variant_url = "$url?variant=$variant_id";
+                    
+                    if($shop->shop_type === 'shopify'){
+                        $variant_url = "$url?variant=$variant_id";
+                    } else {
+                        $variant_url = $url;
+                    }
+
+                    
                     $variant_metadata = json_encode($variant);
 
                     $details = PokemonHelper::determineProductDetails($title, $variant_title);
@@ -298,6 +384,7 @@ class SaveExternalProducts extends Command
                     $set_identifier = $details['set_identifier'];
                     $product_type = $details['product_type'];
                     $language = $details['language'];
+                    $variant = $details['variant'];
                     $multiplier = $details['multiplier'];
 
                     // Insert or update the product - only include the variant title if it isnt "Default Title"
@@ -314,6 +401,7 @@ class SaveExternalProducts extends Command
                             'multiplier' => $multiplier,
                             'type' => $product_type,
                             'set_identifier' => $set_identifier,
+                            'variant' => $variant,
                             'language' => $language,
                             'metadata' => $variant_metadata
                         ]

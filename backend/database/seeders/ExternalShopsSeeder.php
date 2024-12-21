@@ -10,6 +10,13 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [
+                'name' => 'TwoMoons',
+                'base_url' => 'https://www.twomoons.ch/',
+                'category_urls' => json_encode(['https://www.twomoons.ch/pokemon-tcg-karten-kaufen/']),
+                'image' => 'twomoons.png',
+                'shop_type' => 'shopware',
+            ],
             [   
                 'name' => 'Laschocards',
                 'base_url' => 'https://laschocards.ch/',

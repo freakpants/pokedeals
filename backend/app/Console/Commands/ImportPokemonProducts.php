@@ -45,6 +45,7 @@ class ImportPokemonProducts extends Command
                     'price' => $product['price'] ?? null,
                     'type' => $product_type,
                     'set_identifier' => $set_identifier,
+                    'variant' => $details['variant'] ?? null,
                     'product_url' => $product['productUrl'] ?? 'N/A', // Map productUrl to product_url
                     'images' => $product['images'] ?? [], // Default images (empty array)
                 ]

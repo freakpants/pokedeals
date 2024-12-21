@@ -21,6 +21,7 @@ class PokemonProduct extends Model
         'price',
         'type',
         'set_identifier',
+        'variant',
         'product_url',
         'images',
     ];

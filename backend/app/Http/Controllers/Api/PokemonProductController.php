@@ -11,13 +11,14 @@ class PokemonProductController extends Controller
     {
 
 
-        // Fetch products that have matches in the external_products table
-        $products = DB::table('pokemon_products as pp')
-            ->join('external_products as ep', function ($join) {
+        
+        $products = DB::table('external_products as ep')
+            ->join('pokemon_products as pp', function ($join) {
                 $join->on('pp.type', '=', 'ep.type')
-                    ->on('pp.set_identifier', '=', 'ep.set_identifier');
-
-            })
+                    ->on('pp.set_identifier', '=', 'ep.set_identifier')
+                    ->on('pp.variant', '=', 'ep.variant')
+                    ;
+            }) 
             ->leftJoin('pokemon_sets as ps', 'pp.set_identifier', '=', 'ps.set_identifier')
             // join the amonunt of packs from the product_types table
             ->leftJoin('product_types as pt', 'pp.type', '=', 'pt.product_type')

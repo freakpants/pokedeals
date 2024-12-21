@@ -17,6 +17,7 @@ class CreatePokemonProductsTable extends Migration
             $table->string('set_identifier')->nullable();
             // create the relationship to the pokemon_sets table
             $table->foreign('set_identifier')->references('set_identifier')->on('pokemon_sets')->onDelete('set null');
+            $table->string('variant')->nullable();
             $table->text('product_url');
             $table->json('images')->nullable();
         });
