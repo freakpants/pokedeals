@@ -100,21 +100,25 @@ async function initializeFilters(products) {
 
     const languages = new Set();
 
-    // Collect all languages from product matches
-    products.forEach(product => {
-        product.matches.forEach(match => {
-            if (match.language) languages.add(match.language);
-        });
-    });
+    // Languages: English, German, French => ''
+    // English => 'en'
+    // German => 'de'
+    // French => 'fr'
+    // Other languages: Japanese => 'ja'
+    // create the languages objects
+    languages.add({ name : 'English, German and French', id : ''});
+    languages.add({ name : 'English', id : 'en'});
+    languages.add({ name : 'German', id : 'de'});
+    languages.add({ name : 'French', id : 'fr'});
+    languages.add({ name : 'Japanese', id : 'ja'});
 
-    // add japanese manually
-    languages.add('ja');
+
 
 
     // Populate the language filter
     languageFilter.innerHTML = `
         <option value=""><span class="flag-icon flag-icon-gb" product-language-flag"></span>English, German and French</option>
-        ${[...languages].map(lang => `<option value="${lang}">${lang}</option>`).join('')}
+        ${[...languages].map(lang => `<option value="${lang.id}">${lang.name}</option>`).join('')}
     `;
 
     // Fetch sets and populate the set filter with English names in reverse order
@@ -290,15 +294,9 @@ async function applyFilters() {
 
     // update the url with the current parameters
     const url = new URL(window.location.href);
-    if(language) {
-        url.searchParams.set('language', language);
-    }    
-    if(setIdentifier) {
-        url.searchParams.set('set', setIdentifier);
-    }
-    if(productType) {
-        url.searchParams.set('product_type', productType);
-    }
+    url.searchParams.set('language', language);
+    url.searchParams.set('set', setIdentifier);
+    url.searchParams.set('product_type', productType);
     if(currentSortKey) {
         url.searchParams.set('sort_key', currentSortKey);
     }

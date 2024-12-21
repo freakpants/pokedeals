@@ -64,8 +64,12 @@ class SaveExternalProducts extends Command
         $json_file = storage_path('/shops/' . $shop_short . '/products_page_' . $page . '.json');
         if (file_exists($json_file) && !$forceRefresh) {
             $products = json_decode(file_get_contents($json_file), true);
+            // check if the external products table is empty
+            $existingProduct = DB::table('external_products')
+                ->first();
+
             // check on the first page of the shop, if there are any products we dont have yet
-            if ($shop->shop_type === 'shopify') {
+            if ($shop->shop_type === 'shopify' && !$existingProduct) {
                 $page = $shop->previous_last_page;
                 $response = Http::get("$baseUrl/products.json", [
                     'page' => $page,
@@ -113,7 +117,7 @@ class SaveExternalProducts extends Command
                 } else {
                     $this->info("Found $newProducts new products on page $page.");
                 }
-            }
+            } 
         } else {
             // nothing is cached, so we need to fetch the products
             $this->info("No cached products found for {$shop->name} (Page: $page).");

@@ -32,7 +32,7 @@ class PokemonHelper{
         // High-priority matches (case-insensitive)
         foreach ($highPriority as $lang => $keywords) {
             foreach ($keywords as $keyword) {
-                if (stripos($title, $keyword) !== false) {
+                if (stripos($title, $keyword) !== false || stripos($variant_title, $keyword) !== false) {
                     self::$language = $lang;
                     break 2; // Exit both loops when a match is found
                 }
@@ -140,12 +140,14 @@ class PokemonHelper{
         foreach ($sets as $set) {
             $set_title_en = self::normalizeDashes($set->title_en ?? '');
             $set_title_de = self::normalizeDashes($set->title_de ?? '');
-            $set_title_jp = self::normalizeDashes($set->title_ja ?? '');
+            $set_title_ja = self::normalizeDashes($set->title_ja ?? '');
 
-            if (!empty($set_title_en)) {
+            if (!empty($set_title_en) && empty($set_title_ja)) {
                 // Prioritize matches with the specific part of the title
                 if (stripos($specificPart, $set_title_en) !== false) {
-                    self::$language = 'en';   
+                    if (self::$language === ''){
+                        self::$language = 'en';
+                    } 
                     // if we are evolutions, maybe we are actually prismatic evolutions
                     if ($set->set_identifier === 'evolutions') {
                         // manually check the title for prismatic evolutions
@@ -175,7 +177,9 @@ class PokemonHelper{
 
             if (!empty($set_title_de)) {
                 if (stripos($specificPart, $set_title_de) !== false) {
-                    self::$language = 'de';
+                    if (self::$language === ''){
+                        self::$language = 'de';
+                    }
                     return $set->set_identifier;
                 }
 
@@ -186,10 +190,14 @@ class PokemonHelper{
             }
 
             // Check for a match with the Japanese title
-            if (!empty($set->title_ja)) {
-                $set_title_ja = self::normalizeDashes($set->title_ja);
+            if (!empty($set_title_ja)) {
+                // we actually have the english version of the japanese title in title_en
+                $set_title_ja = self::normalizeDashes($set->title_en);
                 if (stripos($specificPart, $set_title_ja) !== false) {
-                    self::$language = 'ja';
+                    if (self::$language === ''){
+                        self::$language = 'ja';
+                    }
+                    
 
                     return $set->set_identifier;
                 }
@@ -204,10 +212,6 @@ class PokemonHelper{
         // Return the first potential match if no exact match found
         return isset($potentialMatches) && count($potentialMatches) > 0 ? $potentialMatches[0] : 'other';
     }
-
-
-
-
 
     private static function determineProductType(string $title, ?string $variant_title = null): void
     {
