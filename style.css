@@ -212,25 +212,25 @@ body {
     }
 }
 
-.text-arc {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto; /* Center the SVG horizontally */
-    width: 100%; /* Ensure it scales responsively */
-    max-width: 800px; /* Optional: Restrict the width */
+/* Modern Centered Title with Cool Font */
+.title {
+    font-family: 'Montserrat', sans-serif; /* Sleek and modern font */
+    font-size: 3rem; /* Prominent and bold */
+    text-align: center; /* Center alignment */
+    margin: 20px auto; /* Centered spacing */
+    padding: 10px 0; /* Minimal padding */
+    color: #0078d7; /* Cool blue font color */
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Subtle depth effect */
+    letter-spacing: 0.05em; /* Slight spacing for readability */
+    display: inline-block; /* Fit content width */
+    width: 100%;
 }
 
-svg {
-    width: 100%; /* Make the SVG responsive */
-    height: auto; /* Maintain aspect ratio */
-}
-
-text {
-    font-weight: bold;
-    text-shadow: 
-        -4px -4px 0 #3b4cca,
-         4px -4px 0 #3b4cca,
-        -4px  4px 0 #3b4cca,
-         4px  4px 0 #3b4cca;
+/* Hover Effect for Title */
+.title:hover {
+    user-select: none; /* Disable text selection */
+    color: #005bb5; /* Slightly darker blue on hover */
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    transform: translateY(-2px); /* Slight hover lift effect */
+    transition: all 0.3s ease; /* Smooth animation */
 }
