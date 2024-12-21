@@ -117,7 +117,6 @@ async function initializeFilters(products) {
 
     // Populate the language filter
     languageFilter.innerHTML = `
-        <option value=""><span class="flag-icon flag-icon-gb" product-language-flag"></span>English, German and French</option>
         ${[...languages].map(lang => `<option value="${lang.id}">${lang.name}</option>`).join('')}
     `;
 
