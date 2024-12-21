@@ -371,9 +371,11 @@ const languageToCountryCode = {
     // Add more languages and their respective country codes here
 };
 
-function renderProducts(products, filterLanguage = '', filterSetIdentifier = '') {
+function renderProducts(products) {
     const productList = document.getElementById('product-list');
     productList.innerHTML = ''; // Clear previous content
+
+    const filterLanguage = document.getElementById('language-filter').value;
 
     if (products.length === 0) {
         productList.textContent = 'No products found.';
