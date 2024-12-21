@@ -217,7 +217,7 @@ body {
 }
 
 .matches {
-    margin-top: 15px;
+
 }
 
 .offer {
@@ -286,4 +286,11 @@ h2 {
     flex-direction: row;
     gap: 0.5rem;
     margin-top: 25px;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
 }
