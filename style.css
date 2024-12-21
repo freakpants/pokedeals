@@ -234,3 +234,30 @@ body {
     transform: translateY(-2px); /* Slight hover lift effect */
     transition: all 0.3s ease; /* Smooth animation */
 }
+
+/* Full-width product list on mobile */
+@media (max-width: 768px) {
+    #product-list {
+        margin: 5px; /* Remove margins */
+        padding: 2px; /* Remove padding */
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+    #filters{
+        margin: 7px;
+    }
+}
+
+/* Vertical alignment for filters on mobile */
+@media (max-width: 768px) {
+    #filters {
+        flex-direction: column; /* Stack items vertically */
+        align-items: stretch; /* Make items take full width */
+        gap: 10px; /* Add spacing between items */
+    }
+
+    #filters label,
+    #filters select {
+        width: 100%; /* Ensure full width on small screens */
+    }
+}
+
