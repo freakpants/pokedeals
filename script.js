@@ -288,7 +288,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 
         // Display the cheapest offer
         if (filteredMatches.length > 0) {
-            const cheapestOfferElement = renderOffer(filteredMatches[0]);
+            const cheapestOfferElement = renderOffer(product, filteredMatches[0]);
             cheapestOfferElement.classList.add('cheapest-offer');
             matchesContainer.appendChild(cheapestOfferElement);
         }
@@ -307,7 +307,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             otherOffersContainer.style.display = 'none'; // Hidden by default
 
             filteredMatches.slice(1).forEach(match => {
-                const offerElement = renderOffer(match);
+                const offerElement = renderOffer(product, match);
                 otherOffersContainer.appendChild(offerElement);
             });
 
@@ -328,14 +328,14 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
 }
 
 // Reusable function to render a single offer
-function renderOffer(match) {
+function renderOffer(product, match) {
     const shop = shops[match.shop_id] || {};
     const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
                       alt="${shop.name || 'Shop'} Logo" 
                       class="shop-logo">`;
 
     // Ensure pack_count is handled correctly
-    const packCount = match.pack_count || 1; // Default to 1 if pack_count is undefined or 0
+    const packCount = product.pack_count || 1; // Default to 1 if pack_count is undefined or 0
     const pricePerPack = (match.price / packCount).toFixed(2); // Calculate price per pack
 
     const offerElement = document.createElement('div');
