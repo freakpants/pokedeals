@@ -41,7 +41,11 @@ class PokemonProductController extends Controller
             )
             ->where('pp.type', '<>', 'Other')
             ->where('ep.stock', '>', 0)
-            ->whereNotNull('pp.set_identifier')
+            // where either set_identifier or variant is not other
+            ->where(function ($query) {
+                $query->where('pp.set_identifier', '<>', 'Other')
+                    ->orWhere('pp.variant', '<>', 'Other');
+            })
             ->orderBy('ps.release_date', 'desc')   
             ->get();
 
