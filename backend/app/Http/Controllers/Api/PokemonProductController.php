@@ -37,6 +37,7 @@ class PokemonProductController extends Controller
                 'ps.release_date',
                 'ps.series_id',
                 'pt.pack_count',
+                'pt.product_type',
                 'pt.swh_modifier'
             )
             ->where('pp.type', '<>', 'Other')
@@ -78,6 +79,7 @@ class PokemonProductController extends Controller
                 'pack_count' => $product->pack_count,
                 'set_identifier' => $product->set_identifier,
                 'product_url' => $product->product_url,
+                'product_type' => $product->product_type,
                 'images' => json_decode($product->images, true) ?? [], // Decode JSON images
                 'matches' => $matches,
             ];

@@ -145,8 +145,6 @@ body {
 @media (min-width: 768px) {
     #filters {
         flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
     }
 
     #filters label {

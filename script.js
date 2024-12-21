@@ -3,6 +3,7 @@ const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
 const SHOPS_API_URL = 'https://pokeapi.freakpants.ch/api/shops';
 const SETS_API_URL = 'https://pokeapi.freakpants.ch/api/sets';
 const SERIES_API_URL = 'https://pokeapi.freakpants.ch/api/series';
+const PRODUCT_TYPES_API_URL = 'https://pokeapi.freakpants.ch/api/product_types';
 
 let shops = {}; // To store shop data for quick lookup
 let allProducts = []; // To store all fetched products
@@ -72,6 +73,21 @@ async function fetchSeries() {
     }
 }
 
+async function fetchProductTypes() {
+    try {
+        const response = await fetch(PRODUCT_TYPES_API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error fetching sets! Status: ${response.status}`);
+        }
+        const productTypes = await response.json();
+        return productTypes;
+    }
+    catch (error) {
+        console.error('Error fetching sets:', error);
+        return [];
+    }
+}
+
 
 async function initializeFilters(products) {
     const url = new URL(window.location.href);
@@ -80,6 +96,7 @@ async function initializeFilters(products) {
 
     const languageFilter = document.getElementById('language-filter');
     const setFilter = document.getElementById('set-filter');
+    const productTypeFilter = document.getElementById('product-type-filter');
 
     const languages = new Set();
 
@@ -117,18 +134,28 @@ async function initializeFilters(products) {
         setFilter.value = set;
     }
 
+    // fetch product types and populate the filter
+    const productTypes = await fetchProductTypes();
+    productTypeFilter.innerHTML = `
+        <option value="">All Product Types</option>
+        ${productTypes.map(type => `<option value="${type.product_type}">${type.en_name}</option>`).join('')}
+    `;
+
     setFilter.addEventListener('change', applyFilters);
     languageFilter.addEventListener('change', applyFilters);
+    productTypeFilter.addEventListener('change', applyFilters);
 }
 
 async function applyFilters() {
     const language = document.getElementById('language-filter').value;
     const setIdentifier = document.getElementById('set-filter').value;
+    const productType = document.getElementById('product-type-filter').value;
 
     const filteredProducts = allProducts.filter(product => {
         const languageMatch = !language || product.matches.some(match => match.language === language);
         const setMatch = !setIdentifier || product.set_identifier === setIdentifier;
-        return languageMatch && setMatch;
+        const typeMatch = !productType || product.product_type === productType;
+        return languageMatch && setMatch && typeMatch;
     });
 
     const setData = window.allSets;
@@ -188,7 +215,7 @@ function createSetFilter(japanese = false) {
     }, {});
 
     // Populate the set filter with optgroups for each series
-    setFilter.innerHTML = '<option value="">All Sets</option>';
+    setFilter.innerHTML = '<option value="">All Products</option>';
     Object.keys(setsBySeries).forEach(series => {
         const optgroup = document.createElement('optgroup');
         // lookup the english title in the series object
