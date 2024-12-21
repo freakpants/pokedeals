@@ -144,13 +144,133 @@ async function initializeFilters(products) {
     setFilter.addEventListener('change', applyFilters);
     languageFilter.addEventListener('change', applyFilters);
     productTypeFilter.addEventListener('change', applyFilters);
+
+
 }
 
+
+
+// Function to toggle sorting
+function toggleSort(sortKey) {
+
+    let [currentSortKey, currentSortOrder] = determine_current_sort();
+
+    if (currentSortKey === sortKey) {
+        // Toggle order for the same key
+        currentSortOrder = currentSortOrder === 'asc' ? 'desc' : currentSortOrder === 'desc' ? 'none' : 'asc';
+    } else {
+        // Start sorting by the new key
+        currentSortKey = sortKey;
+        currentSortOrder = 'asc';
+    }
+
+    console.log(currentSortKey, currentSortOrder);
+
+    // Update the data-order attribute on the sort buttons
+    const releaseButton = document.getElementById('sort-release-date');
+    const priceButton = document.getElementById('sort-price-per-pack');
+
+    releaseButton.setAttribute('data-order', currentSortKey === 'release-date' ? currentSortOrder : 'none');
+    priceButton.setAttribute('data-order', currentSortKey === 'price-per-pack' ? currentSortOrder : 'none');
+
+
+    // Update button icons
+    updateSortIcons();
+
+    // Apply filters and then sort the filtered products
+    applyFilters(); // Filters and renders sorted data
+}
+
+// Function to sort products
+function sortProducts(products, sortKey, sortOrder) {
+    if (sortOrder === 'none') {
+        return [...products]; // Return unsorted
+    }
+
+    return [...products].sort((a, b) => {
+        let valueA = a[sortKey];
+        let valueB = b[sortKey];
+
+        // Handle specific cases like price_per_pack or dates
+        if (sortKey === 'price-per-pack') {
+            // order the matches by price
+            a.matches.sort((a, b) => a.price - b.price);
+
+            valueA = a.matches[0]?.price / a.pack_count || 0;
+            valueB = b.matches[0]?.price / b.pack_count || 0;
+        } else if (sortKey === 'release-date') {
+            valueA = new Date(a.release_date);
+            valueB = new Date(b.release_date);
+        }
+
+        return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    });
+}
+
+// Function to update icons for sorting
+function updateSortIcons() {
+    const buttons = document.querySelectorAll('.sort-button');
+
+    const [currentSortKey, currentSortOrder] = determine_current_sort();
+    buttons.forEach(button => {
+        const icon = button.querySelector('.sort-icon');
+        const key = button.id === 'sort-release-date' ? 'release-date' : 'price-per-pack';
+
+        if (key === currentSortKey) {
+            icon.textContent = currentSortOrder === 'asc' ? '↑' : currentSortOrder === 'desc' ? '↓' : '↕';
+            button.classList.add('active');
+        } else {
+            icon.textContent = '↕';
+            button.classList.remove('active');
+        }
+    });
+}
+
+function determine_current_sort() {
+    // check both buttons
+    const releaseButton = document.getElementById('sort-release-date');
+    const priceButton = document.getElementById('sort-price-per-pack');
+
+    // check if one of the buttons contains an order that is not none
+    const releaseOrder = releaseButton.getAttribute('data-order');
+    const priceOrder = priceButton.getAttribute('data-order');
+
+    console.log(releaseOrder, priceOrder);
+
+    let currentSortKey = 'release-date';
+    let currentSortOrder = 'none';
+
+    if (releaseOrder !== 'none') {
+        currentSortKey = 'release-date';
+        currentSortOrder = releaseOrder;
+    }
+    if (priceOrder !== 'none') {
+        currentSortKey = 'price-per-pack';
+        currentSortOrder = priceOrder;
+    }
+
+    return [currentSortKey, currentSortOrder];
+}
+
+// Call this in the initialize function
+initializeSorting();
+
+function initializeSorting() {
+    const sortingContainer = document.getElementById('sorting-container');
+    if (sortingContainer) {
+        updateSortIcons();
+    }
+}
+
+// Update applyFilters to handle sorting
 async function applyFilters() {
     const language = document.getElementById('language-filter').value;
     const setIdentifier = document.getElementById('set-filter').value;
     const productType = document.getElementById('product-type-filter').value;
 
+    const [currentSortKey, currentSortOrder] = determine_current_sort();
+
+    // Filter products based on active filters
     const filteredProducts = allProducts.filter(product => {
         const languageMatch = !language || product.matches.some(match => match.language === language);
         const setMatch = !setIdentifier || product.set_identifier === setIdentifier;
@@ -158,45 +278,39 @@ async function applyFilters() {
         return languageMatch && setMatch && typeMatch;
     });
 
-    // update the result count
-    document.getElementById('result-count').textContent = `Showing ${filteredProducts.length} out of ${allProducts.length} products`;
+    // Sort the filtered products if a sort key is active
+    const sortedProducts = currentSortOrder === 'none'
+        ? filteredProducts
+        : sortProducts(filteredProducts, currentSortKey, currentSortOrder);
 
-    // determine the offer count
-    const offerCount = filteredProducts.reduce((sum, product) => sum + product.matches.length, 0);
-
-    // update the offer count
+    // Update the result counts
+    document.getElementById('result-count').textContent = `Showing ${sortedProducts.length} out of ${allProducts.length} products`;
+    const offerCount = sortedProducts.reduce((sum, product) => sum + product.matches.length, 0);
     document.getElementById('offer-count').textContent = `Found ${offerCount} offers for these products`;
 
-    const setData = window.allSets;
-    const setFilter = document.getElementById('set-filter');
-    const firstSet = setFilter.options[1].value;
-    // select that set from the setData
-    const set = setData.find(set => set.set_identifier === firstSet);
-    // check if that set has title_ja set to null
-    const currentlyJapanese = set.title_ja !== null;
-
-    // if the language is ja, show only ja sets
-    if(language === 'ja') {
-        console.log('we are switching to japanese');
-        if(!currentlyJapanese) {
-            createSetFilter(true);
-        }
-
-    } else {
-        console.log('we are switching to western');
-        if(currentlyJapanese) {
-            createSetFilter(false);
-        }
-    }
-
-    // also amend the url
+    // update the url with the current parameters
     const url = new URL(window.location.href);
-    url.searchParams.set('language', language);
-    url.searchParams.set('set', setIdentifier);
+    if(language) {
+        url.searchParams.set('language', language);
+    }    
+    if(setIdentifier) {
+        url.searchParams.set('set', setIdentifier);
+    }
+    if(productType) {
+        url.searchParams.set('product_type', productType);
+    }
+    if(currentSortKey) {
+        url.searchParams.set('sort_key', currentSortKey);
+    }
+    if(currentSortOrder){
+        url.searchParams.set('sort_order', currentSortOrder);
+    }
+    window.history.replaceState({}, '', url);
 
-    window.history.pushState({}, '', url);
 
-    renderProducts(filteredProducts, language, setIdentifier);
+
+    // Re-render products
+    renderProducts(sortedProducts);
 }
 
 function createSetFilter(japanese = false) {
@@ -403,18 +517,35 @@ function renderOffer(product, match) {
 
 // Initialize the app
 (async function initialize() {
+    // Initialize sorting buttons
+    document.getElementById('sort-release-date').addEventListener('click', () => toggleSort('release-date'));
+    document.getElementById('sort-price-per-pack').addEventListener('click', () => toggleSort('price-per-pack'));
+
     await fetchShops(); // Fetch shops first to have the data ready
     await fetchSeries();
     await fetchProducts().then(() => {
         const url = new URL(window.location.href);
         const language = url.searchParams.get('language');
         const set = url.searchParams.get('set');
+        const productType = url.searchParams.get('product_type');
+        const sortKey = url.searchParams.get('sort_key');
+        const sortOrder = url.searchParams.get('sort_order');
         if (language) {
             document.getElementById('language-filter').value = language;
         }
         if (set) {
             document.getElementById('set-filter').value = set;
         }
+        if (productType) {
+            document.getElementById('product-type-filter').value = productType;
+        }
+        if (sortKey && sortOrder) {
+            // set the data-order attribute on the sort button
+            document.getElementById('sort-' + sortKey).setAttribute('data-order', sortOrder);
+        } else {
+            // set the default sort order
+            document.getElementById('sort-release-date').setAttribute('data-order', 'desc');
+        }   
         applyFilters(); // Apply filters after setting the filter values
     });
 })();

@@ -80,6 +80,7 @@ class PokemonProductController extends Controller
                 'set_identifier' => $product->set_identifier,
                 'product_url' => $product->product_url,
                 'product_type' => $product->product_type,
+                'release_date' => $product->release_date,
                 'images' => json_decode($product->images, true) ?? [], // Decode JSON images
                 'matches' => $matches,
             ];
