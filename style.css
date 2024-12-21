@@ -279,6 +279,7 @@ h2 {
 .price-per-pack{
     color: black;
     font-size: small;
+    font-weight: normal;
 }
 
 .language-and-title {
