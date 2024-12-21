@@ -30,9 +30,10 @@ async function fetchProducts() {
             throw new Error(`HTTP error fetching products! Status: ${response.status}`);
         }
         const products = await response.json();
-        allProducts = products; // Store all products for filtering
-        await initializeFilters(products);
-        renderProducts(products);
+        const productsData = products.data;
+        allProducts = productsData ; // Store all products for filtering
+        await initializeFilters(productsData);
+        renderProducts(productsData);
     } catch (error) {
         console.error('Error fetching products:', error);
         const productList = document.getElementById('product-list');

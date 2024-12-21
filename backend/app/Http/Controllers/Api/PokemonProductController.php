@@ -83,6 +83,13 @@ class PokemonProductController extends Controller
             ];
         })->values(); // Re-index the collection
 
-        return response()->json($groupedProducts);
+        $response = [
+            'data' => $groupedProducts,
+            'meta' => [
+                'total' => $groupedProducts->count(),
+            ],
+        ];
+
+        return response()->json($response);
     }
 }
