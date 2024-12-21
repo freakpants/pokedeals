@@ -301,3 +301,10 @@ h3 {
     gap: 1rem;
     width: 100%; /* Ensure full width of the parent container */
 }
+
+#result-count, #offer-count {
+    width:100%;
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+}

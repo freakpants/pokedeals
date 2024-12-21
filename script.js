@@ -158,6 +158,15 @@ async function applyFilters() {
         return languageMatch && setMatch && typeMatch;
     });
 
+    // update the result count
+    document.getElementById('result-count').textContent = `Showing ${filteredProducts.length} out of ${allProducts.length} products`;
+
+    // determine the offer count
+    const offerCount = filteredProducts.reduce((sum, product) => sum + product.matches.length, 0);
+
+    // update the offer count
+    document.getElementById('offer-count').textContent = `Found ${offerCount} offers for these products`;
+
     const setData = window.allSets;
     const setFilter = document.getElementById('set-filter');
     const firstSet = setFilter.options[1].value;

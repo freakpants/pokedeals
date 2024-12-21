@@ -119,11 +119,11 @@ class ProductTypesSeeder extends Seeder
             'en_name' => 'Poke Ball Tin',
         ]);
 
-        // DB::table('product_types')->insert([
-        //     'product_type' => 'ultra_premium_collection',
-        //     'pack_count' => 1,
-        //     'mixed_sets' => false,
-        // ]);
+        DB::table('product_types')->insert([
+            'product_type' => 'ultra_premium_collection',
+            'pack_count' => 16,
+            'mixed_sets' => false,
+        ]);
 
         DB::table('product_types')->insert([
             'product_type' => 'premium_collection',
