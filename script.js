@@ -233,6 +233,16 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
 
+        // Full-width title
+        const title = document.createElement('h2');
+        title.textContent = product.title.replace('Pokémon TCG: ', '');
+        productCard.appendChild(title);
+
+        // Row for image and details
+        const contentRow = document.createElement('div');
+        contentRow.className = 'content-row';
+
+        // Image container
         const imageContainer = document.createElement('div');
         imageContainer.className = 'image-container';
 
@@ -242,16 +252,30 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         mainImage.className = 'main-image';
         imageContainer.appendChild(mainImage);
 
-        // Replace "Pokémon TCG:" in the title
-        product.title = product.title.replace('Pokémon TCG: ', '');
+        // Product details container
+        const productDetails = document.createElement('div');
+        productDetails.className = 'product-details';
 
-        productCard.innerHTML += `
-            <h2>${product.title}</h2>
-            <p>Pokemon Center Price: ${product.price || 'Price not available'}</p>
-            <p>Packs in product: ${product.pack_count}</p>
-            <a href="${product.product_url}" target="_blank">View on Pokemon Center</a>
-        `;
+        const price = document.createElement('span');
+        price.textContent = `Pokemon Center Price: ${product.price || 'Price not available'}`;
 
+        const packs = document.createElement('span');
+        packs.textContent = `Packs in product: ${product.pack_count}`;
+
+        const link = document.createElement('a');
+        link.href = product.product_url;
+        link.target = '_blank';
+        link.textContent = 'View on Pokemon Center';
+
+        productDetails.appendChild(price);
+        productDetails.appendChild(packs);
+        productDetails.appendChild(link);
+
+        contentRow.appendChild(imageContainer);
+        contentRow.appendChild(productDetails);
+        productCard.appendChild(contentRow);
+
+        // Offers section
         const matchesContainer = document.createElement('div');
         matchesContainer.className = 'matches';
         matchesContainer.innerHTML = '<h3>Offers:</h3>';
@@ -261,7 +285,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             return !filterLanguage || match.language === filterLanguage;
         });
 
-        // Sort all matches by price (regardless of shop)
+        // Sort all matches by price
         filteredMatches.sort((a, b) => a.price - b.price);
 
         // Display the cheapest offer
@@ -279,13 +303,17 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
                 <div class="shop-info">
                     ${shopLogo}
                     <strong>${shop.name || 'Unknown Shop'}</strong>
+                    <div class="product-price">CHF ${cheapestMatch.price.toFixed(2)}<span class="price-per-pack">(~${(cheapestMatch.price / product.pack_count).toFixed(2)} per pack)</span></div>
                 </div>
+                <div class="language-and-title">
+                <span class="flag-icon flag-icon-${languageToCountryCode[cheapestMatch.language] || 'unknown'} product-language-flag"></span>
                 <a href="${cheapestMatch.external_product.url}" target="_blank" class="match-link">
                     ${cheapestMatch.title}
                 </a>
-                <span class="flag-icon flag-icon-${languageToCountryCode[cheapestMatch.language] || 'unknown'} product-language-flag"></span>
-                <span class="product-price">CHF ${cheapestMatch.price.toFixed(2)}</span>
-                <span class="price-per-pack">(~${(cheapestMatch.price / product.pack_count).toFixed(2)} per pack)</span>
+                </div>
+                
+                
+                
             `;
 
             matchesContainer.appendChild(cheapestOfferElement);
@@ -340,13 +368,14 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             matchesContainer.appendChild(toggleContainer);
         }
 
-        // Add the product details and offers to the product card
-        productCard.appendChild(imageContainer);
+        // Add matches to the product card
         productCard.appendChild(matchesContainer);
 
         productList.appendChild(productCard);
     });
 }
+
+
 
 
 

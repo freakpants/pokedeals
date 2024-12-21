@@ -19,14 +19,18 @@ body {
 .product-price {
     font-weight: bold;
     color: #007bff;
-    margin: 8px 0;
+    float: right;
     font-size: large;
+    text-align: right;
+    display:flex;
+    flex-direction: column;
 }
 
 /* Updated image container for proper alignment */
 .image-container {
     text-align: center;
-    margin-bottom: 12px; /* Reduced margin for compactness */
+    flex-shrink: 0; /* Prevent the image from shrinking */
+    max-width: 150px; /* Limit the image width */
 }
 
 .main-image {
@@ -45,7 +49,7 @@ body {
 .shop-logo.shop-logo {
     width: 24px; /* Correct size */
     height: 24px;
-    margin-right: 8px; /* Space between logo and text */
+    margin-right: 4px; /* Space between logo and text */
     vertical-align: middle; /* Align with text */
     flex-shrink: 0; /* Prevent resizing */
 }
@@ -206,6 +210,10 @@ body {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background: white;
+    display: flex; /* Create a flex container */
+    flex-direction: column; /* Arrange children horizontally */
+    align-items: flex-start; /* Align items at the top */
+    gap: 1rem; /* Add spacing between the image and text */
 }
 
 .matches {
@@ -245,13 +253,37 @@ body {
 }
 
 h2 {
-    display: -webkit-box; /* Enables multi-line ellipsis */
-    -webkit-line-clamp: 2; /* Limits to two lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden; /* Prevents overflow beyond two lines */
-    text-align: center; /* Centers text horizontally */
-    vertical-align: middle; /* Centers text vertically */
-    font-size: calc(0.35vw + 1rem); /* Scales font size with viewport width */
-    line-height: 1.4; /* Adjust line spacing for readability */
+    font-size: 1.5rem;
+    margin: 0;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
+.product-details {
+    flex-grow: 1; /* Allow the text to take available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Distribute content vertically */
+    line-height: 1.5; /* Improved readability */
+}
+
+.content-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.price-per-pack{
+    color: black;
+    font-size: small;
+}
+
+.language-and-title {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 25px;
+}
