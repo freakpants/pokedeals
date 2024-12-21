@@ -280,46 +280,20 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
         matchesContainer.className = 'matches';
         matchesContainer.innerHTML = '<h3>Offers:</h3>';
 
-        // Filter matches strictly by the selected language
         const filteredMatches = product.matches.filter(match => {
             return !filterLanguage || match.language === filterLanguage;
         });
 
-        // Sort all matches by price
         filteredMatches.sort((a, b) => a.price - b.price);
 
         // Display the cheapest offer
         if (filteredMatches.length > 0) {
-            const cheapestMatch = filteredMatches[0];
-            const shop = shops[cheapestMatch.shop_id] || {};
-            const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
-                              alt="${shop.name || 'Shop'} Logo" 
-                              class="shop-logo">`;
-
-            const cheapestOfferElement = document.createElement('div');
-            cheapestOfferElement.className = 'offer cheapest-offer';
-
-            cheapestOfferElement.innerHTML = `
-                <div class="shop-info">
-                    ${shopLogo}
-                    <strong>${shop.name || 'Unknown Shop'}</strong>
-                    <div class="product-price">CHF ${cheapestMatch.price.toFixed(2)}<span class="price-per-pack">(~${(cheapestMatch.price / product.pack_count).toFixed(2)} per pack)</span></div>
-                </div>
-                <div class="language-and-title">
-                <span class="flag-icon flag-icon-${languageToCountryCode[cheapestMatch.language] || 'unknown'} product-language-flag"></span>
-                <a href="${cheapestMatch.external_product.url}" target="_blank" class="match-link">
-                    ${cheapestMatch.title}
-                </a>
-                </div>
-                
-                
-                
-            `;
-
+            const cheapestOfferElement = renderOffer(filteredMatches[0]);
+            cheapestOfferElement.classList.add('cheapest-offer');
             matchesContainer.appendChild(cheapestOfferElement);
         }
 
-        // Create a collapsible section for all other offers
+        // Expandable offers section
         if (filteredMatches.length > 1) {
             const toggleContainer = document.createElement('div');
             toggleContainer.className = 'toggle-container';
@@ -333,27 +307,7 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             otherOffersContainer.style.display = 'none'; // Hidden by default
 
             filteredMatches.slice(1).forEach(match => {
-                const shop = shops[match.shop_id] || {};
-                const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
-                                  alt="${shop.name || 'Shop'} Logo" 
-                                  class="shop-logo">`;
-
-                const offerElement = document.createElement('div');
-                offerElement.className = 'offer';
-
-                offerElement.innerHTML = `
-                    <div class="shop-info">
-                        ${shopLogo}
-                        <strong>${shop.name || 'Unknown Shop'}</strong>
-                    </div>
-                    <a href="${match.external_product.url}" target="_blank" class="match-link">
-                        ${match.title}
-                    </a>
-                    <span class="flag-icon flag-icon-${languageToCountryCode[match.language] || 'unknown'} product-language-flag"></span>
-                    <span class="product-price">CHF ${match.price.toFixed(2)}</span>
-                    <span class="price-per-pack">(~${(match.price / product.pack_count).toFixed(2)} per pack)</span>
-                `;
-
+                const offerElement = renderOffer(match);
                 otherOffersContainer.appendChild(offerElement);
             });
 
@@ -368,13 +322,44 @@ function renderProducts(products, filterLanguage = '', filterSetIdentifier = '')
             matchesContainer.appendChild(toggleContainer);
         }
 
-        // Add matches to the product card
         productCard.appendChild(matchesContainer);
-
         productList.appendChild(productCard);
     });
 }
 
+// Reusable function to render a single offer
+function renderOffer(match) {
+    const shop = shops[match.shop_id] || {};
+    const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
+                      alt="${shop.name || 'Shop'} Logo" 
+                      class="shop-logo">`;
+
+    // Ensure pack_count is handled correctly
+    const packCount = match.pack_count || 1; // Default to 1 if pack_count is undefined or 0
+    const pricePerPack = (match.price / packCount).toFixed(2); // Calculate price per pack
+
+    const offerElement = document.createElement('div');
+    offerElement.className = 'offer';
+
+    offerElement.innerHTML = `
+        <div class="shop-info">
+            ${shopLogo}
+            <strong>${shop.name || 'Unknown Shop'}</strong>
+            <div class="product-price">
+                CHF ${match.price.toFixed(2)}
+                <span class="price-per-pack">(~${pricePerPack} per pack)</span>
+            </div>
+        </div>
+        <div class="language-and-title">
+            <span class="flag-icon flag-icon-${languageToCountryCode[match.language] || 'unknown'} product-language-flag"></span>
+            <a href="${match.external_product.url}" target="_blank" class="match-link">
+                ${match.title}
+            </a>
+        </div>
+    `;
+
+    return offerElement;
+}
 
 
 
