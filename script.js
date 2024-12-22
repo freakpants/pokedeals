@@ -190,16 +190,28 @@ function sortProducts(products, sortKey, sortOrder) {
         return [...products]; // Return unsorted
     }
 
-    
-
-    return [...products].sort((a, b) => {
+    const sortedProducts = [...products].sort((a, b) => {
         let valueA, valueB;
 
         // Handle specific cases like price_per_pack or dates
         if (sortKey === 'price-per-pack') {
+
+            // get the current language filter
+            const language = document.getElementById('language-filter').value;
+            // if its empty, filter out any matches that are not de, en or fr
+            if (!language) {
+                a.matches = a.matches.filter(match => ['de', 'en', 'fr'].includes(match.language));
+                b.matches = b.matches.filter(match => ['de', 'en', 'fr'].includes(match.language));
+            } else {
+                a.matches = a.matches.filter(match => match.language === language);
+                b.matches = b.matches.filter(match => match.language === language);
+            }
+
             // order the matches by price
             a.matches.sort((a, b) => a.price - b.price);
             b.matches.sort((a, b) => a.price - b.price);
+
+            
 
             valueA = a.matches[0]?.price / a.pack_count || 0;
             valueB = b.matches[0]?.price / b.pack_count || 0;
@@ -217,6 +229,8 @@ function sortProducts(products, sortKey, sortOrder) {
             return valueB - valueA;
         }
     });
+    console.log(sortedProducts);
+    return sortedProducts;
 }
 
 // Function to update icons for sorting
