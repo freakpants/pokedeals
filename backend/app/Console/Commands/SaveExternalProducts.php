@@ -140,7 +140,13 @@ class SaveExternalProducts extends Command
                     while ($hasMorePages) {
                         // wait for 1 second between each page
                         sleep(1);
-                        $paginatedUrl = $categoryUrl . '?page=' . $page;
+                        $isMana = $shop->name === 'The Mana Shop';
+                        if($isMana){
+                            $paginatedUrl = $categoryUrl . '&n=1000';
+                        } else {
+                            $paginatedUrl = $categoryUrl . '?page=' . $page;
+                        }
+                        
                         $this->info("Fetching page $page: $paginatedUrl");
 
                         $response = Http::get($paginatedUrl);
@@ -156,25 +162,56 @@ class SaveExternalProducts extends Command
                         $crawler = new Crawler($html);
 
                         // find all product-box elements
-                        $current_products = $crawler->filter('.product-miniature')->each(function (Crawler $node) use ($shop) {
+                        $current_products = $crawler->filter('.product-container')->each(function (Crawler $node) use ($shop, $isMana) {
                             // $product = json_decode($node->attr('data-product')); // Extract the data-product attribute
                             // turn it into an array
                             $product = [];
 
                             $product['id'] = $node->attr('data-id-product');
 
+                            if(!$product['id']){
+                                $product['id'] = $node->filter('.addToWishlist')->attr('rel');
+                            }
+
                             // find the product-price element
-                            $price = $node->filter('.product-price-and-shipping .price')->text();
+                            $priceNode = $node->filter('.product-price-and-shipping .price');
+
+                            // check if the price node is empty
+                            if(!$priceNode->count()){
+                                $priceNode = $node->filter('.product-price.price');
+                            }
+
+                            $price = $priceNode->text();
+
                             // replace everything that is not a number or a dot
                             $price = preg_replace('/[^0-9.]/', '', $price);
                             $product['price'] = floatval($price);
                             // find the product-title element
-                            $product['title'] = $node->filter('.product-title')->text();
+                            $productTitleNode = $node->filter('.product-title');
+                            if(!$productTitleNode->count()){
+                                $productTitleNode = $node->filter('.product-name');
+                            }
+
+                            if($isMana){
+                                $product['title'] = $productTitleNode->attr('title');
+                            } else {
+                                $product['title'] = $productTitleNode->text();
+                            }
+                            
+
                             // find the first href element
                             $product['url'] = $node->filter('a')->first()->attr('href');
                             // replace the base url
-                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
-                            $product['available'] = true;
+
+                            $product['handle'] = 
+                            str_replace($shop->base_url, '', str_replace('www.', '', $product['url']));
+
+                            // if there is a label-danger or label-warning, the product is out of stock
+                            if($node->filter('.label-danger')->count() || $node->filter('.label-warning')->count()){
+                                $product['available'] = false;
+                            } else {
+                                $product['available'] = true;
+                            }
 
                             $product['variants'] = [$product];
 
@@ -184,8 +221,7 @@ class SaveExternalProducts extends Command
                         // merge the arrays
                         $products = array_merge($products, $current_products);
 
-                        // Check if a "next page" button exists
-                        $hasMorePages = $crawler->filter('.next')->count() > 0;
+                        $hasMorePages = $crawler->filter('.next')->count() > 0 || !$isMana;
                         $page++;
                     }
                 }
@@ -398,7 +434,7 @@ class SaveExternalProducts extends Command
             $product_type = $this->pokemonHelper->determineProductCategory($product);
 
             // continue if its not a unknown or pokemon product
-            if ($product_type !== 'pokemon' && $product_type !== 'unknown') {
+            if ($product_type !== 'pokemon' && $product_type !== 'unknown' && $product_type !== 'Sammelkarten') {
                 // check against the specific pokemon product types
                 $details = PokemonHelper::determineProductDetails($product_type);
                 if($details['product_type'] === ProductTypes::Other){
@@ -418,8 +454,11 @@ class SaveExternalProducts extends Command
                 $url = $shop->base_url . 'store/product/' . $product['item_id'];
             } else if($shop->shop_type === 'shopware'){
                 $url = $shop->base_url . $product['handle'];
-            } else {
-                $url = "$baseUrl/products/{$product['handle']}";
+            } else if($shop->shop_type === 'prestashop'){
+                $url = $shop->base_url . $product['handle'];
+            } 
+            else {
+                $url = "{$baseUrl}products/{$product['handle']}";
             }
 
             if (!$externalId) {
@@ -464,6 +503,11 @@ class SaveExternalProducts extends Command
 
                     if($title !== $variant_title && $variant_title !== 'Default Title'){
                         $title = $title . ' - ' . $variant_title;
+                    }
+
+                    // when the shop is manaShop, set language to english if it isnt set yet
+                    if($shop->name === 'The Mana Shop' && !$language){
+                        $language = 'en';
                     }
 
                     // Insert or update the product - only include the variant title if it isnt "Default Title"
