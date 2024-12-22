@@ -206,6 +206,59 @@ class ProductVariantsSeeder extends Seeder
             'en_name' => 'Tornadus, Thundurus & Landorus Cards with 2 Booster Packs & Coin'
         ]);
 
+        // koraidon etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'koraidon_etb',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['koraidon']),
+            'en_name' => 'Scarlet & Violet Elite Trainer Box (Koraidon)'
+        ]);
+
+        // miraidon etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'miraidon_etb',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['miraidon']),
+            'en_name' => 'Scarlet & Violet Elite Trainer Box (Miraidon)'
+        ]);
+
+        // iron leaves etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'iron_leaves_etb',
+            'de_strings' => json_encode(['eisendorn', 'Temporal Forces ETB - DE - Grün']),
+            'en_strings' => json_encode(['iron leaves', 'Temporal Forces ETB - EN - Grün']),
+            'en_name' => 'Scarlet & Violet-Temporal Forces Elite Trainer Box (Iron Leaves)'
+        ]);
+
+        // walking wake etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'walking_wake_etb',
+            'de_strings' => json_encode(['windewoge', 'Temporal Forces ETB - DE - blau']),
+            'en_strings' => json_encode(['walking wake', 'Temporal Forces ETB - EN - blau']),
+            'en_name' => 'Scarlet & Violet-Temporal Forces Elite Trainer Box (Walking Wake)'
+        ]);
+
+        // iron valiant etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'iron_valiant_etb',
+            'de_strings' => json_encode(['eisenkrieger', 'Paradox Rift ETB - Deutsch - Grün']),
+            'en_strings' => json_encode(['iron valiant', 'Paradox Rift ETB - Englisch - Grün']),
+            'en_name' => 'Scarlet & Violet-Paradox Rift Elite Trainer Box (Iron Valiant)'
+        ]);
+
+        // roaring moon etb
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'roaring_moon_etb',
+            'de_strings' => json_encode(['donnersichel', 'Paradox Rift ETB - Deutsch - Blau']),
+            'en_strings' => json_encode(['roaring moon', 'Paradox Rift ETB - Englisch - Blau']),
+            'en_name' => 'Scarlet & Violet-Paradox Rift Elite Trainer Box (Roaring Moon)'
+        ]);
 
     }
 }

@@ -123,6 +123,13 @@ class ExternalShopsSeeder extends Seeder
                 'shop_type' => 'prestashop',
             ],
             [
+                'name' => 'Toytans',
+                'base_url' => 'https://toytans.ch/',
+                'category_urls' => json_encode(['https://www.toytans.ch/en/245-pokemon']),
+                'image' => 'toytans.png',
+                'shop_type' => 'prestashop',
+            ],
+            [
                 'name' => 'The uncommon shop',
                 'base_url' => 'https://theuncommonshop.ch/',
                 'category_urls' => json_encode(['https://theuncommonshop.ch/collections/pokemon']),
@@ -142,6 +149,13 @@ class ExternalShopsSeeder extends Seeder
                 'category_urls' => null,
                 'image' => 'cardtreasure.png',
                 'shop_type' => 'shopify',
+            ],
+            [
+                'name' => 'Carab',
+                'base_url' => 'https://carab.ch/',
+                'category_urls' => json_encode(['https://www.carab.ch/shop?category=3459']),
+                'image' => 'carab.png',
+                'shop_type' => 'pimcore',
             ]
         ]);
     }

@@ -409,6 +409,7 @@ function renderProducts(products) {
         // Full-width title
         const title = document.createElement('h2');
         title.textContent = product.title.replace('Pokémon TCG: ', '');
+        title.textContent = title.textContent.replace('Pokémon Center', '');
         productCard.appendChild(title);
 
         // Row for image and details

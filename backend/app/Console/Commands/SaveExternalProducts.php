@@ -44,8 +44,9 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop'];
         // output info and skip if the shop type is neither websell nor shopify
-        if ($shop->shop_type !== 'websell' && $shop->shop_type !== 'shopify' && $shop->shop_type !== 'shopware') {
+        if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
             return $totalNewProducts;
         }
@@ -129,9 +130,69 @@ class SaveExternalProducts extends Command
         
         // if there are new products, run the rest of the process
         if((!file_exists($json_file) || $newProducts) || $forceRefresh){
-            if($shop->shop_type === 'shopware'){
+            if($shop->shop_type === 'prestashop'){
                 $categoryUrls = json_decode($shop->category_urls);
-                $allCodes = [];
+                $this->info("Starting HTML parsing for PrestaShop...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        // wait for 1 second between each page
+                        sleep(1);
+                        $paginatedUrl = $categoryUrl . '?page=' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.product-miniature')->each(function (Crawler $node) use ($shop) {
+                            // $product = json_decode($node->attr('data-product')); // Extract the data-product attribute
+                            // turn it into an array
+                            $product = [];
+
+                            $product['id'] = $node->attr('data-id-product');
+
+                            // find the product-price element
+                            $price = $node->filter('.product-price-and-shipping .price')->text();
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+                            // find the product-title element
+                            $product['title'] = $node->filter('.product-title')->text();
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        // Check if a "next page" button exists
+                        $hasMorePages = $crawler->filter('.next')->count() > 0;
+                        $page++;
+                    }
+                }
+
+            }
+            else if($shop->shop_type === 'shopware'){
+                $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for Shopware...");
 
                 foreach ($categoryUrls as $categoryUrl) {

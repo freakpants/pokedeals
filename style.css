@@ -10,7 +10,7 @@ body {
 /* Updated product list for better spacing and layout */
 #product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Adjusted min size */
+    grid-template-columns: repeat(auto-fit, minmax(359px, 1fr)); /* Adjusted min size */
     gap: 16px; /* Spacing between items */
     padding: 20px;
 }
@@ -47,11 +47,20 @@ body {
 
 /* Updated shop logo size and alignment */
 .shop-logo.shop-logo {
-    width: 24px; /* Correct size */
-    height: 24px;
+    width: 40px; /* Correct size */
+    height: 40px;
     margin-right: 4px; /* Space between logo and text */
     vertical-align: middle; /* Align with text */
     flex-shrink: 0; /* Prevent resizing */
+}
+
+/* enlarge shop logo on hover, put it in front of text */
+.shop-logo:hover {
+    transform: scale(2);
+    background: white;
+    padding: 5px;
+    border: 1px solid black;
+    z-index: 1;
 }
 
 .shop-group {
