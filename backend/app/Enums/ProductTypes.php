@@ -7,6 +7,7 @@ enum ProductTypes: string
     case DisplayBox = 'display_box';
     case HalfBoosterBox = 'half_booster_box';
     case JapaneseDisplayBox = 'japanese_display_box';
+    case BoosterBundleCase = 'booster_bundle_case';
     case BoosterBundle = 'booster_bundle';
     case BoosterPack = 'booster_pack';
     case SleevedBoosterCase = 'sleeved_booster_case';

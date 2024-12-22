@@ -17,10 +17,14 @@ class SaveExternalProducts extends Command
     protected $signature = 'products:save-external {--force-refresh}';
     protected $description = 'Save external products to the database';
 
+    private $pokemonHelper;
+
     public function handle()
     {
         $shops = DB::table('external_shops')->get(); 
         $totalNewProducts = 0; // Track total new products across all shops
+
+        $this->pokemonHelper = new PokemonHelper();
 
         $forceRefresh = $this->option('force-refresh') ?? false;
         if($forceRefresh){
@@ -92,7 +96,7 @@ class SaveExternalProducts extends Command
                         ->first();
                     if (!$existingProduct) {
                         // determine if this would be saved
-                        $product_type = PokemonHelper::determineProductCategory($product);
+                        $product_type = $this->pokemonHelper->determineProductCategory($product);
 
 
 
@@ -103,7 +107,7 @@ class SaveExternalProducts extends Command
                             $newProducts++;
                         } else {
                             // also check against the specific pokemon product type
-                            $details = PokemonHelper::determineProductDetails($product_type);
+                            $details = $this->pokemonHelper->determineProductDetails($product_type);
                             if($details['product_type'] !== ProductTypes::Other){
                                 $newProducts++;
                             }
@@ -161,7 +165,12 @@ class SaveExternalProducts extends Command
                             $product['price'] = floatval($price);
                             // find the product-variant-characteristics-text element
                             $variant = $node->filter('.product-variant-characteristics-text')->text();
-                            $product['title'] = $product['name'] . ' - ' . $variant;
+                            if($product['name'] === $variant){
+                                $product['title'] = $product['name'];
+                            } else {
+                                $product['title'] = $product['name'] . ' - ' . $variant;
+                            }
+
                             // find the first href element
                             $product['url'] = $node->filter('a')->first()->attr('href');
                             // replace the base url
@@ -325,7 +334,7 @@ class SaveExternalProducts extends Command
                 continue;
             }
 
-            $product_type = PokemonHelper::determineProductCategory($product);
+            $product_type = $this->pokemonHelper->determineProductCategory($product);
 
             // continue if its not a unknown or pokemon product
             if ($product_type !== 'pokemon' && $product_type !== 'unknown') {
@@ -357,10 +366,11 @@ class SaveExternalProducts extends Command
                 continue;
             }
 
-
+            $original_title = $title;
             // if there are variants, also loop them and add the variant name to the title
             if (count($product['variants']) > 0) {
                 foreach ($product['variants'] as $variant) {
+                    $title = $original_title;
                     $variant_title = $variant['title'];               
                     $variant_price = $variant['price'];
 
@@ -391,6 +401,10 @@ class SaveExternalProducts extends Command
                     $variant = $details['variant'];
                     $multiplier = $details['multiplier'];
 
+                    if($title !== $variant_title && $variant_title !== 'Default Title'){
+                        $title = $title . ' - ' . $variant_title;
+                    }
+
                     // Insert or update the product - only include the variant title if it isnt "Default Title"
                     $inserted = DB::table('external_products')->updateOrInsert(
                         [
@@ -398,7 +412,7 @@ class SaveExternalProducts extends Command
                             'shop_id' => $shopId,
                         ],
                         [
-                            'title' => $title . ($variant_title !== 'Default Title' ? " - $variant_title" : ''),
+                            'title' => $title,
                             'price' => $variant_price,
                             'stock' => $variant_stock,
                             'url' => $variant_url,

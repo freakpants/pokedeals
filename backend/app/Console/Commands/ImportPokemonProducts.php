@@ -29,11 +29,11 @@ class ImportPokemonProducts extends Command
             return Command::FAILURE;
         }
 
-
+        $pokemonHelper = new PokemonHelper();
 
         foreach ($products as $product) {
 
-            $details = PokemonHelper::determineProductDetails($product['title']);
+            $details = $pokemonHelper->determineProductDetails($product['title']);
 
             $set_identifier = $details['set_identifier'];
             $product_type = $details['product_type'];

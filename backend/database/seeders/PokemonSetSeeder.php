@@ -129,7 +129,8 @@ class PokemonSetSeeder extends Seeder
             }
 
 
-            $broken_identifiers = ['facing_a_new_trial', 'triplet_beat','raging_surf'];
+            $broken_identifiers = ['facing_a_new_trial', 'triplet_beat','raging_surf',
+            'gaia_volcano','cruel_traitor', 'alolan_moonlight'];
             if(in_array($set_identifier, $broken_identifiers)){
                // skip until we fix
                 continue;
@@ -214,6 +215,35 @@ class PokemonSetSeeder extends Seeder
                 $anniversary = false;
                 $ex = false;
                 $tag_team = false;
+
+                // if the string contains  • , split the string and use both
+                if(stripos($data[$index], '•') !== false){
+                    $parts = explode('•', $data[$index]);
+
+                    // trim the parts
+                    $parts = array_map('trim', $parts);
+
+                    // also split the string at 1 between english and kanji
+                    $moreparts = preg_split('/(?=[A-Z])/', $parts[1], 2);
+                    
+                    $ja_to_en_mapping[] = [
+                        'ja' => $parts[0],
+                        'en' => $moreparts[1]
+                    ];
+
+                    // if it contains gaia volcano
+                    if(stripos($moreparts[1] , 'Gaia Volcano') !== false){
+                        echo 'test';
+                    }
+
+
+                    $ja_to_en_mapping[] = [
+                        'ja' => $moreparts[0],
+                        'en' => $parts[2]
+                    ];
+                    return false;
+                }
+
                 if(stripos($data[$index], 'VMAX') !== false){
                     $data[$index] = str_replace('VMAX', '', $data[$index]);
                     $vmax = true;

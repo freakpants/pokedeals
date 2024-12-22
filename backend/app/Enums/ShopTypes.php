@@ -10,6 +10,7 @@ enum ShopTypes: string
     case Ecwid = 'ecwid';
     case WooCommerce = 'woocommerce';
     case Shopware = 'shopware';
+    case Pimcore = 'pimcore';
     case Other = 'other';
 
 

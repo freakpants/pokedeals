@@ -128,6 +128,20 @@ class ExternalShopsSeeder extends Seeder
                 'category_urls' => json_encode(['https://theuncommonshop.ch/collections/pokemon']),
                 'image' => 'theuncommonshop.png',
                 'shop_type' => 'ecwid',
+            ],
+            [
+                'name' => 'Maro Games',
+                'base_url' => 'https://www.maro-shop.ch/',
+                'category_urls' => null,
+                'image' => 'marogames.png',
+                'shop_type' => 'shopify',
+            ],
+            [
+                'name' => 'Card Treasure',
+                'base_url' => 'https://cardtreasure.ch/',
+                'category_urls' => null,
+                'image' => 'cardtreasure.png',
+                'shop_type' => 'shopify',
             ]
         ]);
     }

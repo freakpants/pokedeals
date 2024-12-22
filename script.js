@@ -190,23 +190,32 @@ function sortProducts(products, sortKey, sortOrder) {
         return [...products]; // Return unsorted
     }
 
+    
+
     return [...products].sort((a, b) => {
-        let valueA = a[sortKey];
-        let valueB = b[sortKey];
+        let valueA, valueB;
 
         // Handle specific cases like price_per_pack or dates
         if (sortKey === 'price-per-pack') {
             // order the matches by price
             a.matches.sort((a, b) => a.price - b.price);
+            b.matches.sort((a, b) => a.price - b.price);
 
             valueA = a.matches[0]?.price / a.pack_count || 0;
             valueB = b.matches[0]?.price / b.pack_count || 0;
         } else if (sortKey === 'release-date') {
             valueA = new Date(a.release_date);
             valueB = new Date(b.release_date);
+        } else {
+            valueA = a[sortKey];
+            valueB = b[sortKey];
         }
 
-        return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+        if (sortOrder === 'asc') {
+            return valueA - valueB;
+        } else {
+            return valueB - valueA;
+        }
     });
 }
 
@@ -305,8 +314,6 @@ async function applyFilters() {
         url.searchParams.set('sort_order', currentSortOrder);
     }
     window.history.replaceState({}, '', url);
-
-
 
     // Re-render products
     renderProducts(sortedProducts);
@@ -452,7 +459,8 @@ function renderProducts(products) {
 
             const toggleButton = document.createElement('button');
             toggleButton.className = 'toggle-button';
-            toggleButton.textContent = 'Show More Offers';
+            // display the amount of more offers on the button
+            toggleButton.textContent = `Show More Offers (${filteredMatches.length - 1})`;
 
             const otherOffersContainer = document.createElement('div');
             otherOffersContainer.className = 'other-offers';
@@ -466,7 +474,7 @@ function renderProducts(products) {
             toggleButton.addEventListener('click', () => {
                 const isHidden = otherOffersContainer.style.display === 'none';
                 otherOffersContainer.style.display = isHidden ? 'flex' : 'none';
-                toggleButton.textContent = isHidden ? 'Show Fewer Offers' : 'Show More Offers';
+                toggleButton.textContent = isHidden ? 'Show Fewer Offers' : `Show More Offers (${filteredMatches.length - 1})`;
             });
 
             toggleContainer.appendChild(toggleButton);
