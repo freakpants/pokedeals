@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Console\Input\InputOption;
 use App\Enums\ProductTypes;
 
 use App\Helpers\PokemonHelper;
@@ -44,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -130,7 +129,69 @@ class SaveExternalProducts extends Command
         
         // if there are new products, run the rest of the process
         if((!file_exists($json_file) || $newProducts) || $forceRefresh){
-            if($shop->shop_type === 'prestashop'){
+            if($shop->shop_type === 'spielezar'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for Spielezar...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $offset = 0;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        // extract the filter from the url
+                        $explodedUrl = explode('?', $categoryUrl);
+                        $filter = $explodedUrl[1] ?? '';
+                        $paginatedUrl = $explodedUrl[0] . '?offset=' . $offset . '&' . $filter;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.ajax_block_product')->each(function (Crawler $node) use ($shop) {
+                            $product = [];
+                            $product['id'] = $node->attr('data-id-product');
+                            // find the product-price element
+                            $price = $node->filter('.price_default')->text();
+                            // replace comma with a dot
+                            $price = str_replace(',', '.', $price);
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+                            // find the h3
+                            $product['title'] = $node->filter('h3')->text();
+
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        // Check if a "next page" button exists
+                        $hasMorePages = $crawler->filter('#show_more')->count() > 0;
+                        $offset += 30;
+
+                    }
+                }
+
+            }
+            else if($shop->shop_type === 'prestashop'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for PrestaShop...");
 
