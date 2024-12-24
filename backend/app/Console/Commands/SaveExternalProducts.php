@@ -161,8 +161,15 @@ class SaveExternalProducts extends Command
                         // Parse HTML to extract data
                         $crawler = new Crawler($html);
 
+
+                        if($isMana){
+                            $productClass = '.product-container';
+                        } else {
+                            $productClass = '.product-miniature';
+                        }
+
                         // find all product-box elements
-                        $current_products = $crawler->filter('.product-container')->each(function (Crawler $node) use ($shop, $isMana) {
+                        $current_products = $crawler->filter($productClass)->each(function (Crawler $node) use ($shop, $isMana) {
                             // $product = json_decode($node->attr('data-product')); // Extract the data-product attribute
                             // turn it into an array
                             $product = [];
@@ -451,14 +458,14 @@ class SaveExternalProducts extends Command
 
 
             if($shop->shop_type === 'websell'){
-                $url = $shop->base_url . 'store/product/' . $product['item_id'];
+                $url = $shop->base_url . '/store/product/' . $product['item_id'];
             } else if($shop->shop_type === 'shopware'){
-                $url = $shop->base_url . $product['handle'];
+                $url = $shop->base_url . '/' . $product['handle'];
             } else if($shop->shop_type === 'prestashop'){
-                $url = $shop->base_url . $product['handle'];
+                $url = $shop->base_url . '/' . $product['handle'];
             } 
             else {
-                $url = "{$baseUrl}products/{$product['handle']}";
+                $url = "{$baseUrl}/products/{$product['handle']}";
             }
 
             if (!$externalId) {

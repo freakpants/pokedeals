@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('product_type', ProductTypes::getValues())->default(ProductTypes::Other->value);
             $table->json('de_strings')->nullable();
             $table->json('en_strings')->nullable();
+            $table->integer('pack_count')->nullable();
 
         });
     }

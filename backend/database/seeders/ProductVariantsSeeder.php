@@ -275,7 +275,8 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'crown_zenith_special_collection',
             'de_strings' => json_encode(['']),
             'en_strings' => json_encode(['unown v','lugia v']),
-            'en_name' => 'Crown Zenith Special Collection (Unown V & Lugia V)'
+            'en_name' => 'Crown Zenith Special Collection (Unown V & Lugia V)',
+            'pack_count' => 5
         ]);
 
     }
