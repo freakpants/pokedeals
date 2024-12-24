@@ -51,7 +51,15 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'charizard_ex_premium_collection',
             'de_strings' => json_encode(['glurak ex premium collection']),
             'en_strings' => json_encode(['charizard ex premium collection']),
-            'en_name' => 'Charizard EX Premium Collection'
+            'en_name' => 'Charizard EX Premium Collection',
+            'pack_count' => 6
+        ]);
+
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::SuperPremiumCollection->value,
+            'en_short' => 'charizard_ex_super_premium_collection',
+            'de_strings' => json_encode(['glurak ex super-premium kollektion','glurak ex super premium kollektion']),
+            'en_strings' => json_encode(['charizard ex super-premium collection','charizard ex super premium collection']),
         ]);
 
         DB::table('pokemon_product_variants')->insert([
@@ -277,6 +285,170 @@ class ProductVariantsSeeder extends Seeder
             'en_strings' => json_encode(['unown v','lugia v']),
             'en_name' => 'Crown Zenith Special Collection (Unown V & Lugia V)',
             'pack_count' => 5
+        ]);
+
+        // crown zenith etb actually has 10 packs
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'crown_zenith_etb',
+            'de_strings' => json_encode(['crown zenith']),
+            'en_strings' => json_encode(['crown zenith']),
+            'en_name' => 'Crown Zenith Elite Trainer Box',
+            'pack_count' => 10
+        ]);
+
+        // Crown Zenith Collection (Regidrago V)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::Collection->value,
+            'en_short' => 'crown_zenith_collection_regidrago_v',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['regidrago v']),
+            'en_name' => 'Crown Zenith Collection (Regidrago V)',
+            'pack_count' => 4
+        ]);
+        
+        // Crown Zenith Tin (Galarian Zapdos)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::Tin->value,
+            'en_short' => 'crown_zenith_tin_galarian_zapdos',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian zapdos', 'zapdos']),
+            'en_name' => 'Crown Zenith Tin (Galarian Zapdos)',
+        ]);
+
+        // Crown Zenith Tin (Galarian Moltres)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::Tin->value,
+            'en_short' => 'crown_zenith_tin_galarian_moltres',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian moltres', 'moltres']),
+            'en_name' => 'Crown Zenith Tin (Galarian Moltres)',
+        ]);
+
+        // Crown Zenith Tin (Galarian Articuno)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::Tin->value,
+            'en_short' => 'crown_zenith_tin_galarian_articuno',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian articuno', 'articuno']),
+            'en_name' => 'Crown Zenith Tin (Galarian Articuno)',
+        ]);
+
+        // Crown Zenith 5-Booster Tin (Galarian Zapdos)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::FiveBoosterTin->value,
+            'en_short' => 'crown_zenith_5_booster_tin_galarian_zapdos',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian zapdos', 'zapdos']),
+            'en_name' => 'Crown Zenith 5-Booster Tin (Galarian Zapdos)',
+        ]);
+
+        // Crown Zenith 5-Booster Tin (Galarian Moltres)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::FiveBoosterTin->value,
+            'en_short' => 'crown_zenith_5_booster_tin_galarian_moltres',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian moltres', 'moltres']),
+            'en_name' => 'Crown Zenith 5-Booster Tin (Galarian Moltres)',
+        ]);
+
+        // Crown Zenith 5-Booster Tin (Galarian Articuno)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::FiveBoosterTin->value,
+            'en_short' => 'crown_zenith_5_booster_tin_galarian_articuno',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['galarian articuno', 'articuno']),
+            'en_name' => 'Crown Zenith 5-Booster Tin (Galarian Articuno)',
+        ]);
+
+        // Crown Zenith Special Collection (Pikachu VMAX)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::SpecialCollection->value,
+            'en_short' => 'crown_zenith_special_collection_pikachu_vmax',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['pikachu vmax']),
+            'en_name' => 'Crown Zenith Special Collection (Pikachu VMAX)',
+            'pack_count' => 5
+        ]);
+
+        // Crown Zenith Premium Figure Collection (Shiny Zacian)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PremiumFigureCollection->value,
+            'en_short' => 'crown_zenith_premium_figure_collection_shiny_zacian',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['shiny zacian', 'zacian']),
+            'en_name' => 'Crown Zenith Premium Figure Collection (Shiny Zacian)',
+            'pack_count' => 11
+        ]);
+
+        // Zacian V-UNION Special Collection
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::SpecialCollection->value,
+            'en_short' => 'zacian_vunion_special_collection',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['zacian v-union']),
+            'en_name' => 'Zacian V-UNION Special Collection',
+            'pack_count' => 4
+        ]);
+
+        // Crown Zenith Premium Figure Collection (Shiny Zamazenta)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PremiumFigureCollection->value,
+            'en_short' => 'crown_zenith_premium_figure_collection_shiny_zamazenta',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['shiny zamazenta']),
+            'en_name' => 'Crown Zenith Premium Figure Collection (Shiny Zamazenta)',
+            'pack_count' => 11
+        ]);
+
+        // Crown Zenith Pin Collection (Inteleon)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PinCollection->value,
+            'en_short' => 'crown_zenith_pin_collection_inteleon',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['inteleon']),
+            'en_name' => 'Crown Zenith Pin Collection (Inteleon)',
+            'pack_count' => 3
+        ]);
+
+        // Lucario VSTAR Premium Collection
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PremiumCollection->value,
+            'en_short' => 'lucario_vstar_premium_collection',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['lucario']),
+            'en_name' => 'Lucario VSTAR Premium Collection',
+            'pack_count' => 5
+        ]);
+
+        // Crown Zenith Pin Collection (Cinderace)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PinCollection->value,
+            'en_short' => 'crown_zenith_pin_collection_cinderace',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['cinderace']),
+            'en_name' => 'Crown Zenith Pin Collection (Cinderace)',
+            'pack_count' => 3
+        ]);
+
+        // Crown Zenith Collection (Regieleki V)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::Collection->value,
+            'en_short' => 'crown_zenith_collection_regieleki_v',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['regieleki v']),
+            'en_name' => 'Crown Zenith Collection (Regieleki V)',
+            'pack_count' => 4
+        ]);
+
+        // Crown Zenith Pin Collection (Rillaboom)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PinCollection->value,
+            'en_short' => 'crown_zenith_pin_collection_rillaboom',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['rillaboom']),
+            'en_name' => 'Crown Zenith Pin Collection (Rillaboom)',
+            'pack_count' => 3
         ]);
 
     }

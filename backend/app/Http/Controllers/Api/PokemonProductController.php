@@ -22,6 +22,8 @@ class PokemonProductController extends Controller
             ->leftJoin('pokemon_sets as ps', 'pp.set_identifier', '=', 'ps.set_identifier')
             // join the amonunt of packs from the product_types table
             ->leftJoin('product_types as pt', 'pp.type', '=', 'pt.product_type')
+            // join the variant
+            ->leftJoin('pokemon_product_variants as pv', 'pp.variant', '=', 'pv.en_short')
             ->select(
                 'pp.sku',
                 'pp.title',
@@ -37,6 +39,8 @@ class PokemonProductController extends Controller
                 'ps.release_date',
                 'ps.series_id',
                 'pt.pack_count',
+                'pv.pack_count as variant_pack_count',
+                'pv.product_type as variant_product_type',
                 'pt.product_type',
                 'pt.swh_modifier'
             )
@@ -76,7 +80,9 @@ class PokemonProductController extends Controller
                 'title' => $product->title,
                 'id' => $product->sku,
                 'price' => $product->price,
-                'pack_count' => $product->pack_count,
+                'pack_count' => $product->variant_pack_count && $product->variant_product_type === $product->product_type
+                    ? $product->variant_pack_count
+                    : $product->pack_count,
                 'set_identifier' => $product->set_identifier,
                 'product_url' => $product->product_url,
                 'product_type' => $product->product_type,

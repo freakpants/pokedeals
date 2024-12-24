@@ -20,11 +20,15 @@ enum ProductTypes: string
     case ThemeDeck = 'theme_deck';
     case SingleCard = 'single_card';
     case CollectionBox = 'collection_box';
+    case Collection = 'collection';
+    case PinCollection = 'pin_collection';
     case CollectorChest = 'collector_chest';
     case PencilCase = 'pencil_case';
+    case FiveBoosterTin = 'five_booster_tin';
     case Tin = 'tin';
     case MiniTin = 'mini_tin';
     case PokeBallTin = 'poke_ball_tin';
+    case SuperPremiumCollection = 'super_premium_collection';
     case UltraPremiumCollection = 'ultra_premium_collection';
     case SpecialCollection = 'special_collection';
     case PremiumCollection = 'premium_collection';

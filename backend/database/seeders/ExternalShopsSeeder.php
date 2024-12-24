@@ -156,6 +156,13 @@ class ExternalShopsSeeder extends Seeder
                 'category_urls' => json_encode(['https://www.carab.ch/shop?category=3459']),
                 'image' => 'carab.png',
                 'shop_type' => 'pimcore',
+            ],
+            [
+                'name' => 'Spielezar',
+                'base_url' => 'https://spielezar.ch',
+                'category_urls' => json_encode(['https://www.spielezar.ch/tcg/pokemon?filter=eyJmaWx0ZXJfMyI6WyIxIl19']),
+                'image' => 'spielezar.png',
+                'shop_type' => 'spielezar',
             ]
         ]);
     }

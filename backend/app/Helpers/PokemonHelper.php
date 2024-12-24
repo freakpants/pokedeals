@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Enums\ProductTypes;
+use App\Models\ProductType;
 use Illuminate\Support\Facades\DB;
 
 class PokemonHelper
@@ -113,7 +114,14 @@ class PokemonHelper
 
         // match variant from a list of variants
         $variant = 'other';
-        foreach (self::$variants as $v) {
+
+        // filter out variants that are of the wrong type
+
+        $variants = self::$variants->filter(function ($v) {
+            return $v->product_type === self::$product_type->value;
+        });
+
+        foreach ($variants as $v) {
             // check if en_matches is inside our title
             $en_strings = json_decode($v->en_strings);
             $de_strings = json_decode($v->de_strings);
@@ -272,6 +280,7 @@ class PokemonHelper
             ProductTypes::SleevedBooster->value => ['sleeved booster'],
             ProductTypes::SingleBlister->value => ['checklane blister', 'blister', 'premium checklane'],
             ProductTypes::DoubleBlister->value => ['2 booster packs'],
+            ProductTypes::FiveBoosterTin->value => ['5 booster tin', 'collectors tin', 'US tin'],
             ProductTypes::BoosterPack->value => ['booster pack', 'single pack', 'booster'],
             ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer'],
             ProductTypes::PencilCase->value => ['pencil case'],
@@ -280,19 +289,21 @@ class PokemonHelper
             ProductTypes::StackingTin->value => ['stacking tin'],
             ProductTypes::Tin->value => ['tin'],
             ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection', 'ultra premium collection'],
-            ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection'],
-            ProductTypes::SpecialCollection->value => ['special collection'],
+            ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection' ],
+            ProductTypes::SpecialCollection->value => ['special collection', 'Regieleki V Box', 'Regidrago V Box'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
             ProductTypes::PosterCollection->value => ['poster collection'],
             ProductTypes::BinderCollection->value => ['binder collection'],
+            ProductTypes::PinCollection->value => ['pin collection'],
             ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion'],
             ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box'],
             ProductTypes::TechStickerCollection->value =>
                 ['tech sticker collection', 'Tech Sticker Glaceon Collection', 'Tech Sticker Leafon Collection',
                     'Tech Sticker Leafeon Collection', 'Tech Sticker Sylveon Collection'],
             ProductTypes::SurpriseBox->value => ['surprise box'],
+            ProductTypes::Collection->value => ['collection'],
         ];
 
         // Normalize titles for consistent matching

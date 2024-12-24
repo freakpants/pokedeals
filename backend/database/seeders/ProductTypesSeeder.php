@@ -113,6 +113,13 @@ class ProductTypesSeeder extends Seeder
         ]);
 
         DB::table('product_types')->insert([
+            'product_type' => 'five_booster_tin',
+            'pack_count' => 5,
+            'mixed_sets' => false,
+            'en_name' => 'Five Booster Tin',
+        ]);
+
+        DB::table('product_types')->insert([
             'product_type' => 'mini_tin',
             'pack_count' => 2,
             'mixed_sets' => false,
@@ -140,6 +147,13 @@ class ProductTypesSeeder extends Seeder
         ]);
 
         DB::table('product_types')->insert([
+            'product_type' => 'super_premium_collection',
+            'pack_count' => 10,
+            'mixed_sets' => false,
+            'en_name' => 'Super-Premium Collection',
+        ]);
+
+        DB::table('product_types')->insert([
             'product_type' => 'premium_collection',
             'pack_count' => 5,
             'mixed_sets' => false,
@@ -158,6 +172,21 @@ class ProductTypesSeeder extends Seeder
             'pack_count' => 4,
             'mixed_sets' => false,
             'en_name' => 'Build & Battle Box',
+        ]);
+
+        // collection box
+        DB::table('product_types')->insert([
+            'product_type' => 'collection_box',
+            'pack_count' => 5,
+            'mixed_sets' => false,
+            'en_name' => 'Collection Box',
+        ]);
+
+        DB::table('product_types')->insert([
+            'product_type' => 'collection',
+            'pack_count' => 4,
+            'mixed_sets' => false,
+            'en_name' => 'Collection',
         ]);
 
         DB::table('product_types')->insert([
@@ -180,17 +209,17 @@ class ProductTypesSeeder extends Seeder
             'en_name' => 'Binder Collection',
         ]);
 
-        // DB::table('product_types')->insert([
-        //     'product_type' => 'special_illustration_collection',
-        //     'pack_count' => 1,
-        //     'mixed_sets' => false,
-        // ]);
+        DB::table('product_types')->insert([
+            'product_type' => 'special_illustration_collection',
+            'pack_count' => 5,
+            'mixed_sets' => false,
+        ]);
 
-        // DB::table('product_types')->insert([
-        //     'product_type' => 'illustration_collection',
-        //     'pack_count' => 1,
-        //     'mixed_sets' => false,
-        // ]);
+        DB::table('product_types')->insert([
+            'product_type' => 'illustration_collection',
+            'pack_count' => 4,
+            'mixed_sets' => false,
+        ]);
 
         DB::table('product_types')->insert([
             'product_type' => 'tech_sticker_collection', 
@@ -204,6 +233,14 @@ class ProductTypesSeeder extends Seeder
             'pack_count' => 4,
             'mixed_sets' => false,
             'en_name' => 'Surprise Box',
+        ]);
+
+        // Pin Collection
+        DB::table('product_types')->insert([
+            'product_type' => 'pin_collection',
+            'pack_count' => 3,
+            'mixed_sets' => false,
+            'en_name' => 'Pin Collection',
         ]);
 
 

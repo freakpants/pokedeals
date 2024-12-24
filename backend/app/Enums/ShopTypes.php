@@ -11,6 +11,7 @@ enum ShopTypes: string
     case WooCommerce = 'woocommerce';
     case Shopware = 'shopware';
     case Pimcore = 'pimcore';
+    case Spielezar = 'spielezar';
     case Other = 'other';
 
 
