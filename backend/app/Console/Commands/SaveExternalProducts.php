@@ -221,7 +221,7 @@ class SaveExternalProducts extends Command
                         // merge the arrays
                         $products = array_merge($products, $current_products);
 
-                        $hasMorePages = $crawler->filter('.next')->count() > 0 || !$isMana;
+                        $hasMorePages = $crawler->filter('.next')->count() > 0 && !$isMana;
                         $page++;
                     }
                 }

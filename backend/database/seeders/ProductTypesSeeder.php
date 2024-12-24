@@ -133,6 +133,13 @@ class ProductTypesSeeder extends Seeder
         ]);
 
         DB::table('product_types')->insert([
+            'product_type' => 'special_collection',
+            'pack_count' => 4,
+            'mixed_sets' => false,
+            'en_name' => 'Special Collection',
+        ]);
+
+        DB::table('product_types')->insert([
             'product_type' => 'premium_collection',
             'pack_count' => 5,
             'mixed_sets' => false,

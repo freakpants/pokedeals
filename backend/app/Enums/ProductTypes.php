@@ -26,6 +26,7 @@ enum ProductTypes: string
     case MiniTin = 'mini_tin';
     case PokeBallTin = 'poke_ball_tin';
     case UltraPremiumCollection = 'ultra_premium_collection';
+    case SpecialCollection = 'special_collection';
     case PremiumCollection = 'premium_collection';
     case BuildBattleStadium = 'build_battle_stadium';
     case BuildBattleBox = 'build_battle_box';

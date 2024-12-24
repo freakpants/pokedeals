@@ -260,5 +260,23 @@ class ProductVariantsSeeder extends Seeder
             'en_name' => 'Scarlet & Violet-Paradox Rift Elite Trainer Box (Roaring Moon)'
         ]);
 
+        // morpeko v-union premium collection
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::PremiumCollection->value,
+            'en_short' => 'morpeko_vunion_premium_collection',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['morpeko']),
+            'en_name' => 'Morpeko V-Union Premium Collection'
+        ]);
+
+        // Crown Zenith Special Collection (Unown V & Lugia V) (EN)
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::SpecialCollection->value,
+            'en_short' => 'crown_zenith_special_collection',
+            'de_strings' => json_encode(['']),
+            'en_strings' => json_encode(['unown v','lugia v']),
+            'en_name' => 'Crown Zenith Special Collection (Unown V & Lugia V)'
+        ]);
+
     }
 }

@@ -118,7 +118,7 @@ class ExternalShopsSeeder extends Seeder
             [
                 'name' => 'The Mana Shop',
                 'base_url' => 'https://themanashop.ch/',
-                'category_urls' => json_encode(['https://themanashop.ch/en/205-pokemon']),
+                'category_urls' => json_encode(['https://themanashop.ch/en/205-pokemon?id_category=205']),
                 'image' => 'themanashop.png',
                 'shop_type' => 'prestashop',
             ],
