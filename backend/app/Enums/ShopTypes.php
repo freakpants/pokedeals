@@ -12,6 +12,8 @@ enum ShopTypes: string
     case Shopware = 'shopware';
     case Pimcore = 'pimcore';
     case Spielezar = 'spielezar';
+    case Kidz = 'kidz';
+    case Galaxy = 'galaxy';
     case Other = 'other';
 
 

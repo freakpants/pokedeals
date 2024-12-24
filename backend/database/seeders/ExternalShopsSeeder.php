@@ -13,12 +13,12 @@ class ExternalShopsSeeder extends Seeder
             [   
                 'name' => 'Kidz.ch',
                 'base_url' => 'https://www.kidz.ch',
-                'category_urls' => json_encode(['https://kidz.ch/collections/lizenz-pokemon']),
+                'category_urls' => json_encode(['https://kidz.ch/collections/lizenz-pokemon?filter.p.vendor=Pok%C3%A9mon&filter.v.availability=1&filter.v.price.gte=&filter.v.price.lte=&sort_by=best-selling']),
                 'image' => 'kidz.png',
-                'shop_type' => 'shopify',
+                'shop_type' => 'kidz',
             ],
             [
-                'name' => 'https://www.fluxed.ch/',
+                'name' => 'Fluxed',
                 'base_url' => 'https://www.fluxed.ch',
                 'category_urls' => null,
                 'image' => 'fluxed.png',
@@ -27,9 +27,9 @@ class ExternalShopsSeeder extends Seeder
             [
                 'name' => 'GameGalaxy',
                 'base_url' => 'https://gamegalaxy.ch',
-                'category_urls' => null,
+                'category_urls' => json_encode(['https://gamegalaxy.ch/collections/pokemon?filter.v.availability=1&filter.v.price.gte=&filter.v.price.lte=&sort_by=best-selling']),
                 'image' => 'gamegalaxy.png',
-                'shop_type' => 'shopify',
+                'shop_type' => 'galaxy',
             ],
             [
                 'name' => 'TwoMoons',

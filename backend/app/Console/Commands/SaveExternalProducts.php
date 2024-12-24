@@ -43,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -129,7 +129,131 @@ class SaveExternalProducts extends Command
         
         // if there are new products, run the rest of the process
         if((!file_exists($json_file) || $newProducts) || $forceRefresh){
-            if($shop->shop_type === 'spielezar'){
+            // galaxy
+            if($shop->shop_type === 'galaxy'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for Galaxy...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        $paginatedUrl = $categoryUrl . '&page=' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.product-block')->each(function (Crawler $node) use ($shop) {
+                            $product = [];
+                            $product['id'] = $node->attr('data-product-id');
+                            // find the product-price element
+                            if($node->filter('.price')->count()){
+                                $price = $node->filter('.price')->text();
+                            } else {
+                                // skip this product if there is no price
+                                return;
+                            }
+                            $price = $node->filter('.amount.theme-money')->text();
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+                            // find the product-title element
+                            $product['title'] = $node->filter('.title')->text();
+
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+
+                        // remove all null values
+                        $current_products = array_filter($current_products);
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        // Check if a "next page" button exists
+                        $hasMorePages = $crawler->filter('.linkless.next')->count() < 1;
+                        $page++;
+                    }
+                }
+            }
+            else if($shop->shop_type === 'kidz'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for Kidz...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        $paginatedUrl = $categoryUrl . '&page=' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.card--card')->each(function (Crawler $node) use ($shop) {
+                            $product = [];
+                            // select h3's with card__heading
+                            $element = $node->filter('.card__heading.h5')->first();
+                            $product['title'] = $element->text();
+                            // the id are the last numbers inside the id of the the element
+                            $product['id'] = preg_replace('/.*?(\d+)$/', '$1', $element->attr('id'));
+                            // find the product-price element
+                            // its the last one if there are multiple
+                            $price = $node->filter('.price-item--sale.price-item--last')->text();
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        // Check if a "next page" button exists
+                        $hasMorePages = $crawler->filter('.pagination__item--prev')->count() > 0;
+                        $page++;
+                    }
+                }
+            }
+            else if($shop->shop_type === 'spielezar'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for Spielezar...");
 
@@ -502,7 +626,9 @@ class SaveExternalProducts extends Command
             $product_type = $this->pokemonHelper->determineProductCategory($product);
 
             // continue if its not a unknown or pokemon product
-            if ($product_type !== 'pokemon' && $product_type !== 'unknown' && $product_type !== 'Sammelkarten') {
+            if ($product_type !== 'pokemon' && $product_type !== 'unknown' && $product_type !== 'Sammelkarten'
+            && $product_type !== ''
+            ) {
                 // check against the specific pokemon product types
                 $details = PokemonHelper::determineProductDetails($product_type);
                 if($details['product_type'] === ProductTypes::Other){
