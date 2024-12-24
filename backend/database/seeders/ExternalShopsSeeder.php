@@ -10,6 +10,27 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [   
+                'name' => 'Kidz.ch',
+                'base_url' => 'https://www.kidz.ch',
+                'category_urls' => json_encode(['https://kidz.ch/collections/lizenz-pokemon']),
+                'image' => 'kidz.png',
+                'shop_type' => 'shopify',
+            ],
+            [
+                'name' => 'https://www.fluxed.ch/',
+                'base_url' => 'https://www.fluxed.ch',
+                'category_urls' => null,
+                'image' => 'fluxed.png',
+                'shop_type' => 'shopify',
+            ],
+            [
+                'name' => 'GameGalaxy',
+                'base_url' => 'https://gamegalaxy.ch',
+                'category_urls' => null,
+                'image' => 'gamegalaxy.png',
+                'shop_type' => 'shopify',
+            ],
             [
                 'name' => 'TwoMoons',
                 'base_url' => 'https://www.twomoons.ch',
