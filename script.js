@@ -1,3 +1,6 @@
+const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText } = MaterialUI;
+
+
 // Fetch products and shops from the Laravel API
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
 const SHOPS_API_URL = 'https://pokeapi.freakpants.ch/api/shops';
@@ -7,6 +10,58 @@ const PRODUCT_TYPES_API_URL = 'https://pokeapi.freakpants.ch/api/product_types';
 
 let shops = {}; // To store shop data for quick lookup
 let allProducts = []; // To store all fetched products
+
+const { createElement } = React;
+const { createRoot } = ReactDOM;
+
+const languages = [
+    { id: 'en', name: 'English' },
+    { id: 'de', name: 'German' },
+    { id: 'fr', name: 'French' },
+    { id: 'ja', name: 'Japanese' }
+  ];
+  
+const LanguageSelect = () => {
+const [selectedLanguages, setSelectedLanguages] = React.useState(['English', 'German', 'French']);
+
+const handleChange = (event) => {
+    setSelectedLanguages(event.target.value);
+};
+
+return createElement(
+    FormControl,
+    { style: { minWidth: 200 } },
+    createElement(InputLabel, { id: "language-select-label" }, "Languages"),
+    createElement(
+    Select,
+    {
+        labelId: "language-select-label",
+        multiple: true,
+        value: selectedLanguages,
+        onChange: handleChange,
+        renderValue: (selected) => selected.join(', ')
+    },
+    languages.map((lang) =>
+        createElement(
+        MenuItem,
+        { key: lang.id, value: lang.name },
+        createElement(Checkbox, { checked: selectedLanguages.indexOf(lang.name) > -1 }),
+        createElement(ListItemText, { primary: lang.name })
+        )
+    )
+    )
+);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const rootElement = document.getElementById('root');
+  if (rootElement) {
+    const root = createRoot(rootElement);
+    root.render(createElement(LanguageSelect));
+  } else {
+    console.error('Root element not found');
+  }
+});
 
 async function fetchShops() {
     try {
