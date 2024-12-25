@@ -1,630 +1,372 @@
+const { useState, useEffect } = React;
 const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText } = MaterialUI;
 
-
-// Fetch products and shops from the Laravel API
+// API Endpoints
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
 const SHOPS_API_URL = 'https://pokeapi.freakpants.ch/api/shops';
 const SETS_API_URL = 'https://pokeapi.freakpants.ch/api/sets';
 const SERIES_API_URL = 'https://pokeapi.freakpants.ch/api/series';
 const PRODUCT_TYPES_API_URL = 'https://pokeapi.freakpants.ch/api/product_types';
 
-let shops = {}; // To store shop data for quick lookup
-let allProducts = []; // To store all fetched products
-
-const { createElement } = React;
-const { createRoot } = ReactDOM;
-
-const languages = [
-    { id: 'en', name: 'English' },
-    { id: 'de', name: 'German' },
-    { id: 'fr', name: 'French' },
-    { id: 'ja', name: 'Japanese' }
-  ];
-  
-const LanguageSelect = () => {
-const [selectedLanguages, setSelectedLanguages] = React.useState(['English', 'German', 'French']);
-
-const handleChange = (event) => {
-    setSelectedLanguages(event.target.value);
-};
-
-return createElement(
-    FormControl,
-    { style: { minWidth: 200 } },
-    createElement(InputLabel, { id: "language-select-label" }, "Languages"),
-    createElement(
-    Select,
-    {
-        labelId: "language-select-label",
-        multiple: true,
-        value: selectedLanguages,
-        onChange: handleChange,
-        renderValue: (selected) => selected.join(', ')
-    },
-    languages.map((lang) =>
-        createElement(
-        MenuItem,
-        { key: lang.id, value: lang.name },
-        createElement(Checkbox, { checked: selectedLanguages.indexOf(lang.name) > -1 }),
-        createElement(ListItemText, { primary: lang.name })
-        )
-    )
-    )
-);
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  const rootElement = document.getElementById('root');
-  if (rootElement) {
-    const root = createRoot(rootElement);
-    root.render(createElement(LanguageSelect));
-  } else {
-    console.error('Root element not found');
-  }
-});
-
-async function fetchShops() {
-    try {
-        const response = await fetch(SHOPS_API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error fetching shops! Status: ${response.status}`);
-        }
-        const shopData = await response.json();
-        shops = shopData.reduce((map, shop) => {
-            map[shop.id] = shop;
-            return map;
-        }, {});
-    } catch (error) {
-        console.error('Error fetching shops:', error);
-    }
-}
-
-async function fetchProducts() {
-    try {
-        const response = await fetch(PRODUCTS_API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error fetching products! Status: ${response.status}`);
-        }
-        const products = await response.json();
-        const productsData = products.data;
-        allProducts = productsData ; // Store all products for filtering
-        await initializeFilters(productsData);
-        renderProducts(productsData);
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        const productList = document.getElementById('product-list');
-        productList.textContent = 'Failed to load products.';
-    }
-}
-
-async function fetchSets() {
-    try {
-        const response = await fetch(SETS_API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error fetching sets! Status: ${response.status}`);
-        }
-        const sets = await response.json();
-        return sets;
-    }
-    catch (error) {
-        console.error('Error fetching sets:', error);
-        return [];
-    }
-}
-
-async function fetchSeries() {
-    try {
-        const response = await fetch(SERIES_API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error fetching sets! Status: ${response.status}`);
-        }
-        const series = await response.json();
-        // save to window
-        window.series = series;
-    }
-    catch (error) {
-        console.error('Error fetching sets:', error);
-        return [];
-    }
-}
-
-async function fetchProductTypes() {
-    try {
-        const response = await fetch(PRODUCT_TYPES_API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error fetching sets! Status: ${response.status}`);
-        }
-        const productTypes = await response.json();
-        return productTypes;
-    }
-    catch (error) {
-        console.error('Error fetching sets:', error);
-        return [];
-    }
-}
-
-
-async function initializeFilters(products) {
-    const url = new URL(window.location.href);
-    const language = url.searchParams.get('language');
-    const set = url.searchParams.get('set');
-
-    const languageFilter = document.getElementById('language-filter');
-    const setFilter = document.getElementById('set-filter');
-    const productTypeFilter = document.getElementById('product-type-filter');
-
-    const languages = new Set();
-
-    // Languages: English, German, French => ''
-    // English => 'en'
-    // German => 'de'
-    // French => 'fr'
-    // Other languages: Japanese => 'ja'
-    // create the languages objects
-    languages.add({ name : 'English, German and French', id : ''});
-    languages.add({ name : 'English', id : 'en'});
-    languages.add({ name : 'German', id : 'de'});
-    languages.add({ name : 'French', id : 'fr'});
-    languages.add({ name : 'Japanese', id : 'ja'});
-
-
-
-
-    // Populate the language filter
-    languageFilter.innerHTML = `
-        ${[...languages].map(lang => `<option value="${lang.id}">${lang.name}</option>`).join('')}
-    `;
-
-    // Fetch sets and populate the set filter with English names in reverse order
-    const setData = await fetchSets();
-
-    // save the unfiltered sets in a global variable
-    window.allSets = setData;
-
-    // filter out japanese sets unless the language is set to japanese
-    createSetFilter(language === 'ja');
-
-    // Set the filter values from the URL parameters after the options are populated
-    if (language) {
-        languageFilter.value = language;
-    }
-    if (set) {
-        setFilter.value = set;
-    }
-
-    // fetch product types and populate the filter
-    const productTypes = await fetchProductTypes();
-    productTypeFilter.innerHTML = `
-        <option value="">All Product Types</option>
-        ${productTypes.map(type => `<option value="${type.product_type}">${type.en_name}</option>`).join('')}
-    `;
-
-    setFilter.addEventListener('change', applyFilters);
-    languageFilter.addEventListener('change', applyFilters);
-    productTypeFilter.addEventListener('change', applyFilters);
-
-
-}
-
-
-
-// Function to toggle sorting
-function toggleSort(sortKey) {
-
-    let [currentSortKey, currentSortOrder] = determine_current_sort();
-
-    if (currentSortKey === sortKey) {
-        // Toggle order for the same key
-        currentSortOrder = currentSortOrder === 'asc' ? 'desc' : currentSortOrder === 'desc' ? 'none' : 'asc';
-    } else {
-        // Start sorting by the new key
-        currentSortKey = sortKey;
-        currentSortOrder = 'asc';
-    }
-
-    console.log(currentSortKey, currentSortOrder);
-
-    // Update the data-order attribute on the sort buttons
-    const releaseButton = document.getElementById('sort-release-date');
-    const priceButton = document.getElementById('sort-price-per-pack');
-
-    releaseButton.setAttribute('data-order', currentSortKey === 'release-date' ? currentSortOrder : 'none');
-    priceButton.setAttribute('data-order', currentSortKey === 'price-per-pack' ? currentSortOrder : 'none');
-
-
-    // Update button icons
-    updateSortIcons();
-
-    // Apply filters and then sort the filtered products
-    applyFilters(); // Filters and renders sorted data
-}
-
-// Function to sort products
-function sortProducts(products, sortKey, sortOrder) {
-    if (sortOrder === 'none') {
-        return [...products]; // Return unsorted
-    }
-
-    const sortedProducts = [...products].sort((a, b) => {
-        let valueA, valueB;
-
-        // Handle specific cases like price_per_pack or dates
-        if (sortKey === 'price-per-pack') {
-
-            // get the current language filter
-            const language = document.getElementById('language-filter').value;
-            // if its empty, filter out any matches that are not de, en or fr
-            if (!language) {
-                a.matches = a.matches.filter(match => ['de', 'en', 'fr'].includes(match.language));
-                b.matches = b.matches.filter(match => ['de', 'en', 'fr'].includes(match.language));
-            } else {
-                a.matches = a.matches.filter(match => match.language === language);
-                b.matches = b.matches.filter(match => match.language === language);
-            }
-
-            // order the matches by price
-            a.matches.sort((a, b) => a.price - b.price);
-            b.matches.sort((a, b) => a.price - b.price);
-
-            
-
-            valueA = a.matches[0]?.price / a.pack_count || 0;
-            valueB = b.matches[0]?.price / b.pack_count || 0;
-        } else if (sortKey === 'release-date') {
-            valueA = new Date(a.release_date);
-            valueB = new Date(b.release_date);
-        } else {
-            valueA = a[sortKey];
-            valueB = b[sortKey];
-        }
-
-        if (sortOrder === 'asc') {
-            return valueA - valueB;
-        } else {
-            return valueB - valueA;
-        }
-    });
-    console.log(sortedProducts);
-    return sortedProducts;
-}
-
-// Function to update icons for sorting
-function updateSortIcons() {
-    const buttons = document.querySelectorAll('.sort-button');
-
-    const [currentSortKey, currentSortOrder] = determine_current_sort();
-    buttons.forEach(button => {
-        const icon = button.querySelector('.sort-icon');
-        const key = button.id === 'sort-release-date' ? 'release-date' : 'price-per-pack';
-
-        if (key === currentSortKey) {
-            icon.textContent = currentSortOrder === 'asc' ? '↑' : currentSortOrder === 'desc' ? '↓' : '↕';
-            button.classList.add('active');
-        } else {
-            icon.textContent = '↕';
-            button.classList.remove('active');
-        }
-    });
-}
-
-function determine_current_sort() {
-    // check both buttons
-    const releaseButton = document.getElementById('sort-release-date');
-    const priceButton = document.getElementById('sort-price-per-pack');
-
-    // check if one of the buttons contains an order that is not none
-    const releaseOrder = releaseButton.getAttribute('data-order');
-    const priceOrder = priceButton.getAttribute('data-order');
-
-    console.log(releaseOrder, priceOrder);
-
-    let currentSortKey = 'release-date';
-    let currentSortOrder = 'none';
-
-    if (releaseOrder !== 'none') {
-        currentSortKey = 'release-date';
-        currentSortOrder = releaseOrder;
-    }
-    if (priceOrder !== 'none') {
-        currentSortKey = 'price-per-pack';
-        currentSortOrder = priceOrder;
-    }
-
-    return [currentSortKey, currentSortOrder];
-}
-
-// Call this in the initialize function
-initializeSorting();
-
-function initializeSorting() {
-    const sortingContainer = document.getElementById('sorting-container');
-    if (sortingContainer) {
-        updateSortIcons();
-    }
-}
-
-// Update applyFilters to handle sorting
-async function applyFilters() {
-    const language = document.getElementById('language-filter').value;
-    const setIdentifier = document.getElementById('set-filter').value;
-    const productType = document.getElementById('product-type-filter').value;
-
-    const [currentSortKey, currentSortOrder] = determine_current_sort();
-
-    // Filter products based on active filters
-    const filteredProducts = allProducts.filter(product => {
-        const languageMatch = language === ''
-            ? product.matches.some(match => ['de', 'en', 'fr'].includes(match.language))
-            : product.matches.some(match => match.language === language);    
-        const setMatch = !setIdentifier || product.set_identifier === setIdentifier;
-        const typeMatch = !productType || product.product_type === productType;
-        return languageMatch && setMatch && typeMatch;
-    });
-
-    // Sort the filtered products if a sort key is active
-    const sortedProducts = currentSortOrder === 'none'
-        ? filteredProducts
-        : sortProducts(filteredProducts, currentSortKey, currentSortOrder);
-
-    // Update the result counts
-    document.getElementById('result-count').textContent = `Showing ${sortedProducts.length} out of ${allProducts.length} products`;
-    const offerCount = sortedProducts.reduce((sum, product) => sum + product.matches.length, 0);
-    document.getElementById('offer-count').textContent = `Found ${offerCount} offers for these products`;
-
-    // update the url with the current parameters
-    const url = new URL(window.location.href);
-    url.searchParams.set('language', language);
-    url.searchParams.set('set', setIdentifier);
-    url.searchParams.set('product_type', productType);
-    if(currentSortKey) {
-        url.searchParams.set('sort_key', currentSortKey);
-    }
-    if(currentSortOrder){
-        url.searchParams.set('sort_order', currentSortOrder);
-    }
-    window.history.replaceState({}, '', url);
-
-    // Re-render products
-    renderProducts(sortedProducts);
-}
-
-function createSetFilter(japanese = false) {
-    const setData = window.allSets;
-    const setFilter = document.getElementById('set-filter');
-    let setDataFiltered;
-
-    if (japanese) {
-        setDataFiltered = setData.filter(set => set.title_ja !== null);
-    } else {
-        setDataFiltered = setData.filter(set => set.title_ja === null);
-    }
-
-    // Sort sets by release_date in descending order
-    setDataFiltered.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
-
-    // Group sets by series
-    const setsBySeries = setDataFiltered.reduce((groups, set) => {
-        const series = set.series_id || 'Other';
-        if (!groups[series]) {
-            groups[series] = [];
-        }
-        groups[series].push(set);
-        return groups;
-    }, {});
-
-    // Populate the set filter with optgroups for each series
-    setFilter.innerHTML = '<option value="">All Products</option>';
-    Object.keys(setsBySeries).forEach(series => {
-        const optgroup = document.createElement('optgroup');
-        // lookup the english title in the series object
-        const seriesObject = window.series.find(s => s.id === series);
-        console.log(seriesObject);
-        optgroup.label = seriesObject ? seriesObject.name_en : series;
-        setsBySeries[series].forEach(set => {
-            const option = document.createElement('option');
-            option.value = set.set_identifier;
-            option.textContent = set.title_en || set.set_identifier;
-            optgroup.appendChild(option);
-        });
-        setFilter.appendChild(optgroup);
-    });
-
-    // Set the filter value from the URL parameter if available
-    const url = new URL(window.location.href);
-    const set = url.searchParams.get('set');
-    if (set) {
-        setFilter.value = set;
-    }
-}
-
-// Mapping of languages to country codes
+// Utility for language-country mapping
 const languageToCountryCode = {
-    en: 'gb', // UK
-    de: 'de', // Germany
-    fr: 'fr', // France
-    ja: 'jp', // Japan
-    // Add more languages and their respective country codes here
+  en: 'gb',
+  de: 'de',
+  fr: 'fr',
+  ja: 'jp',
 };
 
-function renderProducts(products) {
-    const productList = document.getElementById('product-list');
-    productList.innerHTML = ''; // Clear previous content
-
-    const filterLanguage = document.getElementById('language-filter').value;
-
-    if (products.length === 0) {
-        productList.textContent = 'No products found.';
-        return;
-    }
-
-    products.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-
-        // Full-width title
-        const title = document.createElement('h2');
-        title.textContent = product.title.replace('Pokémon TCG: ', '');
-        title.textContent = title.textContent.replace('Pokémon Center', '');
-        productCard.appendChild(title);
-
-        // Row for image and details
-        const contentRow = document.createElement('div');
-        contentRow.className = 'content-row';
-
-        // Image container
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'image-container';
-
-        const mainImage = document.createElement('img');
-        mainImage.src = product.images[0] || '';
-        mainImage.alt = product.title;
-        mainImage.className = 'main-image';
-        imageContainer.appendChild(mainImage);
-
-        // Product details container
-        const productDetails = document.createElement('div');
-        productDetails.className = 'product-details';
-
-        const price = document.createElement('span');
-        price.textContent = `Pokemon Center Price: ${product.price || 'Price not available'}`;
-
-        const packs = document.createElement('span');
-        packs.textContent = `Packs in product: ${product.pack_count}`;
-
-        const link = document.createElement('a');
-        link.href = product.product_url;
-        link.target = '_blank';
-        link.textContent = 'View on Pokemon Center';
-
-        productDetails.appendChild(price);
-        productDetails.appendChild(packs);
-        productDetails.appendChild(link);
-
-        contentRow.appendChild(imageContainer);
-        contentRow.appendChild(productDetails);
-        productCard.appendChild(contentRow);
-
-        // Offers section
-        const matchesContainer = document.createElement('div');
-        matchesContainer.className = 'matches';
-        matchesContainer.innerHTML = '<h3>Offers:</h3>';
-
-        const filteredMatches = product.matches.filter(match => {
-            return !filterLanguage && ['de', 'en', 'fr'].includes(match.language) || match.language === filterLanguage;
-        });
-
-        filteredMatches.sort((a, b) => a.price - b.price);
-
-        // Display the cheapest offer
-        if (filteredMatches.length > 0) {
-            const cheapestOfferElement = renderOffer(product, filteredMatches[0]);
-            cheapestOfferElement.classList.add('cheapest-offer');
-            matchesContainer.appendChild(cheapestOfferElement);
-        }
-
-        // Expandable offers section
-        if (filteredMatches.length > 1) {
-            const toggleContainer = document.createElement('div');
-            toggleContainer.className = 'toggle-container';
-
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'toggle-button';
-            // display the amount of more offers on the button
-            toggleButton.textContent = `Show More Offers (${filteredMatches.length - 1})`;
-
-            const otherOffersContainer = document.createElement('div');
-            otherOffersContainer.className = 'other-offers';
-            otherOffersContainer.style.display = 'none'; // Hidden by default
-
-            filteredMatches.slice(1).forEach(match => {
-                const offerElement = renderOffer(product, match);
-                otherOffersContainer.appendChild(offerElement);
-            });
-
-            toggleButton.addEventListener('click', () => {
-                const isHidden = otherOffersContainer.style.display === 'none';
-                otherOffersContainer.style.display = isHidden ? 'flex' : 'none';
-                toggleButton.textContent = isHidden ? 'Show Fewer Offers' : `Show More Offers (${filteredMatches.length - 1})`;
-            });
-
-            toggleContainer.appendChild(toggleButton);
-            toggleContainer.appendChild(otherOffersContainer);
-            matchesContainer.appendChild(toggleContainer);
-        }
-
-        productCard.appendChild(matchesContainer);
-        productList.appendChild(productCard);
+const App = () => {
+    const [shops, setShops] = React.useState({});
+    const [products, setProducts] = React.useState([]);
+    const [filteredProducts, setFilteredProducts] = React.useState([]);
+    const [sets, setSets] = React.useState([]);
+    const [series, setSeries] = React.useState([]);
+    const [productTypes, setProductTypes] = React.useState([]);
+    const [filters, setFilters] = React.useState({
+      language: '',
+      set: '',
+      productType: '',
     });
-}
-
-// Reusable function to render a single offer
-function renderOffer(product, match) {
-    const shop = shops[match.shop_id] || {};
-    const shopLogo = `<img src="assets/images/shop-logos/${shop.image || ''}" 
-                      alt="${shop.name || 'Shop'} Logo" 
-                      class="shop-logo">`;
-
-    // Ensure pack_count is handled correctly
-    const packCount = product.pack_count || 1; // Default to 1 if pack_count is undefined or 0
-    const pricePerPack = (match.price / packCount).toFixed(2); // Calculate price per pack
-
-    const offerElement = document.createElement('div');
-    offerElement.className = 'offer';
-
-    offerElement.innerHTML = `
-        <div class="shop-info">
-            ${shopLogo}
-            <strong>${shop.name || 'Unknown Shop'}</strong>
-            <div class="product-price">
-                CHF ${match.price.toFixed(2)}
-                <span class="price-per-pack">(~${pricePerPack} per pack)</span>
-            </div>
-        </div>
-        <div class="language-and-title">
-            <span class="flag-icon flag-icon-${languageToCountryCode[match.language] || 'unknown'} product-language-flag"></span>
-            <a href="${match.external_product.url}" target="_blank" class="match-link">
-                ${match.title}
-            </a>
-        </div>
-    `;
-
-    return offerElement;
-}
-
-
-
-
-// Initialize the app
-(async function initialize() {
-    // Initialize sorting buttons
-    document.getElementById('sort-release-date').addEventListener('click', () => toggleSort('release-date'));
-    document.getElementById('sort-price-per-pack').addEventListener('click', () => toggleSort('price-per-pack'));
-
-    await fetchShops(); // Fetch shops first to have the data ready
-    await fetchSeries();
-    await fetchProducts().then(() => {
-        const url = new URL(window.location.href);
-        const language = url.searchParams.get('language');
-        const set = url.searchParams.get('set');
-        const productType = url.searchParams.get('product_type');
-        const sortKey = url.searchParams.get('sort_key');
-        const sortOrder = url.searchParams.get('sort_order');
-        if (language) {
-            document.getElementById('language-filter').value = language;
-        }
-        if (set) {
-            document.getElementById('set-filter').value = set;
-        }
-        if (productType) {
-            document.getElementById('product-type-filter').value = productType;
-        }
-        if (sortKey && sortOrder) {
-            // set the data-order attribute on the sort button
-            document.getElementById('sort-' + sortKey).setAttribute('data-order', sortOrder);
-        } else {
-            // set the default sort order
-            document.getElementById('sort-release-date').setAttribute('data-order', 'desc');
-        }   
-        applyFilters(); // Apply filters after setting the filter values
+    const [sortConfig, setSortConfig] = React.useState({
+      key: 'release-date',
+      order: 'desc',
     });
-})();
+  
+    React.useEffect(() => {
+      fetchInitialData();
+    }, []);
+  
+    React.useEffect(() => {
+      applyFilters();
+    }, [filters, sortConfig]);
+  
+    const fetchInitialData = async () => {
+      await Promise.all([fetchShops(), fetchSets(), fetchSeries(), fetchProductTypes(), fetchProducts()]);
+    };
+  
+    const fetchShops = async () => {
+      try {
+        const response = await fetch(SHOPS_API_URL);
+        const data = await response.json();
+        const shopsMap = data.reduce((acc, shop) => {
+          acc[shop.id] = shop;
+          return acc;
+        }, {});
+        setShops(shopsMap);
+      } catch (error) {
+        console.error('Error fetching shops:', error);
+      }
+    };
+  
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(PRODUCTS_API_URL);
+        const data = await response.json();
+        setProducts(data.data);
+        setFilteredProducts(data.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+  
+    const fetchSets = async () => {
+      try {
+        const response = await fetch(SETS_API_URL);
+        const data = await response.json();
+        setSets(data);
+      } catch (error) {
+        console.error('Error fetching sets:', error);
+      }
+    };
+  
+    const fetchSeries = async () => {
+      try {
+        const response = await fetch(SERIES_API_URL);
+        const data = await response.json();
+        setSeries(data);
+      } catch (error) {
+        console.error('Error fetching series:', error);
+      }
+    };
+  
+    const fetchProductTypes = async () => {
+      try {
+        const response = await fetch(PRODUCT_TYPES_API_URL);
+        const data = await response.json();
+        setProductTypes(data);
+      } catch (error) {
+        console.error('Error fetching product types:', error);
+      }
+    };
+  
+    const handleFilterChange = (key, value) => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: value,
+      }));
+    };
+  
+    const applyFilters = () => {
+      let result = products;
+  
+      if (filters.language) {
+        result = result.filter((product) =>
+          product.matches.some((match) => match.language === filters.language)
+        );
+      }
+  
+      if (filters.set) {
+        result = result.filter((product) => product.set_identifier === filters.set);
+      }
+  
+      if (filters.productType) {
+        result = result.filter((product) => product.product_type === filters.productType);
+      }
+  
+      result = sortProducts(result, sortConfig.key, sortConfig.order);
+      setFilteredProducts(result);
+    };
+  
+    const sortProducts = (products, key, order) => {
+      if (order === 'none') return products;
+      return [...products].sort((a, b) => {
+        let valueA, valueB;
+        if (key === 'release-date') {
+          valueA = new Date(a.release_date);
+          valueB = new Date(b.release_date);
+        } else if (key === 'price-per-pack') {
+          valueA = (a.matches[0]?.price || 0) / (a.pack_count || 1);
+          valueB = (b.matches[0]?.price || 0) / (b.pack_count || 1);
+        }
+        return order === 'asc' ? valueA - valueB : valueB - valueA;
+      });
+    };
+  
+    const toggleSort = (key) => {
+      setSortConfig((prevConfig) => ({
+        key,
+        order: prevConfig.key === key
+          ? prevConfig.order === 'asc'
+            ? 'desc'
+            : 'asc'
+          : 'asc',
+      }));
+    };
+  
+    const renderSetFilterOptions = () => {
+      const languageIsJapanese = filters.language === 'ja';
+      const filteredSets = sets.filter((set) =>
+        languageIsJapanese ? set.title_ja : !set.title_ja
+      );
+  
+      const groupedSets = filteredSets.reduce((acc, set) => {
+        const seriesTitle = series.find((s) => s.id === set.series_id)?.name_en || 'Other';
+        if (!acc[seriesTitle]) acc[seriesTitle] = [];
+        acc[seriesTitle].push(set);
+        return acc;
+      }, {});
+  
+      return Object.entries(groupedSets).map(([seriesTitle, sets]) =>
+        React.createElement(
+          'optgroup',
+          { label: seriesTitle, key: seriesTitle },
+          sets.map((set) =>
+            React.createElement(
+              'option',
+              { value: set.set_identifier, key: set.set_identifier },
+              set.title_en || set.title_ja
+            )
+          )
+        )
+      );
+    };
+  
+    const renderOffer = (product, match, isCheapest) => {
+      const shop = shops[match.shop_id] || {};
+      const packCount = product.pack_count || 1;
+      const pricePerPack = (match.price / packCount).toFixed(2);
+  
+      return React.createElement(
+        'div',
+        { className: `offer ${isCheapest ? 'cheapest-offer' : ''}`, key: match.id },
+        React.createElement(
+          'div',
+          { className: 'shop-info' },
+          React.createElement('img', {
+            src: `assets/images/shop-logos/${shop.image || ''}`,
+            alt: `${shop.name || 'Shop'} Logo`,
+            className: 'shop-logo',
+          }),
+          React.createElement('strong', null, shop.name || 'Unknown Shop'),
+          React.createElement(
+            'div',
+            { className: 'product-price' },
+            `CHF ${match.price.toFixed(2)}`,
+            React.createElement('span', { className: 'price-per-pack' }, `(~${pricePerPack} per pack)`)
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'language-and-title' },
+          React.createElement('span', {
+            className: `flag-icon flag-icon-${match.language || 'unknown'}`,
+          }),
+          React.createElement(
+            'a',
+            { href: match.external_product.url, target: '_blank', className: 'match-link' },
+            match.title
+          )
+        )
+      );
+    };
+  
+    const renderProductCard = (product) => {
+      const cheapestMatch = product.matches.slice().sort((a, b) => a.price - b.price)[0];
+      const otherMatches = product.matches
+        .slice()
+        .sort((a, b) => a.price - b.price)
+        .slice(1);
+  
+      const matchesContainer = React.createElement('div', { className: 'matches' }, [
+        renderOffer(product, cheapestMatch, true),
+        otherMatches.length > 0 &&
+          React.createElement(
+            'div',
+            { className: 'toggle-container' },
+            React.createElement(
+              'button',
+              {
+                className: 'toggle-button',
+                onClick: (e) => {
+                  const sibling = e.target.nextSibling;
+                  sibling.style.display = sibling.style.display === 'none' ? 'block' : 'none';
+                  e.target.textContent =
+                    sibling.style.display === 'none' ? 'Show More Offers' : 'Show Fewer Offers';
+                },
+              },
+              'Show More Offers'
+            ),
+            React.createElement(
+              'div',
+              { className: 'other-offers', style: { display: 'none' } },
+              otherMatches.map((match) => renderOffer(product, match, false))
+            )
+          ),
+      ]);
+  
+      const productDetails = React.createElement(
+        'div',
+        { className: 'product-details' },
+        React.createElement('span', null, `Pokemon Center Price: ${product.price || 'Price not available'}`),
+        React.createElement('span', null, `Packs in product: ${product.pack_count}`),
+        React.createElement(
+          'a',
+          { href: product.product_url, target: '_blank' },
+          'View on Pokemon Center'
+        )
+      );
+  
+      return React.createElement(
+        'div',
+        { className: 'product-card', key: product.id },
+        React.createElement('h2', null, product.title.replace('Pokémon TCG: ', '')),
+        React.createElement(
+          'div',
+          { className: 'content-row' },
+          React.createElement(
+            'div',
+            { className: 'image-container' },
+            React.createElement('img', {
+              src: product.images[0] || '',
+              alt: product.title,
+              className: 'main-image',
+            })
+          ),
+          productDetails
+        ),
+        matchesContainer
+      );
+    };
+  
+    const filtersComponent = React.createElement(
+      'div',
+      { id: 'filters' },
+      React.createElement(
+        FormControl,
+        null,
+        React.createElement(InputLabel, { id: 'language-filter-label' }, 'Language'),
+        React.createElement(
+          Select,
+          {
+            labelId: 'language-filter-label',
+            value: filters.language,
+            onChange: (e) => handleFilterChange('language', e.target.value),
+          },
+          React.createElement(MenuItem, { value: '' }, 'All Languages'),
+          React.createElement(MenuItem, { value: 'en' }, 'English'),
+          React.createElement(MenuItem, { value: 'de' }, 'German'),
+          React.createElement(MenuItem, { value: 'fr' }, 'French'),
+          React.createElement(MenuItem, { value: 'ja' }, 'Japanese')
+        )
+      ),
+      React.createElement(
+        FormControl,
+        null,
+        React.createElement(InputLabel, { id: 'set-filter-label' }, 'Set'),
+        React.createElement(
+          'select',
+          {
+            id: 'set-filter',
+            value: filters.set,
+            onChange: (e) => handleFilterChange('set', e.target.value),
+          },
+          React.createElement('option', { value: '' }, 'All Sets'),
+          renderSetFilterOptions()
+        )
+      ),
+      React.createElement(
+        FormControl,
+        null,
+        React.createElement(InputLabel, { id: 'product-type-filter-label' }, 'Product Type'),
+        React.createElement(
+          Select,
+          {
+            labelId: 'product-type-filter-label',
+            value: filters.productType,
+            onChange: (e) => handleFilterChange('productType', e.target.value),
+          },
+          React.createElement(MenuItem, { value: '' }, 'All Product Types'),
+          productTypes.map((type) =>
+            React.createElement(MenuItem, { key: type.product_type, value: type.product_type }, type.en_name)
+          )
+        )
+      )
+    );
+  
+    const sortingComponent = React.createElement(
+      'div',
+      { id: 'sorting' },
+      React.createElement(
+        'button',
+        { onClick: () => toggleSort('release-date') },
+        'Sort by Release Date'
+      ),
+      React.createElement(
+        'button',
+        { onClick: () => toggleSort('price-per-pack') },
+        'Sort by Price per Pack'
+      )
+    );
+  
+    return React.createElement(
+      'div',
+      null,
+      filtersComponent,
+      sortingComponent,
+      React.createElement('div', { id: 'product-list' }, filteredProducts.map(renderProductCard))
+    );
+  };
+  
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  
