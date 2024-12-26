@@ -16,6 +16,13 @@ const languageToCountryCode = {
   ja: 'jp',
 };
 
+const languageToDisplayName = {
+  en: 'English',
+  de: 'German',
+  fr: 'French',
+  ja: 'Japanese',
+};
+
 const parseQueryParams = () => {
   const params = new URLSearchParams(window.location.search);
   return {
@@ -356,7 +363,7 @@ const App = () => {
           multiple: true,
           value: filters.language,
           onChange: (e) => handleFilterChange('language', e.target.value),
-          renderValue: (selected) => selected.join(', '),
+          renderValue: (selected) => selected.map(lang => languageToDisplayName[lang]).join(', '),
         },
         React.createElement(MenuItem, { value: 'en' }, 'English'),
         React.createElement(MenuItem, { value: 'de' }, 'German'),
