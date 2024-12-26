@@ -45,8 +45,8 @@ const App = () => {
     const [series, setSeries] = React.useState([]);
     const [productTypes, setProductTypes] = React.useState([]);
     const [filters, setFilters] = React.useState({
-      language: '',
-      set: [], // Initialize as an array
+      language: ['de', 'en', 'fr'], // Default selected languages
+      set: [],
       productType: '',
     });
     
@@ -136,28 +136,38 @@ const App = () => {
     };
   
     // Updated filtering logic in applyFilters
-const applyFilters = () => {
-  let result = products;
-
-  if (filters.language) {
-    result = result.filter((product) =>
-      product.matches.some((match) => match.language === filters.language)
-    );
-  }
-
-  if (filters.set.length > 0) {
-    result = result.filter((product) =>
-      filters.set.includes(product.set_identifier)
-    );
-  }
-
-  if (filters.productType) {
-    result = result.filter((product) => product.product_type === filters.productType);
-  }
-
-  result = sortProducts(result, sortConfig.key, sortConfig.order);
-  setFilteredProducts(result);
-};
+    const applyFilters = () => {
+      let result = products;
+    
+      // Filter products based on language and update their matches
+      if (filters.language.length > 0) {
+        result = result
+          .map((product) => {
+            const filteredMatches = product.matches.filter((match) =>
+              filters.language.includes(match.language)
+            );
+            return filteredMatches.length > 0 ? { ...product, matches: filteredMatches } : null;
+          })
+          .filter((product) => product !== null); // Remove products with no valid matches
+      }
+    
+      // Filter products based on set
+      if (filters.set.length > 0) {
+        result = result.filter((product) =>
+          filters.set.includes(product.set_identifier)
+        );
+      }
+    
+      // Filter products based on product type
+      if (filters.productType) {
+        result = result.filter((product) => product.product_type === filters.productType);
+      }
+    
+      // Sort the filtered products
+      result = sortProducts(result, sortConfig.key, sortConfig.order);
+      
+      setFilteredProducts(result);
+    };
   
     const sortProducts = (products, key, order) => {
       if (order === 'none') return products;
@@ -227,7 +237,8 @@ const applyFilters = () => {
       const shop = shops[match.shop_id] || {};
       const packCount = product.pack_count || 1;
       const pricePerPack = (match.price / packCount).toFixed(2);
-  
+      const countryCode = languageToCountryCode[match.language] || 'unknown'; // Default if no match
+    
       return React.createElement(
         'div',
         { className: `offer ${isCheapest ? 'cheapest-offer' : ''}`, key: match.id },
@@ -251,7 +262,8 @@ const applyFilters = () => {
           'div',
           { className: 'language-and-title' },
           React.createElement('span', {
-            className: `flag-icon flag-icon-${match.language || 'unknown'}`,
+            className: `flag-icon flag-icon-${countryCode}`,
+            title: match.language, // Tooltip for accessibility
           }),
           React.createElement(
             'a',
@@ -344,7 +356,6 @@ const applyFilters = () => {
             value: filters.language,
             onChange: (e) => handleFilterChange('language', e.target.value),
           },
-          React.createElement(MenuItem, { value: '' }, 'All Languages'),
           React.createElement(MenuItem, { value: 'en' }, 'English'),
           React.createElement(MenuItem, { value: 'de' }, 'German'),
           React.createElement(MenuItem, { value: 'fr' }, 'French'),
