@@ -29,15 +29,19 @@ const parseQueryParams = () => {
     language: params.get('language') ? params.get('language').split(',') : [],
     set: params.get('set') ? params.get('set').split(',') : [],
     productType: params.get('productType') || '',
+    sortKey: params.get('sortKey') || 'newest',
+    sortOrder: params.get('sortOrder') || 'asc',
   };
 };
 
-const updateUrlParams = (filters) => {
+const updateUrlParams = (filters, sortConfig) => {
   const params = new URLSearchParams();
 
   if (filters.language.length > 0) params.set('language', filters.language.join(','));
   if (filters.set.length > 0) params.set('set', filters.set.join(','));
   if (filters.productType) params.set('productType', filters.productType);
+  params.set('sortKey', sortConfig.key);
+  params.set('sortOrder', sortConfig.order);
 
   const newUrl = `${window.location.pathname}?${params.toString()}`;
   window.history.replaceState(null, '', newUrl); // Update the URL
@@ -57,8 +61,8 @@ const App = () => {
   });
 
   const [sortConfig, setSortConfig] = useState({
-    key: 'release-date',
-    order: 'desc',
+    key: 'newest',
+    order: 'asc',
   });
 
   const [productCount, setProductCount] = useState(0);
@@ -72,12 +76,13 @@ const App = () => {
       queryParams.language = ['en', 'de', 'fr'];
     }
     setFilters(queryParams); // Update state with filters
+    setSortConfig({ key: queryParams.sortKey, order: queryParams.sortOrder }); // Update state with sort config
   }, []); // Only on mount
 
   useEffect(() => {
     if (products.length > 0) {
       applyFilters(); // Apply filters after products are loaded
-      updateUrlParams(filters); // Sync the updated filters with the URL
+      updateUrlParams(filters, sortConfig); // Sync the updated filters and sort config with the URL
     }
   }, [filters, sortConfig, products]); // Run when filters, sortConfig, or products change
 
@@ -191,20 +196,21 @@ const App = () => {
     if (order === 'none') return products;
     return [...products].sort((a, b) => {
       let valueA, valueB;
-      if (key === 'release-date') {
+      if (key === 'newest' || key === 'oldest') {
         valueA = new Date(a.release_date);
         valueB = new Date(b.release_date);
-      } else if (key === 'price-per-pack') {
+        return key === 'newest' ? valueB - valueA : valueA - valueB;
+      } else if (key === 'cheapest' || key === 'most-expensive') {
         const cheapestA = a.matches.reduce((min, match) => match.price < min ? match.price : min, Infinity);
         const cheapestB = b.matches.reduce((min, match) => match.price < min ? match.price : min, Infinity);
         valueA = cheapestA / (a.pack_count || 1);
         valueB = cheapestB / (b.pack_count || 1);
+        return key === 'cheapest' ? valueA - valueB : valueB - valueA;
       }
-      return order === 'asc' ? valueA - valueB : valueB - valueA;
     });
   };
 
-  const toggleSort = (key) => {
+  const handleSortChange = (key) => {
     setSortConfig((prevConfig) => ({
       key,
       order: prevConfig.key === key
@@ -213,6 +219,11 @@ const App = () => {
           : 'asc'
         : 'asc',
     }));
+  };
+
+  const renderSortOrderIcon = (key) => {
+    if (sortConfig.key !== key) return '↕';
+    return sortConfig.order === 'asc' ? '↑' : '↓';
   };
 
   const renderSetFilterOptions = () => {
@@ -421,21 +432,23 @@ const App = () => {
           React.createElement(MenuItem, { key: type.product_type, value: type.product_type }, type.en_name)
         )
       )
-    )
-  );
-
-  const sortingComponent = React.createElement(
-    'div',
-    { id: 'sorting' },
-    React.createElement(
-      'button',
-      { onClick: () => toggleSort('release-date') },
-      'Sort by Release Date'
     ),
     React.createElement(
-      'button',
-      { onClick: () => toggleSort('price-per-pack') },
-      'Sort by Price per Pack'
+      FormControl,
+      null,
+      React.createElement(InputLabel, { id: 'sort-filter-label' }, 'Sort By'),
+      React.createElement(
+        Select,
+        {
+          labelId: 'sort-filter-label',
+          value: sortConfig.key,
+          onChange: (e) => handleSortChange(e.target.value),
+        },
+        React.createElement(MenuItem, { value: 'newest' }, 'Newest'),
+        React.createElement(MenuItem, { value: 'oldest' }, 'Oldest'),
+        React.createElement(MenuItem, { value: 'cheapest' }, 'Cheapest (per Pack)'),
+        React.createElement(MenuItem, { value: 'most-expensive' }, 'Most expensive (per Pack)')
+      )
     )
   );
 
@@ -443,7 +456,6 @@ const App = () => {
     'div',
     null,
     filtersComponent,
-    sortingComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),
     React.createElement('div', { id: 'product-list' }, filteredProducts.map(renderProductCard))
