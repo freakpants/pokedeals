@@ -385,12 +385,24 @@ const App = () => {
           multiple: true,
           value: filters.language,
           onChange: (e) => handleFilterChange('language', e.target.value),
-          renderValue: (selected) => selected.map(lang => languageToDisplayName[lang]).join(', '),
+          renderValue: (selected) =>
+            React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
+              selected.map(lang => (
+                React.createElement('span', { key: lang, style: { display: 'flex', alignItems: 'center', gap: '5px' } },
+                  React.createElement('span', { className: `flag-icon flag-icon-${languageToCountryCode[lang]}` }),
+                  languageToDisplayName[lang]
+                )
+              ))
+            ),
         },
-        React.createElement(MenuItem, { value: 'en' }, 'English'),
-        React.createElement(MenuItem, { value: 'de' }, 'German'),
-        React.createElement(MenuItem, { value: 'fr' }, 'French'),
-        React.createElement(MenuItem, { value: 'ja' }, 'Japanese')
+        Object.keys(languageToDisplayName).map(lang => (
+          React.createElement(MenuItem, { key: lang, value: lang },
+            React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '5px' } },
+              React.createElement('span', { className: `flag-icon flag-icon-${languageToCountryCode[lang]}` }),
+              languageToDisplayName[lang]
+            )
+          )
+        ))
       )
     ),
     React.createElement(
