@@ -61,6 +61,9 @@ const App = () => {
     order: 'desc',
   });
 
+  const [productCount, setProductCount] = useState(0);
+  const [offerCount, setOfferCount] = useState(0);
+
   useEffect(() => {
     fetchInitialData(); // Fetch all data
     const queryParams = parseQueryParams(); // Extract filters from URL
@@ -147,6 +150,7 @@ const App = () => {
   // Updated filtering logic in applyFilters
   const applyFilters = () => {
     let result = products;
+    let totalOffers = 0;
 
     // Filter products based on language and update their matches
     if (filters.language.length > 0) {
@@ -172,10 +176,15 @@ const App = () => {
       result = result.filter((product) => product.product_type === filters.productType);
     }
 
+    // Count total offers after all filters are applied
+    totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
+
     // Sort the filtered products
     result = sortProducts(result, sortConfig.key, sortConfig.order);
 
     setFilteredProducts(result);
+    setProductCount(result.length);
+    setOfferCount(totalOffers);
   };
 
   const sortProducts = (products, key, order) => {
@@ -186,8 +195,10 @@ const App = () => {
         valueA = new Date(a.release_date);
         valueB = new Date(b.release_date);
       } else if (key === 'price-per-pack') {
-        valueA = (a.matches[0]?.price || 0) / (a.pack_count || 1);
-        valueB = (b.matches[0]?.price || 0) / (b.pack_count || 1);
+        const cheapestA = a.matches.reduce((min, match) => match.price < min ? match.price : min, Infinity);
+        const cheapestB = b.matches.reduce((min, match) => match.price < min ? match.price : min, Infinity);
+        valueA = cheapestA / (a.pack_count || 1);
+        valueB = cheapestB / (b.pack_count || 1);
       }
       return order === 'asc' ? valueA - valueB : valueB - valueA;
     });
@@ -433,6 +444,8 @@ const App = () => {
     null,
     filtersComponent,
     sortingComponent,
+    React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
+    React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),
     React.createElement('div', { id: 'product-list' }, filteredProducts.map(renderProductCard))
   );
 };
