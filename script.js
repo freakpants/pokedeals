@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText } = MaterialUI;
+const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, ListSubheader } = MaterialUI;
 
 // API Endpoints
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
@@ -16,6 +16,27 @@ const languageToCountryCode = {
   ja: 'jp',
 };
 
+const parseQueryParams = () => {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    language: params.get('language') || '',
+    set: params.get('set') ? params.get('set').split(',') : [],
+    productType: params.get('productType') || '',
+  };
+};
+
+const updateUrlParams = (filters) => {
+  const params = new URLSearchParams();
+
+  if (filters.language) params.set('language', filters.language);
+  if (filters.set.length > 0) params.set('set', filters.set.join(','));
+  if (filters.productType) params.set('productType', filters.productType);
+
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState(null, '', newUrl); // Update the URL
+};
+
+
 const App = () => {
     const [shops, setShops] = React.useState({});
     const [products, setProducts] = React.useState([]);
@@ -25,21 +46,28 @@ const App = () => {
     const [productTypes, setProductTypes] = React.useState([]);
     const [filters, setFilters] = React.useState({
       language: '',
-      set: '',
+      set: [], // Initialize as an array
       productType: '',
     });
+    
     const [sortConfig, setSortConfig] = React.useState({
       key: 'release-date',
       order: 'desc',
     });
   
     React.useEffect(() => {
-      fetchInitialData();
-    }, []);
-  
+      fetchInitialData(); // Fetch all data
+      const queryParams = parseQueryParams(); // Extract filters from URL
+      setFilters(queryParams); // Update state with filters
+    }, []); // Only on mount
+    
     React.useEffect(() => {
-      applyFilters();
-    }, [filters, sortConfig]);
+      if (products.length > 0) {
+        applyFilters(); // Apply filters after products are loaded
+        updateUrlParams(filters); // Sync the updated filters with the URL
+      }
+    }, [filters, sortConfig, products]); // Run when filters, sortConfig, or products change
+    
   
     const fetchInitialData = async () => {
       await Promise.all([fetchShops(), fetchSets(), fetchSeries(), fetchProductTypes(), fetchProducts()]);
@@ -103,30 +131,33 @@ const App = () => {
     const handleFilterChange = (key, value) => {
       setFilters((prevFilters) => ({
         ...prevFilters,
-        [key]: value,
+        [key]: key === 'set' ? value : value, // Ensure 'set' filter is always an array
       }));
     };
   
-    const applyFilters = () => {
-      let result = products;
-  
-      if (filters.language) {
-        result = result.filter((product) =>
-          product.matches.some((match) => match.language === filters.language)
-        );
-      }
-  
-      if (filters.set) {
-        result = result.filter((product) => product.set_identifier === filters.set);
-      }
-  
-      if (filters.productType) {
-        result = result.filter((product) => product.product_type === filters.productType);
-      }
-  
-      result = sortProducts(result, sortConfig.key, sortConfig.order);
-      setFilteredProducts(result);
-    };
+    // Updated filtering logic in applyFilters
+const applyFilters = () => {
+  let result = products;
+
+  if (filters.language) {
+    result = result.filter((product) =>
+      product.matches.some((match) => match.language === filters.language)
+    );
+  }
+
+  if (filters.set.length > 0) {
+    result = result.filter((product) =>
+      filters.set.includes(product.set_identifier)
+    );
+  }
+
+  if (filters.productType) {
+    result = result.filter((product) => product.product_type === filters.productType);
+  }
+
+  result = sortProducts(result, sortConfig.key, sortConfig.order);
+  setFilteredProducts(result);
+};
   
     const sortProducts = (products, key, order) => {
       if (order === 'none') return products;
@@ -159,28 +190,38 @@ const App = () => {
       const filteredSets = sets.filter((set) =>
         languageIsJapanese ? set.title_ja : !set.title_ja
       );
-  
-      const groupedSets = filteredSets.reduce((acc, set) => {
+    
+      // Sort sets by release_date descending
+      const sortedSets = [...filteredSets].sort((a, b) => {
+        const dateA = new Date(a.release_date);
+        const dateB = new Date(b.release_date);
+        return dateB - dateA; // Descending order
+      });
+    
+      const groupedSets = sortedSets.reduce((acc, set) => {
         const seriesTitle = series.find((s) => s.id === set.series_id)?.name_en || 'Other';
         if (!acc[seriesTitle]) acc[seriesTitle] = [];
         acc[seriesTitle].push(set);
         return acc;
       }, {});
-  
-      return Object.entries(groupedSets).map(([seriesTitle, sets]) =>
+    
+      return Object.entries(groupedSets).flatMap(([seriesTitle, sets]) => [
         React.createElement(
-          'optgroup',
-          { label: seriesTitle, key: seriesTitle },
-          sets.map((set) =>
-            React.createElement(
-              'option',
-              { value: set.set_identifier, key: set.set_identifier },
-              set.title_en || set.title_ja
-            )
+          ListSubheader,
+          { key: `header-${seriesTitle}` },
+          seriesTitle
+        ),
+        ...sets.map((set) =>
+          React.createElement(
+            MenuItem,
+            { value: set.set_identifier, key: set.set_identifier },
+            set.title_en || set.title_ja
           )
-        )
-      );
+        ),
+      ]);
     };
+    
+    
   
     const renderOffer = (product, match, isCheapest) => {
       const shop = shops[match.shop_id] || {};
@@ -315,13 +356,21 @@ const App = () => {
         null,
         React.createElement(InputLabel, { id: 'set-filter-label' }, 'Set'),
         React.createElement(
-          'select',
+          Select,
           {
             id: 'set-filter',
-            value: filters.set,
+            labelId: 'set-filter-label',
+            multiple: true, // Enable multi-select
+            value: filters.set, // Array of selected values
             onChange: (e) => handleFilterChange('set', e.target.value),
+            renderValue: (selected) =>
+              selected
+                .map((setId) => {
+                  const set = sets.find((s) => s.set_identifier === setId);
+                  return set ? set.title_en || set.title_ja : '';
+                })
+                .join(', '),
           },
-          React.createElement('option', { value: '' }, 'All Sets'),
           renderSetFilterOptions()
         )
       ),
