@@ -376,7 +376,7 @@ const App = () => {
     { id: 'filters' },
     React.createElement(
       FormControl,
-      null,
+      { sx: { minWidth: 300 } }, // Ensure a minimum width
       React.createElement(InputLabel, { id: 'language-filter-label' }, 'Language'),
       React.createElement(
         Select,
@@ -395,7 +395,7 @@ const App = () => {
     ),
     React.createElement(
       FormControl,
-      null,
+      { sx: { minWidth: 300 } }, // Ensure a minimum width
       React.createElement(InputLabel, { id: 'set-filter-label' }, 'Set'),
       React.createElement(
         Select,
@@ -418,7 +418,7 @@ const App = () => {
     ),
     React.createElement(
       FormControl,
-      null,
+      { sx: { minWidth: 300 } }, // Ensure a minimum width
       React.createElement(InputLabel, { id: 'product-type-filter-label' }, 'Product Type'),
       React.createElement(
         Select,
@@ -435,7 +435,7 @@ const App = () => {
     ),
     React.createElement(
       FormControl,
-      null,
+      { sx: { minWidth: 300 } }, // Ensure a minimum width
       React.createElement(InputLabel, { id: 'sort-filter-label' }, 'Sort By'),
       React.createElement(
         Select,
