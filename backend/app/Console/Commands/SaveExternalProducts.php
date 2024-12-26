@@ -75,6 +75,9 @@ class SaveExternalProducts extends Command
             // check on the first page of the shop, if there are any products we dont have yet
             if ($shop->shop_type === 'shopify' && !$existingProduct) {
                 $page = $shop->previous_last_page;
+                $this->info("Checking for new products on page $page...");
+                // sleep for 1 second to not get rate limited
+                sleep(1);
                 $response = Http::get("$baseUrl/products.json", [
                     'page' => $page,
                     'limit' => $perPage,
@@ -485,7 +488,7 @@ class SaveExternalProducts extends Command
                 
             }
             else if ($shop->shop_type === 'websell') {
-                $productInfoUrl = $baseUrl  . 'store/ajax/productinfo.nsc';
+                $productInfoUrl = $baseUrl  . '/store/ajax/productinfo.nsc';
                 $categoryUrls = json_decode($shop->category_urls);
     
                 $allCodes = [];

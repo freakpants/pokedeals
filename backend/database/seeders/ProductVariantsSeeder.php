@@ -83,7 +83,9 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'combined_powers_premium_collection',
             'de_strings' => json_encode(['']),
             'en_strings' => json_encode(['combined powers']),
-            'en_name' => 'Combined Powers Premium Collection'
+            'en_name' => 'Combined Powers Premium Collection',
+            'pack_count' => 11
+
         ]);
 
         DB::table('pokemon_product_variants')->insert([
@@ -176,9 +178,9 @@ class ProductVariantsSeeder extends Seeder
 
         DB::table('pokemon_product_variants')->insert([
             'product_type' => ProductTypes::MiniTin->value,
-            'en_short' => 'vibrant_paldea_pachirisu_palafin_mini_tin',
+            'en_short' => 'vibrant_paldea_pachirisu_palafin_mini_tin', 
             'de_strings' => json_encode(['mini tins juni 2024','farbenfrohes paldea']),
-            'en_strings' => json_encode(['pachirisu','palafin']),
+            'en_strings' => json_encode(['palafin','Pachirisu & Palafin']),
             'en_name' => 'Vibrant Paldea Mini Tin (Pachirisu & Palafin)'
         ]);
 
@@ -294,6 +296,16 @@ class ProductVariantsSeeder extends Seeder
             'de_strings' => json_encode(['crown zenith']),
             'en_strings' => json_encode(['crown zenith']),
             'en_name' => 'Crown Zenith Elite Trainer Box',
+            'pack_count' => 10
+        ]);
+
+        // Hidden Fates etb actually has 10 packs
+        DB::table('pokemon_product_variants')->insert([
+            'product_type' => ProductTypes::EliteTrainerBox->value,
+            'en_short' => 'hidden_fates_etb',
+            'de_strings' => json_encode(['hidden fates']),
+            'en_strings' => json_encode(['hidden fates']),
+            'en_name' => 'Hidden Fates Elite Trainer Box',
             'pack_count' => 10
         ]);
 
