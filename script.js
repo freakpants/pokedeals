@@ -324,10 +324,12 @@ const App = () => {
                 const sibling = e.target.nextSibling;
                 sibling.style.display = sibling.style.display === 'none' ? 'block' : 'none';
                 e.target.textContent =
-                  sibling.style.display === 'none' ? 'Show More Offers' : 'Show Fewer Offers';
+                  sibling.style.display === 'none'
+                    ? `Show More Offers (${otherMatches.length})`
+                    : 'Show Fewer Offers';
               },
             },
-            'Show More Offers'
+            `Show More Offers (${otherMatches.length})`
           ),
           React.createElement(
             'div',
