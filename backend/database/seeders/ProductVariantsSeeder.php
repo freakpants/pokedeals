@@ -19,7 +19,9 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'terapagos_ex_ultra_premium_collection',
             'de_strings' => json_encode(['']),
             'en_strings' => json_encode(['terapagos ex']),
-            'en_name' => 'Terapagos ex Ultra Premium Collection'
+            'en_name' => 'Terapagos ex Ultra Premium Collection',
+            'pack_count' => 18
+
         ]);
 
         DB::table('pokemon_product_variants')->insert([
@@ -67,7 +69,8 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'kleaveor_vstar_premium_collection',
             'de_strings' => json_encode(['']),
             'en_strings' => json_encode(['vstar premium collection kleavor','kleavor vstar' ]),
-            'en_name' => 'Kleavor VSTAR Premium Collection'
+            'en_name' => 'Kleavor VSTAR Premium Collection',
+            'pack_count' => 6
         ]);
 
         DB::table('pokemon_product_variants')->insert([
@@ -75,7 +78,8 @@ class ProductVariantsSeeder extends Seeder
             'en_short' => 'ogerpon_ex_premium_collection',
             'de_strings' => json_encode(['']),
             'en_strings' => json_encode(['ogerpon ex']),
-            'en_name' => 'Ogerpon ex Premium Collection'
+            'en_name' => 'Ogerpon ex Premium Collection',
+            'pack_count' => 6
         ]);
 
         DB::table('pokemon_product_variants')->insert([

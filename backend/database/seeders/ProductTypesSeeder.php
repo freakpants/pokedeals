@@ -204,7 +204,7 @@ class ProductTypesSeeder extends Seeder
 
         DB::table('product_types')->insert([
             'product_type' => 'binder_collection',
-            'pack_count' => 4,
+            'pack_count' => 5,
             'mixed_sets' => false,
             'en_name' => 'Binder Collection',
         ]);
