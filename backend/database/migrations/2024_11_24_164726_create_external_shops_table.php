@@ -17,6 +17,7 @@ class CreateExternalShopsTable extends Migration
             $table->integer('previous_last_page')->default(1);
             // category url (can be empty)
             $table->json('category_urls')->nullable();
+            $table->timestamp('last_scraped_at')->nullable();
             $table->string('image')->nullable();
         });
     }

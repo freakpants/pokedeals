@@ -55,7 +55,7 @@ const App = () => {
   const [series, setSeries] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const [filters, setFilters] = useState({
-    language: ['de', 'en', 'fr'], // Default selected languages
+    language: ['en'], // Default selected languages
     set: [],
     productType: '',
   });
@@ -67,6 +67,7 @@ const App = () => {
 
   const [productCount, setProductCount] = useState(0);
   const [offerCount, setOfferCount] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     fetchInitialData(); // Fetch all data
@@ -85,6 +86,18 @@ const App = () => {
       updateUrlParams(filters, sortConfig); // Sync the updated filters and sort config with the URL
     }
   }, [filters, sortConfig, products]); // Run when filters, sortConfig, or products change
+
+  useEffect(() => {
+    if (Object.keys(shops).length > 0) {
+      const dates = Object.values(shops)
+        .map(shop => shop.last_scraped_at)
+        .filter(date => date !== null)
+        .sort();
+      if (dates.length > 0) {
+        setLastUpdated(dates[0]);
+      }
+    }
+  }, [shops]);
 
   const fetchInitialData = async () => {
     await Promise.all([fetchShops(), fetchSets(), fetchSeries(), fetchProductTypes(), fetchProducts()]);
@@ -469,6 +482,7 @@ const App = () => {
   return React.createElement(
     'div',
     null,
+    lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleString()}`),
     filtersComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),

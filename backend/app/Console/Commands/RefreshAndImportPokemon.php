@@ -38,10 +38,6 @@ class RefreshAndImportPokemon extends Command
         // Define the files to import
         $filePaths = [
             storage_path('pokemon.json'),
-            storage_path('pokemon2.json'),
-            storage_path('pokemon3.json'),
-            storage_path('pokemon4.json'),
-            storage_path('pokemon5.json'), 
         ];
 
         foreach ($filePaths as $filePath) {

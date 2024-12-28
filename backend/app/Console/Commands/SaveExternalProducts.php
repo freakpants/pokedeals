@@ -132,6 +132,12 @@ class SaveExternalProducts extends Command
         
         // if there are new products, run the rest of the process
         if((!file_exists($json_file) || $newProducts) || $forceRefresh){
+            // update the shop's last scraped at timestamp
+            DB::table('external_shops')
+                ->where('id', $shopId)
+                ->update([
+                    'last_scraped_at' => now(),
+                ]);
             // galaxy
             if($shop->shop_type === 'galaxy'){
                 $categoryUrls = json_decode($shop->category_urls);

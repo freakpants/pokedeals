@@ -31,9 +31,18 @@ class ImportPokemonProducts extends Command
 
         $pokemonHelper = new PokemonHelper();
 
+        $skus = [];
+
         foreach ($products as $product) {
 
             $details = $pokemonHelper->determineProductDetails($product['title']);
+
+            if (in_array($product['sku'], $skus)) {
+                $this->warn("Duplicate SKU found: {$product['sku']}");
+                continue;
+            }
+            // add to skus array
+            $skus[] = $product['sku'];
 
             $set_identifier = $details['set_identifier'];
             $product_type = $details['product_type'];

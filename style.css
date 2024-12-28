@@ -166,8 +166,7 @@ body {
     font-family: 'Montserrat', sans-serif; /* Sleek and modern font */
     font-size: 3rem; /* Prominent and bold */
     text-align: center; /* Center alignment */
-    margin: 20px auto; /* Centered spacing */
-    padding: 10px 0; /* Minimal padding */
+    margin: 5px auto; /* Centered spacing */
     color: #0078d7; /* Cool blue font color */
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Subtle depth effect */
     letter-spacing: 0.05em; /* Slight spacing for readability */
@@ -311,7 +310,7 @@ h3 {
     width: 100%; /* Ensure full width of the parent container */
 }
 
-#result-count, #offer-count {
+#result-count, #offer-count, #last-updated {
     width:100%;
     text-align: center;
     margin-top: 20px;
