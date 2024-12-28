@@ -74,7 +74,7 @@ const App = () => {
     const queryParams = parseQueryParams(); // Extract filters from URL
     // if the query params have no language, default to en, de, fr
     if (queryParams.language.length === 0) {
-      queryParams.language = ['en', 'de', 'fr'];
+      queryParams.language = ['en'];
     }
     setFilters(queryParams); // Update state with filters
     setSortConfig({ key: queryParams.sortKey, order: queryParams.sortOrder }); // Update state with sort config
