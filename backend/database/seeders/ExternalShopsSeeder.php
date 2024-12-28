@@ -10,6 +10,13 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [
+                'name' => 'world of games',
+                'base_url' => 'https://www.wog.ch',
+                'category_urls' => json_encode(['https://www.wog.ch/index.cfm/developers/type/Toys/developer/7688']),
+                'image' => 'wog.png',
+                'shop_type' => 'wog'
+            ],
             [   
                 'name' => 'Kidz.ch',
                 'base_url' => 'https://www.kidz.ch',

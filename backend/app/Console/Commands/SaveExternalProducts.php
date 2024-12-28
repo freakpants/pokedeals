@@ -43,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -138,8 +138,47 @@ class SaveExternalProducts extends Command
                 ->update([
                     'last_scraped_at' => now(),
                 ]);
-            // galaxy
-            if($shop->shop_type === 'galaxy'){
+            if($shop->shop_type === 'wog'){
+                // wog
+                $response = Http::withHeaders([
+                    'Accept' => '*/*',
+                    'Content-Type' => 'multipart/form-data',
+                ])->asForm()->post('https://www.wog.ch/index.cfm/ajax.productList', [
+                    'type' => 'Toys',
+                    'developerID' => '7688',
+                    'productTypeID' => '3',
+                    'productFormTypeName' => '',
+                    'displayTypeID' => '3',
+                    'listType' => 'developers',
+                    'maxRows' => '48',
+                    'page' => '1',
+                    'forceTileView' => 'false',
+                ]);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
+                    // Handle your response data
+                    // loop all products
+                    $products = [];
+                    foreach($data['products'] as $product){
+                        $productArray = [];
+                        $productArray['id'] = $product['productID'];
+                        $productArray['price'] = $product['unitPrice'];
+                        $productArray['title'] = $product['fullTitle'];
+                        $productArray['url'] = $product['linkTo'];
+                        $productArray['available'] = $product['deliveryDetail'] !== 'crossIcon';
+                        $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
+                        $productArray['variants'] = [$productArray];
+
+                        $products[] = $productArray;
+                    }
+                } else {
+                    // Handle errors
+                    dd($response->status(), $response->body());
+                }
+            }
+            else if($shop->shop_type === 'galaxy'){
+                // galaxy
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for Galaxy...");
 
@@ -659,7 +698,9 @@ class SaveExternalProducts extends Command
                 $url = $shop->base_url . '/' . $product['handle'];
             } else if($shop->shop_type === 'prestashop'){
                 $url = $shop->base_url . '/' . $product['handle'];
-            } 
+            } else if($shop->shop_type === 'wog'){
+                $url = $product['url'];
+            }
             else {
                 $url = "{$baseUrl}/products/{$product['handle']}";
             }
