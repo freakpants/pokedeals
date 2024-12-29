@@ -28,7 +28,7 @@ const parseQueryParams = () => {
   return {
     language: params.get('language') ? params.get('language').split(',') : [],
     set: params.get('set') ? params.get('set').split(',') : [],
-    productType: params.get('productType') || '',
+    productType: params.get('productType') ? params.get('productType').split(',') : [],
     sortKey: params.get('sortKey') || 'cheapest',
     sortOrder: params.get('sortOrder') || 'asc',
   };
@@ -39,7 +39,7 @@ const updateUrlParams = (filters, sortConfig) => {
 
   if (filters.language.length > 0) params.set('language', filters.language.join(','));
   if (filters.set.length > 0) params.set('set', filters.set.join(','));
-  if (filters.productType) params.set('productType', filters.productType);
+  if (filters.productType.length > 0) params.set('productType', filters.productType.join(','));
   params.set('sortKey', sortConfig.key);
   params.set('sortOrder', sortConfig.order);
 
@@ -57,7 +57,7 @@ const App = () => {
   const [filters, setFilters] = useState({
     language: ['en'], // Default selected languages
     set: [],
-    productType: '',
+    productType: [],
   });
 
   const [sortConfig, setSortConfig] = useState({
@@ -161,7 +161,7 @@ const App = () => {
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [key]: key === 'set' ? value : value, // Ensure 'set' filter is always an array
+      [key]: key === 'set' || key === 'productType' ? value : value, // Ensure 'set' and 'productType' filters are always arrays
     }));
   };
 
@@ -186,8 +186,8 @@ const applyFilters = () => {
     result = result.filter((product) => filters.set.includes(product.set_identifier));
   }
 
-  if (filters.productType) {
-    result = result.filter((product) => product.product_type === filters.productType);
+  if (filters.productType.length > 0) {
+    result = result.filter((product) => filters.productType.includes(product.product_type));
   }
 
   totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
@@ -513,12 +513,35 @@ const DeleteIcon = (props) => (
         Select,
         {
           labelId: 'product-type-filter-label',
+          multiple: true,
           value: filters.productType,
           onChange: (e) => handleFilterChange('productType', e.target.value),
+          renderValue: (selected) =>
+            React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
+              selected.map(type => {
+                const productType = productTypes.find(pt => pt.product_type === type);
+                return productType ? (
+                  React.createElement(Chip, {
+                    key: type,
+                    label: productType.en_name,
+                    onDelete: (e) => {
+                      e.stopPropagation();
+                      handleFilterChange('productType', selected.filter(item => item !== type));
+                    },
+                    deleteIcon: React.createElement(DeleteIcon, {
+                      onMouseDown: (event) => event.stopPropagation(),
+                      style: { cursor: 'pointer', marginLeft: '5px' }
+                    }),
+                    style: { margin: '2px' },
+                    clickable: true,
+                    onClick: (e) => e.stopPropagation()
+                  })
+                ) : null;
+              })
+            ),
         },
-        React.createElement(MenuItem, { value: '' }, 'All Product Types'),
         productTypes.map((type) =>
-          React.createElement(MenuItem, { key: type.product_type, value: type.product_type, className: filters.productType === type.product_type ? 'selected-set' : '' }, type.en_name)
+          React.createElement(MenuItem, { key: type.product_type, value: type.product_type, className: filters.productType.includes(type.product_type) ? 'selected-set' : '' }, type.en_name)
         )
       )
     ),
