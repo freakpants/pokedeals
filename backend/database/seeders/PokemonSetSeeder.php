@@ -77,6 +77,16 @@ class PokemonSetSeeder extends Seeder
             'release_date' => '2099-01-01',
         ]);
 
+        // manually add a none set
+        $sets->push([
+            'id' => 'none',
+            'set_identifier' => 'none',
+            'series_id' => 'none',
+            'title_de' => 'Keine',
+            'title_en' => 'None',
+            'release_date' => '2099-01-01',
+        ]);
+
         // fetch the japanese sets
         $tcgdex = new TCGdex("ja");
         $ja_sets = $tcgdex->fetchSets();
