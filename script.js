@@ -52,8 +52,10 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sets, setSets] = useState([]);
+  const [allSets, setAllSets] = useState([]);
   const [series, setSeries] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
+  const [allProductTypes, setAllProductTypes] = useState([]);
   const [filters, setFilters] = useState({
     language: ['en'], // Default selected languages
     set: [],
@@ -133,6 +135,7 @@ const App = () => {
       const response = await fetch(SETS_API_URL);
       const data = await response.json();
       setSets(data);
+      setAllSets(data);
     } catch (error) {
       console.error('Error fetching sets:', error);
     }
@@ -153,6 +156,7 @@ const App = () => {
       const response = await fetch(PRODUCT_TYPES_API_URL);
       const data = await response.json();
       setProductTypes(data);
+      setAllProductTypes(data);
     } catch (error) {
       console.error('Error fetching product types:', error);
     }
@@ -189,6 +193,25 @@ const applyFilters = () => {
   if (filters.productType.length > 0) {
     result = result.filter((product) => filters.productType.includes(product.product_type));
   }
+
+  // loop all product types
+  // if product type has no offers with current filters, remove it
+  const productTypesWithOffers = new Set(result.map((product) => product.product_type));
+  result = result.filter((product) => productTypesWithOffers.has(product.product_type));
+
+  // set the available productTypes for the filter
+  setProductTypes(allProductTypes.filter((productType) => productTypesWithOffers.has(productType.product_type)));
+
+  // loop all sets
+  // if set has no offers with current filters, remove it
+  const setsWithOffers = new Set(result.map((product) => product.set_identifier));
+  result = result.filter((product) => setsWithOffers.has(product.set_identifier));
+
+  // set the available sets for the filter
+  setSets(allSets.filter((set) => setsWithOffers.has(set.set_identifier)));
+
+
+
 
   totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
 
