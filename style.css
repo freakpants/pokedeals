@@ -337,3 +337,10 @@ h3 {
   background-color: #0078d7;
   color: white;
 }
+
+#filters .MuiInputLabel-shrink {
+    background-color: #0078d7;
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+}

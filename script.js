@@ -421,8 +421,8 @@ const DeleteIcon = (props) => (
     { id: 'filters' },
     React.createElement(
       FormControl,
-      { sx: { minWidth: 300 } }, // Ensure a minimum width
-      React.createElement(InputLabel, { id: 'language-filter-label' }, 'Language'),
+      { sx: { minWidth: 300, marginBottom: 2 } }, // Ensure a minimum width and margin bottom
+      React.createElement(InputLabel, { id: 'language-filter-label' }, 'Languages'),
       React.createElement(
         Select,
         {
@@ -468,8 +468,8 @@ const DeleteIcon = (props) => (
     ),
     React.createElement(
       FormControl,
-      { sx: { minWidth: 300 } }, // Ensure a minimum width
-      React.createElement(InputLabel, { id: 'set-filter-label' }, 'Set'),
+      { sx: { minWidth: 300, marginBottom: 2 } }, // Ensure a minimum width and margin bottom
+      React.createElement(InputLabel, { id: 'set-filter-label' }, 'Sets'),
       React.createElement(
         Select,
         {
@@ -507,7 +507,7 @@ const DeleteIcon = (props) => (
     ),
     React.createElement(
       FormControl,
-      { sx: { minWidth: 300 } }, // Ensure a minimum width
+      { sx: { minWidth: 300, marginBottom: 2 } }, // Ensure a minimum width and margin bottom
       React.createElement(InputLabel, { id: 'product-type-filter-label' }, 'Product Type'),
       React.createElement(
         Select,
@@ -524,7 +524,7 @@ const DeleteIcon = (props) => (
     ),
     React.createElement(
       FormControl,
-      { sx: { minWidth: 300 } }, // Ensure a minimum width
+      { sx: { minWidth: 300, marginBottom: 2 } }, // Ensure a minimum width and margin bottom
       React.createElement(InputLabel, { id: 'sort-filter-label' }, 'Sort By'),
       React.createElement(
         Select,
