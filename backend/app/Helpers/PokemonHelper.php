@@ -35,6 +35,18 @@ class PokemonHelper
         self::$language = '';
         self::$multiplier = 1;
 
+        // for the purpose of detection, replace Scarlet & Violet: Set 9 with Scarlet & Violet: Journey Together
+        if (stripos($title, 'Scarlet & Violet: Set 9') !==
+            false) {
+            $title = str_replace('Scarlet & Violet: Set 9', 'Scarlet & Violet: Journey Together', $title);
+        }
+
+        // Scarlet & Violet - Set 9
+        if (stripos($title, 'Scarlet & Violet - Set 9') !==
+            false) {
+            $title = str_replace('Scarlet & Violet - Set 9', 'Scarlet & Violet: Journey Together', $title);
+        }
+
         self::determineProductType($title, $variant_title);
 
         // Language-specific strings with priority matches

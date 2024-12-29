@@ -320,3 +320,14 @@ h3 {
 .flag-icon{
     min-width: 24px;
 }
+
+/* Style for series title in the set selector */
+.MuiListSubheader-root {
+    font-size: 1.2em; /* Increase font size */
+    font-weight: bold; /* Make it bold */
+    color: #0078d7; /* Distinct color */
+    background-color: #f4f4f4; /* Background color */
+    padding: 5px 10px; /* Add padding */
+    border-radius: 4px; /* Rounded corners */
+    margin-top: 10px; /* Space above */
+}

@@ -67,6 +67,17 @@ class PokemonSetSeeder extends Seeder
             'release_date' => '2024-12-6',
         ]);
 
+        // manually add journey together
+        $sets->push([
+            'id' => 'sv9',
+            'set_identifier' => 'journey_together',
+            'series_id' => 'sv',
+            'title_de' => 'Gemeinsam auf Reisen',
+            'title_en' => 'Journey Together',
+            'title_ja' => '',
+            'release_date' => '2025-03-28',
+        ]);
+
         // manually add an other set
         $sets->push([
             'id' => 'other',

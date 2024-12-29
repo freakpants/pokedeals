@@ -259,13 +259,19 @@ const applyFilters = () => {
         { key: `header-${seriesTitle}` },
         seriesTitle
       ),
-      ...sets.map((set) =>
-        React.createElement(
+      ...sets.map((set) => {
+        const releaseDate = set.release_date && set.set_identifier !== 'none' && set.set_identifier !== 'other' 
+          ? new Date(set.release_date).toLocaleDateString('de-DE') 
+          : '';
+        return React.createElement(
           MenuItem,
           { value: set.set_identifier, key: set.set_identifier },
-          set.title_en || set.title_ja
-        )
-      ),
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', width: '100%' } },
+            React.createElement('span', null, set.title_en || set.title_ja),
+            releaseDate && React.createElement('span', null, releaseDate)
+          )
+        );
+      }),
     ]);
   };
 
@@ -492,7 +498,7 @@ const filterUniqueOffers = (matches) => {
   return React.createElement(
     'div',
     null,
-    lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleString()}`),
+    lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleDateString('de-DE')}`),
     filtersComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),

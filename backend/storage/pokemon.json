@@ -295,7 +295,23 @@
     "price": "£861.84",
     "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-42279/pokemon-tcg-scarlet-and-violet-stellar-crown-booster-display-box-36-packs",
     "images": [
-      "https://www.wog.ch/nas/cover_large/tc/tc_pokemonkarmesinpurpurstellarkroneboosterdisplaycase.jpg"
+      "https://i.imgur.com/WLGiaSf.png"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Booster Display Case (216 Packs)",
+    "sku": "journey-booster-case",
+    "price": "£861.84",
+    "productUrl": "",
+    "images": ["https://i.imgur.com/WLGiaSf.png"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Booster Display Box (36 Packs)",
+    "sku": "journey-display-box",
+    "price": "£143.64",
+    "productUrl": "",
+    "images": ["https://i.imgur.com/PI0do2Q.png"
     ]
   },
   {
@@ -843,7 +859,7 @@
     "price": "£861.84",
     "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-86349/pokemon-tcg-scarlet-and-violet-paldea-evolved-booster-display-box-36-packs",
     "images": [
-      "https://www.wog.ch/nas/cover_large/tc/tc_pokemonkarmesinpurpurentwicklungeninpaldeaboosterdisplaycase.jpg"
+      "https://i.imgur.com/WLGiaSf.png"
     ]
   },
   {
@@ -2496,6 +2512,14 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_08.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_09.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_10.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Pokémon Center Elite Trainer Box",
+    "sku": "journey-etb",
+    "price": "£54.99",
+    "productUrl": "",
+    "images": ["https://i.imgur.com/uny6yOs.png"
     ]
   },
   {
