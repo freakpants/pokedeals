@@ -34,6 +34,7 @@ class PokemonProductController extends Controller
                 'ep.shop_id',
                 'ep.title as match_title',
                 'ep.price as match_price',
+                'ep.external_id as match_external_id',
                 'ep.language as match_language',
                 'ep.url as match_url',
                 'ps.release_date',
@@ -67,6 +68,7 @@ class PokemonProductController extends Controller
             $matches = $productGroup->map(function ($match) {
                 return [
                     'shop_id' => $match->shop_id,
+                    'external_id' => $match->match_external_id,
                     'title' => $match->match_title,
                     'price' => $match->match_price,
                     'language' => $match->match_language,

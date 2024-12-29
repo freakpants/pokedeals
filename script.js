@@ -319,7 +319,7 @@ const applyFilters = () => {
 const filterUniqueOffers = (matches) => {
   const seen = new Set();
   return matches.filter((match) => {
-    const identifier = `${match.shop_id}-${match.language}-${match.price}`;
+    const identifier = `${match.shop_id}-${match.external_id}`;
     if (seen.has(identifier)) return false;
     seen.add(identifier);
     return true;
