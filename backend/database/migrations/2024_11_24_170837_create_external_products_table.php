@@ -13,7 +13,7 @@ class CreateExternalProductsTable extends Migration
         Schema::create('external_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('shop_id'); // Foreign key to external_shops
-            $table->string('external_id')->unique(); // External product ID or SKU
+            $table->string('external_id');
             $table->string('title');
             $table->float('price')->nullable();
             $table->integer('stock')->nullable();
@@ -30,6 +30,9 @@ class CreateExternalProductsTable extends Migration
             $table->string('variant')->nullable();
             $table->json('metadata')->nullable(); // For additional data like tags or images
             $table->foreign('shop_id')->references('id')->on('external_shops')->onDelete('cascade');
+
+            // make sure shop and external_id are unique
+            $table->unique(['shop_id', 'external_id']);
         });
     }
 

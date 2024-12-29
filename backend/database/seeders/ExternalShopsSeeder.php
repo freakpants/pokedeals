@@ -10,6 +10,12 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [   'name' => 'Softridge',
+                'base_url' => 'https://www.softridge.ch',
+                'category_urls' => json_encode(['https://www.softridge.ch/api/shop/products?loadingType=79&languageId=2&navigationId=25783&filterByAllCategories=True&onlineExclusive=&displayType=1&sort=6&filter=null']),
+                'image' => 'softridge.png',
+                'shop_type' => 'softridge',
+            ],
             [
                 'name' => 'GoodGames Bern',
                 'base_url' => 'https://www.goodgamesbern.ch',

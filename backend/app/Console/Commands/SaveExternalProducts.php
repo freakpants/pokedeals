@@ -43,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -138,7 +138,55 @@ class SaveExternalProducts extends Command
                 ->update([
                     'last_scraped_at' => now(),
                 ]);
-            if($shop->shop_type === 'cs-cart'){
+            if($shop->shop_type === 'softridge'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting parsing for Softridge...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+
+                    $products = [];
+                    while ($hasMorePages) {
+                        $paginatedUrl = $categoryUrl . '&page=' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $json = $response->json();
+
+                        foreach($json['products'] as $product){
+                            $productArray = [];
+                            $productArray['id'] = $product['id'];
+                            $productArray['price'] = $product['salesPriceText'];
+
+                            // replace .– in price
+                            $productArray['price'] = str_replace('.–', '', $productArray['price']);
+
+                            $productArray['title'] = $product['fullTitle'] . ' ' . $product['regionCode'];
+                            $productArray['handle'] = $product['linkUrl'];
+
+
+                            $productArray['url'] =  $shop->base_url . $productArray['handle'];
+                            $productArray['available'] = $product['statusColor'] !== 'Gray';
+                            
+                            $productArray['variants'] = [$productArray];
+
+                            $products[] = $productArray;
+                        }
+
+                        $hasMorePages = $json['hasMore']; 
+                        $page++;
+                        
+                    }
+                }
+            }    
+            else if($shop->shop_type === 'cs-cart'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for CS-Cart...");
 

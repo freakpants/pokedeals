@@ -357,7 +357,8 @@ class PokemonHelper
             'Versandkosten', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro', 'Star Wars', 'Acryl Case', 'PRO-BINDER', 'KEYCHAIN',
             'Dragon Shield', 'Store Card', 'Duskmourn', 'Van Gogh', 'Plush', 'Sleeves', 'Gutschein', 'Attack On Titan', 'Bleach', 'Digimon',
             'Sidewinder 100+', 'Spendenaktion', 'ZipFolio', 'Sleeves', 'Altered TCG', 'Card Preserver', 'Flip\'n\'Tray', 'Nanoblock',
-            'PSA Card', 'XenoSkin', 'Ultra Clear', 'gamegenic', 'ultimate guard', 'into the inklands', 'the first chapter'
+            'PSA Card', 'XenoSkin', 'Ultra Clear', 'gamegenic', 'ultimate guard', 'into the inklands', 'the first chapter',
+            'plushy'
         ];
 
         $title = $product['title'];
