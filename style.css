@@ -331,3 +331,9 @@ h3 {
     border-radius: 4px; /* Rounded corners */
     margin-top: 10px; /* Space above */
 }
+
+/* Highlight color for selected sets */
+.selected-set.selected-set.selected-set {
+  background-color: #0078d7;
+  color: white;
+}

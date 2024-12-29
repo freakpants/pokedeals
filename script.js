@@ -237,7 +237,7 @@ const applyFilters = () => {
     const languageIsJapanese = filters.language.includes('ja');
     const filteredSets = sets.filter((set) =>
       languageIsJapanese ? set.title_ja : !set.title_ja
-    );
+    ).filter(set => !set.title_en.includes('Black Star Promos')); // Ignore sets with 'Black Star Promos' in their name
 
     // Sort sets by release_date descending
     const sortedSets = [...filteredSets].sort((a, b) => {
@@ -263,9 +263,14 @@ const applyFilters = () => {
         const releaseDate = set.release_date && set.set_identifier !== 'none' && set.set_identifier !== 'other' 
           ? new Date(set.release_date).toLocaleDateString('de-DE') 
           : '';
+        const isSelected = filters.set.includes(set.set_identifier);
         return React.createElement(
           MenuItem,
-          { value: set.set_identifier, key: set.set_identifier },
+          { 
+            value: set.set_identifier, 
+            key: set.set_identifier,
+            className: isSelected ? 'selected-set' : '' // Apply the selected-set class
+          },
           React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', width: '100%' } },
             React.createElement('span', null, set.title_en || set.title_ja),
             releaseDate && React.createElement('span', null, releaseDate)
