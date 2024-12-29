@@ -11,6 +11,20 @@ class ExternalShopsSeeder extends Seeder
     {
         DB::table('external_shops')->insert([
             [
+                'name' => 'GoodGames Bern',
+                'base_url' => 'https://www.goodgamesbern.ch',
+                'category_urls' => json_encode(['https://www.goodgamesbern.ch/pokemon/?features_hash=7-155&items_per_page=2000&full_render=false&result_ids=pagination_contents&is_ajax=1']),
+                'image' => 'goodgamesbern.png',
+                'shop_type' => 'cs-cart',
+            ],
+            [
+                'name' => 'RyuLand',
+                'base_url' => 'https://ryu.land',
+                'category_urls' => null,
+                'image' => 'ryuland.png',
+                'shop_type' => 'shopify',
+            ],
+            [
                 'name' => 'world of games',
                 'base_url' => 'https://www.wog.ch',
                 'category_urls' => json_encode(['https://www.wog.ch/index.cfm/developers/type/Toys/developer/7688']),
@@ -120,13 +134,6 @@ class ExternalShopsSeeder extends Seeder
                 'base_url' => 'https://collectorsdeal.ch',
                 'category_urls' => null,
                 'image' => 'collectorsdeal.png',
-                'shop_type' => 'shopify',
-            ],
-            [
-                'name' => 'RyuLand',
-                'base_url' => 'https://ryu.land',
-                'category_urls' => null,
-                'image' => 'ryuland.png',
                 'shop_type' => 'shopify',
             ],
             [

@@ -18,9 +18,10 @@ class ProductVariantsSeeder extends Seeder
             'product_type' => ProductTypes::UltraPremiumCollection->value,
             'en_short' => 'terapagos_ex_ultra_premium_collection',
             'de_strings' => json_encode(['']),
-            'en_strings' => json_encode(['terapagos ex']),
+            'en_strings' => json_encode(['terapagos ex', 'Terapagos-ex']),
             'en_name' => 'Terapagos ex Ultra Premium Collection',
-            'pack_count' => 18
+            'pack_count' => 18,
+            'set' => 'other'
 
         ]);
 

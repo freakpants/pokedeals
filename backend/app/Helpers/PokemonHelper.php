@@ -134,6 +134,10 @@ class PokemonHelper
                     if (self::$language === '') {
                         self::$language = 'en';
                     }
+                    // if the set is defined on the variant, overwrite it
+                    if (isset($v->set)) {
+                        $set_identifier = $v->set;
+                    }
                     $variant = $v->en_short;
                     break 2;
                 }
@@ -146,6 +150,10 @@ class PokemonHelper
                 if (stripos($title, $string) !== false) {
                     if (self::$language === '') {
                         self::$language = 'de';
+                    }
+                    // if the set is defined on the variant, overwrite it
+                    if (isset($v->set)) {
+                        $set_identifier = $v->set;
                     }
                     $variant = $v->en_short;
                     break 2;

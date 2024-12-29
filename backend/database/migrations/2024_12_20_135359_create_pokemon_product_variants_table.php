@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('en_short')->nullable();
             // foreign key to product_types
             $table->enum('product_type', ProductTypes::getValues())->default(ProductTypes::Other->value);
+            $table->string('set')->default('other');
             $table->json('de_strings')->nullable();
             $table->json('en_strings')->nullable();
             $table->integer('pack_count')->nullable();

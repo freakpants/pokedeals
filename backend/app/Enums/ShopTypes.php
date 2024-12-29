@@ -15,6 +15,7 @@ enum ShopTypes: string
     case Kidz = 'kidz';
     case Galaxy = 'galaxy';
     case Wog = 'wog';
+    case CsCart = 'cs-cart';
     case Other = 'other';
 
 

@@ -29,7 +29,7 @@ const parseQueryParams = () => {
     language: params.get('language') ? params.get('language').split(',') : [],
     set: params.get('set') ? params.get('set').split(',') : [],
     productType: params.get('productType') || '',
-    sortKey: params.get('sortKey') || 'newest',
+    sortKey: params.get('sortKey') || 'cheapest',
     sortOrder: params.get('sortOrder') || 'asc',
   };
 };
@@ -61,7 +61,7 @@ const App = () => {
   });
 
   const [sortConfig, setSortConfig] = useState({
-    key: 'newest',
+    key: 'cheapest',
     order: 'asc',
   });
 
@@ -471,9 +471,9 @@ const App = () => {
           value: sortConfig.key,
           onChange: (e) => handleSortChange(e.target.value),
         },
+        React.createElement(MenuItem, { value: 'cheapest' }, 'Cheapest (per Pack)'),
         React.createElement(MenuItem, { value: 'newest' }, 'Newest'),
         React.createElement(MenuItem, { value: 'oldest' }, 'Oldest'),
-        React.createElement(MenuItem, { value: 'cheapest' }, 'Cheapest (per Pack)'),
         React.createElement(MenuItem, { value: 'most-expensive' }, 'Most expensive (per Pack)')
       )
     )

@@ -43,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -138,7 +138,40 @@ class SaveExternalProducts extends Command
                 ->update([
                     'last_scraped_at' => now(),
                 ]);
-            if($shop->shop_type === 'wog'){
+            if($shop->shop_type === 'cs-cart'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for CS-Cart...");
+
+                $products = [];
+                foreach ($categoryUrls as $categoryUrl) {
+                    // do the request
+                    $response = Http::get($categoryUrl);
+                    if ($response->failed()) {
+                        $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                        break;
+                    }
+                    $productsJson = $response->json()['ga_array_data']['add_impression']['items'];
+                    foreach($productsJson as $product){
+                        $productArray = [];
+                        $productArray['id'] = $product['id'];
+                        $productArray['price'] = $product['price'];
+                        if($product['name'] === ''){
+                            // skip this product if there is no name
+                            continue;
+                        }
+                        $productArray['title'] = $product['name'];
+
+
+                        $productArray['url'] = $product['url'];
+                        $productArray['available'] = 1;
+                        $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
+                        $productArray['variants'] = [$productArray];
+
+                        $products[] = $productArray;
+                    }
+                }
+            }
+            else if($shop->shop_type === 'wog'){
                 // wog
                 $response = Http::withHeaders([
                     'Accept' => '*/*',
