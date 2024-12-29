@@ -10,6 +10,20 @@ class ExternalShopsSeeder extends Seeder
     public function run()
     {
         DB::table('external_shops')->insert([
+            [
+                'name' => 'The Uncommon Shop',
+                'base_url' => 'https://theuncommonshop.ch',
+                'category_urls' => json_encode(['https://theuncommonshop.ch/shop/Top-Trainer-Boxen-c41085180',
+                    'https://theuncommonshop.ch/shop/Booster-Packs-c129994504',
+                    'https://theuncommonshop.ch/shop/Booster-Displays-c37574011',
+                    'https://theuncommonshop.ch/shop/Boxen-&-Kollektionen-c123972502',
+                    'https://theuncommonshop.ch/shop/Tins-c123971257',
+                    'https://theuncommonshop.ch/shop/Blister-Packs-c129993752',
+                    'https://theuncommonshop.ch/shop/Decks-c37574009'
+            ]),
+                'image' => 'theuncommonshop.png',
+                'shop_type' => 'ecwid', 
+            ],
             [   'name' => 'Softridge',
                 'base_url' => 'https://www.softridge.ch',
                 'category_urls' => json_encode(['https://www.softridge.ch/api/shop/products?loadingType=79&languageId=2&navigationId=25783&filterByAllCategories=True&onlineExclusive=&displayType=1&sort=6&filter=null']),
@@ -169,13 +183,6 @@ class ExternalShopsSeeder extends Seeder
                 'category_urls' => json_encode(['https://www.toytans.ch/en/245-pokemon']),
                 'image' => 'toytans.png',
                 'shop_type' => 'prestashop',
-            ],
-            [
-                'name' => 'The uncommon shop',
-                'base_url' => 'https://theuncommonshop.ch',
-                'category_urls' => json_encode(['https://theuncommonshop.ch/collections/pokemon']),
-                'image' => 'theuncommonshop.png',
-                'shop_type' => 'ecwid',
             ],
             [
                 'name' => 'Maro Games',

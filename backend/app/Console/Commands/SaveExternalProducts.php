@@ -43,7 +43,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge','ecwid'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -138,15 +138,105 @@ class SaveExternalProducts extends Command
                 ->update([
                     'last_scraped_at' => now(),
                 ]);
-            if($shop->shop_type === 'softridge'){
+            if($shop->shop_type === 'ecwid'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting parsing for Ecwid...");
+
+                $products = [];
+                foreach ($categoryUrls as $categoryUrl) {
+                    $offset = 0;
+                    $hasMorePages = true;
+
+                    while($hasMorePages){
+                        $paginatedUrl = $categoryUrl;
+                        if($offset){
+                            $paginatedUrl .= '&offset=' . $offset;
+                        }
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        // crawl the html
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all grid-product elements
+                        $current_products = $crawler->filter('.grid-product')->each(function (Crawler $node) use ($shop) {
+                            $product = [];
+                            
+                            // Extract product ID from the `data-product-id` attribute
+                            $product['id'] = $node->filter('.grid-product__wrap')->attr('data-product-id');
+                            
+                            // Extract and clean the product price
+                            try {
+                                $price = $node->filter('.grid-product__price-value')->text('');
+                                $price = preg_replace('/[^0-9.]/', '', $price); // Clean price to retain numbers and dot
+                                $product['price'] = floatval($price);
+                            } catch (\Exception $e) {
+                                $product['price'] = null; // Handle missing price
+                            }
+                            
+                            // Extract the product title
+                            try {
+                                $product['title'] = $node->filter('.grid-product__title-inner')->text('');
+                            } catch (\Exception $e) {
+                                $product['title'] = null; // Handle missing title
+                            }
+                            
+                            // Extract the product URL and handle
+                            try {
+                                $product['url'] = $node->filter('a')->first()->attr('href');
+                                $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            } catch (\Exception $e) {
+                                $product['url'] = null;
+                                $product['handle'] = null;
+                            }
+                            
+                            // Detect sold-out status
+                            try {
+                                $sold_out = $node->filter('.grid-product__button-hover.grid-product__buy-now')->text('') === '';
+                                $product['available'] = !$sold_out; // If the buy button is not found or empty, the product is sold out
+                            } catch (\Exception $e) {
+                                $product['available'] = false; // Assume unavailable if the hover button is not found
+                            }
+                        
+                            // Variants (example structure, modify if needed)
+                            $product['variants'] = [$product];
+                            
+                            return $product;
+                        });
+
+                        // check if there is an element with the class 'pager__button-text' and the text Nächste
+                        $hasMorePages = $crawler->filter('.pager__button-text')->each(function (Crawler $node) {
+                            return $node->text() === 'Nächste';
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        $offset += 60;
+                    }
+
+                }
+
+            }
+            else if($shop->shop_type === 'softridge'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting parsing for Softridge...");
 
+                $products = [];
                 foreach ($categoryUrls as $categoryUrl) {
                     $page = 1;
                     $hasMorePages = true;
 
-                    $products = [];
+                    
                     while ($hasMorePages) {
                         $paginatedUrl = $categoryUrl . '&page=' . $page;
                         $this->info("Fetching page $page: $paginatedUrl");
