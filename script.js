@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, ListSubheader, Chip } = MaterialUI;
+const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, ListSubheader, Chip, SvgIcon } = MaterialUI;
 
 // API Endpoints
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
@@ -407,6 +407,15 @@ const filterUniqueOffers = (matches) => {
     );
   };
 
+// Define the SvgIcon for the delete icon using React.createElement
+const DeleteIcon = (props) => (
+  React.createElement(SvgIcon, props,
+    React.createElement('circle', { cx: '12', cy: '12', r: '10', stroke: '#666', strokeWidth: '2', fill: 'none' }),
+    React.createElement('line', { x1: '8', y1: '8', x2: '16', y2: '16', stroke: '#666', strokeWidth: '2' }),
+    React.createElement('line', { x1: '8', y1: '16', x2: '16', y2: '8', stroke: '#666', strokeWidth: '2' })
+  )
+);
+
   const filtersComponent = React.createElement(
     'div',
     { id: 'filters' },
@@ -436,11 +445,10 @@ const filterUniqueOffers = (matches) => {
                     e.stopPropagation();
                     handleFilterChange('language', selected.filter(item => item !== lang));
                   },
-                  deleteIcon: React.createElement('span', {
+                  deleteIcon: React.createElement(DeleteIcon, {
                     onMouseDown: (event) => event.stopPropagation(),
-                    style: { cursor: 'pointer', marginLeft: '5px'}
-                 
-                  }, 'x'),
+                    style: { cursor: 'pointer', marginLeft: '5px' }
+                  }),
                   style: { margin: '2px' },
                   clickable: true,
                   onClick: (e) => e.stopPropagation()
@@ -482,10 +490,10 @@ const filterUniqueOffers = (matches) => {
                       e.stopPropagation();
                       handleFilterChange('set', selected.filter(item => item !== setId));
                     },
-                    deleteIcon: React.createElement('span', {
+                    deleteIcon: React.createElement(DeleteIcon, {
                       onMouseDown: (event) => event.stopPropagation(),
                       style: { cursor: 'pointer', marginLeft: '5px' }
-                    }, 'x'),
+                    }),
                     style: { margin: '2px' },
                     clickable: true,
                     onClick: (e) => e.stopPropagation()
