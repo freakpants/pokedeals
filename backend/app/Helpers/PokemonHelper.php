@@ -273,6 +273,7 @@ class PokemonHelper
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
             ProductTypes::HalfBoosterBox->value => ['half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
+            ProductTypes::DisplayBoxCase->value => ['Booster Display Case'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs', 'display'],
             ProductTypes::JapaneseDisplayBox->value => ['Box - Japanese', 'Booster Box (JPN)'],
             ProductTypes::BoosterBundleCase->value => ['booster bundle case'],

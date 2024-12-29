@@ -697,12 +697,14 @@ class SaveExternalProducts extends Command
             } else if($shop->shop_type === 'shopware'){
                 $url = $shop->base_url . '/' . $product['handle'];
             } else if($shop->shop_type === 'prestashop'){
-                $url = $shop->base_url . '/' . $product['handle'];
+                $url = $shop->base_url . $product['handle'];
             } else if($shop->shop_type === 'wog'){
                 $url = $product['url'];
             }
-            else {
+            else if($shop->shop_type === 'shopify'){
                 $url = "{$baseUrl}/products/{$product['handle']}";
+            } else {
+                $url = $product['url'];
             }
 
             if (!$externalId) {
