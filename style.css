@@ -322,7 +322,7 @@ h3 {
 }
 
 /* Style for series title in the set selector */
-.MuiListSubheader-root {
+.MuiListSubheader-root.MuiListSubheader-root  {
     font-size: 1.2em; /* Increase font size */
     font-weight: bold; /* Make it bold */
     color: #0078d7; /* Distinct color */
