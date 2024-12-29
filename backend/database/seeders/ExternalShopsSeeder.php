@@ -13,7 +13,7 @@ class ExternalShopsSeeder extends Seeder
             [
                 'name' => 'GoodGames Bern',
                 'base_url' => 'https://www.goodgamesbern.ch',
-                'category_urls' => json_encode(['https://www.goodgamesbern.ch/pokemon/?features_hash=7-155&items_per_page=2000&full_render=false&result_ids=pagination_contents&is_ajax=1']),
+                'category_urls' => json_encode(['https://www.goodgamesbern.ch/pokemon/?features_hash=7-155&items_per_page=2000&full_render=true&result_ids=pagination_contents&is_ajax=1']),
                 'image' => 'goodgamesbern.png',
                 'shop_type' => 'cs-cart',
             ],

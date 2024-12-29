@@ -150,26 +150,53 @@ class SaveExternalProducts extends Command
                         $this->error("Failed to fetch page $page. Status: {$response->status()}");
                         break;
                     }
-                    $productsJson = $response->json()['ga_array_data']['add_impression']['items'];
-                    foreach($productsJson as $product){
-                        $productArray = [];
-                        $productArray['id'] = $product['id'];
-                        $productArray['price'] = $product['price'];
-                        if($product['name'] === ''){
-                            // skip this product if there is no name
-                            continue;
+                    // create a crawler
+                    $crawler = new Crawler($response->json()['html']['pagination_contents']);
+
+                    // find the class products_grid
+                    $products = $crawler->filter('.ut2-gl__item')->each(function (Crawler $node) use ($shop) {
+                        $product = [];
+                        
+                        // Extract product ID
+                        $product['id'] = $node->filter('input[name^="product_data"]')->count() 
+                            ? $node->filter('input[name^="product_data"]')->attr('value') 
+                            : null;
+                        
+                        // Extract price
+                        $priceNode = $node->filter('.ty-price');
+                        if ($priceNode->count()) {
+                            $priceText = $priceNode->text(); // Full text, e.g., "CHF 7.90"
+                            $product['price'] = trim(str_replace('CHF', '', $priceText)); // Remove "CHF" to leave just the number
+                        } else {
+                            $product['price'] = null;
                         }
-                        $productArray['title'] = $product['name'];
-
-
-                        $productArray['url'] = $product['url'];
-                        $productArray['available'] = 1;
-                        $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
-                        $productArray['variants'] = [$productArray];
-
-                        $products[] = $productArray;
-                    }
+                        
+                        // Extract title
+                        $product['title'] = $node->filter('.product-title')->count() 
+                            ? trim($node->filter('.product-title')->text()) 
+                            : null;
+                        
+                        // Extract URL
+                        $product['url'] = $node->filter('.product-title')->count() 
+                            ? $node->filter('.product-title')->attr('href') 
+                            : null;
+                        
+                        // Check availability
+                        $product['available'] = !$node->filter('.ty-qty-out-of-stock')->count(); // If "Out of stock" is not found, it's available
+                        
+                        // Generate handle
+                        $product['handle'] = $product['url'] 
+                            ? str_replace($shop->base_url, '', $product['url']) 
+                            : null;
+                    
+                        // Variants placeholder
+                        $product['variants'] = [$product];
+                    
+                        return $product;
+                    });
                 }
+
+
             }
             else if($shop->shop_type === 'wog'){
                 // wog
