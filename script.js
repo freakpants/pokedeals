@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, ListSubheader } = MaterialUI;
+const { Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, ListSubheader, Chip } = MaterialUI;
 
 // API Endpoints
 const PRODUCTS_API_URL = 'https://pokeapi.freakpants.ch/api/products';
@@ -424,10 +424,27 @@ const filterUniqueOffers = (matches) => {
           renderValue: (selected) =>
             React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
               selected.map(lang => (
-                React.createElement('span', { key: lang, style: { display: 'flex', alignItems: 'center', gap: '5px' } },
-                  React.createElement('span', { className: `flag-icon flag-icon-${languageToCountryCode[lang]}` }),
-                  languageToDisplayName[lang]
-                )
+                React.createElement(Chip, {
+                  key: lang,
+                  label: (
+                    React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '5px' } },
+                      React.createElement('span', { className: `flag-icon flag-icon-${languageToCountryCode[lang]}` }),
+                      languageToDisplayName[lang]
+                    )
+                  ),
+                  onDelete: (e) => {
+                    e.stopPropagation();
+                    handleFilterChange('language', selected.filter(item => item !== lang));
+                  },
+                  deleteIcon: React.createElement('span', {
+                    onMouseDown: (event) => event.stopPropagation(),
+                    style: { cursor: 'pointer', marginLeft: '5px'}
+                 
+                  }, 'x'),
+                  style: { margin: '2px' },
+                  clickable: true,
+                  onClick: (e) => e.stopPropagation()
+                })
               ))
             ),
         },
@@ -454,12 +471,28 @@ const filterUniqueOffers = (matches) => {
           value: filters.set, // Array of selected values
           onChange: (e) => handleFilterChange('set', e.target.value),
           renderValue: (selected) =>
-            selected
-              .map((setId) => {
-                const set = sets.find((s) => s.set_identifier === setId);
-                return set ? set.title_en || set.title_ja : '';
+            React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
+              selected.map(setId => {
+                const set = sets.find(s => s.set_identifier === setId);
+                return set ? (
+                  React.createElement(Chip, {
+                    key: setId,
+                    label: set.title_en || set.title_ja,
+                    onDelete: (e) => {
+                      e.stopPropagation();
+                      handleFilterChange('set', selected.filter(item => item !== setId));
+                    },
+                    deleteIcon: React.createElement('span', {
+                      onMouseDown: (event) => event.stopPropagation(),
+                      style: { cursor: 'pointer', marginLeft: '5px' }
+                    }, 'x'),
+                    style: { margin: '2px' },
+                    clickable: true,
+                    onClick: (e) => e.stopPropagation()
+                  })
+                ) : null;
               })
-              .join(', '),
+            ),
         },
         renderSetFilterOptions()
       )
