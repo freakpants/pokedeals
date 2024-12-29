@@ -166,44 +166,38 @@ const App = () => {
   };
 
   // Updated filtering logic in applyFilters
-  const applyFilters = () => {
-    let result = products;
-    let totalOffers = 0;
+  // Apply filters and sort
+const applyFilters = () => {
+  let result = products;
+  let totalOffers = 0;
 
-    // Filter products based on language and update their matches
-    if (filters.language.length > 0) {
-      result = result
-        .map((product) => {
-          const filteredMatches = product.matches.filter((match) =>
-            filters.language.includes(match.language)
-          );
-          return filteredMatches.length > 0 ? { ...product, matches: filteredMatches } : null;
-        })
-        .filter((product) => product !== null); // Remove products with no valid matches
-    }
+  if (filters.language.length > 0) {
+    result = result
+      .map((product) => {
+        const filteredMatches = filterUniqueOffers(
+          product.matches.filter((match) => filters.language.includes(match.language))
+        );
+        return filteredMatches.length > 0 ? { ...product, matches: filteredMatches } : null;
+      })
+      .filter((product) => product !== null);
+  }
 
-    // Filter products based on set
-    if (filters.set.length > 0) {
-      result = result.filter((product) =>
-        filters.set.includes(product.set_identifier)
-      );
-    }
+  if (filters.set.length > 0) {
+    result = result.filter((product) => filters.set.includes(product.set_identifier));
+  }
 
-    // Filter products based on product type
-    if (filters.productType) {
-      result = result.filter((product) => product.product_type === filters.productType);
-    }
+  if (filters.productType) {
+    result = result.filter((product) => product.product_type === filters.productType);
+  }
 
-    // Count total offers after all filters are applied
-    totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
+  totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
 
-    // Sort the filtered products
-    result = sortProducts(result, sortConfig.key, sortConfig.order);
+  result = sortProducts(result, sortConfig.key, sortConfig.order);
 
-    setFilteredProducts(result);
-    setProductCount(result.length);
-    setOfferCount(totalOffers);
-  };
+  setFilteredProducts(result);
+  setProductCount(result.length);
+  setOfferCount(totalOffers);
+};
 
   const sortProducts = (products, key, order) => {
     if (order === 'none') return products;
@@ -279,8 +273,13 @@ const App = () => {
     const shop = shops[match.shop_id] || {};
     const packCount = product.pack_count || 1;
     const pricePerPack = (match.price / packCount).toFixed(2);
-    const countryCode = languageToCountryCode[match.language] || 'unknown'; // Default if no match
-
+    const countryCode = languageToCountryCode[match.language] || 'unknown';
+  
+    // Ensure valid URL
+    const productUrl = match.external_product.url.startsWith("http")
+      ? match.external_product.url
+      : `https://fallbackurl.com${match.external_product.url}`;
+  
     return React.createElement(
       'div',
       { className: `offer ${isCheapest ? 'cheapest-offer' : ''}`, key: match.id },
@@ -288,7 +287,7 @@ const App = () => {
         'div',
         { className: 'shop-info' },
         React.createElement('img', {
-          src: `assets/images/shop-logos/${shop.image || ''}`,
+          src: `assets/images/shop-logos/${shop.image || 'default-logo.png'}`,
           alt: `${shop.name || 'Shop'} Logo`,
           className: 'shop-logo',
         }),
@@ -297,7 +296,7 @@ const App = () => {
           'div',
           { className: 'product-price' },
           `CHF ${match.price.toFixed(2)}`,
-          React.createElement('span', { className: 'price-per-pack' }, `(~${pricePerPack} per pack)`)
+          React.createElement('span', { className: 'price-per-pack' }, ` (~${pricePerPack} per pack)`)
         )
       ),
       React.createElement(
@@ -305,16 +304,27 @@ const App = () => {
         { className: 'language-and-title' },
         React.createElement('span', {
           className: `flag-icon flag-icon-${countryCode}`,
-          title: match.language, // Tooltip for accessibility
+          title: match.language, // Tooltip
         }),
         React.createElement(
           'a',
-          { href: match.external_product.url, target: '_blank', className: 'match-link' },
+          { href: productUrl, target: '_blank', className: 'match-link' },
           match.title
         )
       )
     );
   };
+
+  // Ensure unique matches
+const filterUniqueOffers = (matches) => {
+  const seen = new Set();
+  return matches.filter((match) => {
+    const identifier = `${match.shop_id}-${match.language}-${match.price}`;
+    if (seen.has(identifier)) return false;
+    seen.add(identifier);
+    return true;
+  });
+};
 
   const renderProductCard = (product) => {
     const cheapestMatch = product.matches.slice().sort((a, b) => a.price - b.price)[0];
