@@ -338,6 +338,10 @@ h3 {
   color: white;
 }
 
+..selected-set.selected-set.selected-set:hover {
+  background-color: #0056b3;
+}
+
 #filters .MuiInputLabel-shrink {
     background-color: #0078d7;
     color: white;

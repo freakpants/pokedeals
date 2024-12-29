@@ -457,7 +457,7 @@ const DeleteIcon = (props) => (
             ),
         },
         Object.keys(languageToDisplayName).map(lang => (
-          React.createElement(MenuItem, { key: lang, value: lang },
+          React.createElement(MenuItem, { key: lang, value: lang, className: filters.language.includes(lang) ? 'selected-set' : '' },
             React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '5px' } },
               React.createElement('span', { className: `flag-icon flag-icon-${languageToCountryCode[lang]}` }),
               languageToDisplayName[lang]
@@ -518,7 +518,7 @@ const DeleteIcon = (props) => (
         },
         React.createElement(MenuItem, { value: '' }, 'All Product Types'),
         productTypes.map((type) =>
-          React.createElement(MenuItem, { key: type.product_type, value: type.product_type }, type.en_name)
+          React.createElement(MenuItem, { key: type.product_type, value: type.product_type, className: filters.productType === type.product_type ? 'selected-set' : '' }, type.en_name)
         )
       )
     ),
