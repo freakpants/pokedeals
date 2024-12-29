@@ -338,7 +338,7 @@ h3 {
   color: white;
 }
 
-..selected-set.selected-set.selected-set:hover {
+.selected-set.selected-set.selected-set:hover {
   background-color: #0056b3;
 }
 
