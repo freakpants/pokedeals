@@ -237,6 +237,45 @@ const applyFilters = () => {
     return sortConfig.order === 'asc' ? '↑' : '↓';
   };
 
+  const renderProductTypeFilterOptions = () => {
+    // Filter product types to include only those with offers
+    let filteredProductTypes = productTypes.filter(type => {
+      const hasOffers = products.some(product => product.product_type === type.product_type);
+      return hasOffers;
+    });
+  
+    // If sets are being filtered, further narrow down product types based on offers for those sets
+    if (filters.set.length > 0) {
+      filteredProductTypes = filteredProductTypes.filter(type => {
+        const hasOffers = products.some(product =>
+          product.product_type === type.product_type && filters.set.includes(product.set_identifier)
+        );
+        return hasOffers;
+      });
+    }
+  
+    // Calculate offer counts for each product type
+    return filteredProductTypes.map(type => {
+      const offerCount = products
+        .filter(product =>
+          product.product_type === type.product_type &&
+          (filters.set.length === 0 || filters.set.includes(product.set_identifier))
+        )
+        .reduce((sum, product) => 
+          sum + (product.matches || []).filter(match => 
+            filters.language.length === 0 || filters.language.includes(match.language)
+          ).length, 
+          0
+        );
+  
+      return offerCount > 0 ? React.createElement(
+        MenuItem,
+        { key: type.product_type, value: type.product_type },
+        `${type.en_name} (${offerCount})`
+      ) : null;
+    });
+  };
+
   const renderSetFilterOptions = () => {
     const languageIsJapanese = filters.language.includes('ja');
     var filteredSets = sets.filter((set) =>
@@ -299,7 +338,7 @@ const applyFilters = () => {
 
         // if the count is 0, don't show the set
         if (offerCount === 0) return null;
-        
+
   
         return React.createElement(
           MenuItem,
@@ -546,8 +585,8 @@ const DeleteIcon = (props) => (
     ),
     React.createElement(
       FormControl,
-      { sx: { minWidth: 300, marginBottom: 2 } }, // Ensure a minimum width and margin bottom
-      React.createElement(InputLabel, { id: 'product-type-filter-label' }, 'Product Type'),
+      { sx: { minWidth: 300, marginBottom: 2 } },
+      React.createElement(InputLabel, { id: 'product-type-filter-label' }, 'Product Types'),
       React.createElement(
         Select,
         {
@@ -579,9 +618,7 @@ const DeleteIcon = (props) => (
               })
             ),
         },
-        productTypes.map((type) =>
-          React.createElement(MenuItem, { key: type.product_type, value: type.product_type, className: filters.productType.includes(type.product_type) ? 'selected-set' : '' }, type.en_name)
-        )
+        renderProductTypeFilterOptions()
       )
     ),
     React.createElement(
