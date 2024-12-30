@@ -144,6 +144,7 @@ class ProductTypesSeeder extends Seeder
             'product_type' => 'ultra_premium_collection',
             'pack_count' => 16,
             'mixed_sets' => false,
+            'en_name' => 'Ultra-Premium Collection',
         ]);
 
         DB::table('product_types')->insert([
@@ -200,6 +201,7 @@ class ProductTypesSeeder extends Seeder
             'product_type' => 'premium_figure_collection',
             'pack_count' => 11,
             'mixed_sets' => false,
+            'en_name' => 'Premium Figure Collection',
         ]);
 
         DB::table('product_types')->insert([
@@ -220,12 +222,14 @@ class ProductTypesSeeder extends Seeder
             'product_type' => 'special_illustration_collection',
             'pack_count' => 5,
             'mixed_sets' => false,
+            'en_name' => 'Special Illustration Collection',
         ]);
 
         DB::table('product_types')->insert([
             'product_type' => 'illustration_collection',
             'pack_count' => 4,
             'mixed_sets' => false,
+            'en_name' => 'Illustration Collection',
         ]);
 
         DB::table('product_types')->insert([
@@ -249,9 +253,6 @@ class ProductTypesSeeder extends Seeder
             'mixed_sets' => false,
             'en_name' => 'Pin Collection',
         ]);
-
-
-
 
     }
 }

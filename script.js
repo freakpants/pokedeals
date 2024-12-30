@@ -292,10 +292,14 @@ const applyFilters = () => {
         )
         .reduce((sum, product) => 
           sum + (product.matches || []).filter(match => 
-            filters.language.includes(match.language)
+            filters.language.length === 0 || filters.language.includes(match.language)
           ).length, 
           0
         );
+
+        // if the count is 0, don't show the set
+        if (offerCount === 0) return null;
+        
   
         return React.createElement(
           MenuItem,
