@@ -194,25 +194,6 @@ const applyFilters = () => {
     result = result.filter((product) => filters.productType.includes(product.product_type));
   }
 
-  // loop all product types
-  // if product type has no offers with current filters, remove it
-  const productTypesWithOffers = new Set(result.map((product) => product.product_type));
-  result = result.filter((product) => productTypesWithOffers.has(product.product_type));
-
-  // set the available productTypes for the filter
-  setProductTypes(allProductTypes.filter((productType) => productTypesWithOffers.has(productType.product_type)));
-
-  // loop all sets
-  // if set has no offers with current filters, remove it
-  const setsWithOffers = new Set(result.map((product) => product.set_identifier));
-  result = result.filter((product) => setsWithOffers.has(product.set_identifier));
-
-  // set the available sets for the filter
-  setSets(allSets.filter((set) => setsWithOffers.has(set.set_identifier)));
-
-
-
-
   totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
 
   result = sortProducts(result, sortConfig.key, sortConfig.order);
