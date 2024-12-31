@@ -643,7 +643,7 @@ const DeleteIcon = (props) => (
   return React.createElement(
     'div',
     null,
-    lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleDateString('de-DE')}`),
+    lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleString('de-DE')}`),
     filtersComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),
