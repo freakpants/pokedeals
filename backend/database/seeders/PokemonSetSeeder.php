@@ -69,7 +69,7 @@ class PokemonSetSeeder extends Seeder
 
         // manually add journey together
         $sets->push([
-            'id' => 'sv9',
+            'id' => 'sv09',
             'set_identifier' => 'journey_together',
             'series_id' => 'sv',
             'title_de' => 'Gemeinsam auf Reisen',
@@ -77,6 +77,18 @@ class PokemonSetSeeder extends Seeder
             'title_ja' => '',
             'release_date' => '2025-03-28',
         ]);
+
+        // manually add battle partners
+        $sets->push([
+            'id' => 'sv9',
+            'set_identifier' => 'battle_partners',
+            'series_id' => 'sv',
+            'title_de' => '',
+            'title_en' => 'Battle Partners',
+            'title_ja' => 'バトルパートナーズ',
+            'release_date' => '2025-01-24',
+        ]);
+
 
         // manually add an other set
         $sets->push([
@@ -173,7 +185,10 @@ class PokemonSetSeeder extends Seeder
 
         // Create a set for each entry
         foreach ($sets as $set) {
-            PokemonSet::create($set);
+            // if the set doesnt exist, create it
+            if(!PokemonSet::where('id', $set['id'])->exists()){
+                PokemonSet::create($set);
+            }
         }
 
     }

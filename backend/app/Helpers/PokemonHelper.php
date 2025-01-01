@@ -47,6 +47,30 @@ class PokemonHelper
             $title = str_replace('Scarlet & Violet - Set 9', 'Scarlet & Violet: Journey Together', $title);
         }
 
+        // Obsidianflammen => Obsidian Flammen
+        if (stripos($title, 'Obsidianflammen') !== false) {
+            $title = str_replace('Obsidianflammen', 'Obsidian Flammen', $title);
+        }
+
+        // mask of change => transformation mask
+        if (stripos($title, 'mask of change') !== false) {
+            $title = str_replace('mask of change', 'transformation mask', $title);
+            $title = str_replace('Mask of Change', 'transformation mask', $title);
+        }
+
+        // paldeas schicksal => paldeas schicksale
+        if (stripos($title, 'paldeas schicksal') !== false) {
+            // replace non case sensitive
+            $title = str_replace('paldeas schicksal', 'paldeas schicksale', $title);
+            $title = str_replace('Paldeas Schicksal', 'paldeas schicksale', $title);
+        }
+
+        // prismatic evolution => prismatic evolutions
+        if (stripos($title, 'prismatic evolution') !== false) {
+            $title = str_replace('prismatic evolution', 'prismatic evolutions', $title);
+            $title = str_replace('Prismatic Evolution', 'prismatic evolutions', $title);
+        }
+
         self::determineProductType($title, $variant_title);
 
         // Language-specific strings with priority matches
@@ -289,7 +313,8 @@ class PokemonHelper
     {
         // Map of product types to their associated keywords
         $productTypeKeywords = [
-            ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Top Trainer Box', 'Elite-Trainer-Box'],
+            ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Trainer Box', 'Elite-Trainer-Box', 'Top-Trainer Box', 'Elite Trainer-Box'],
+            ProductTypes::ThreePackBlisterCase->value => ['Three Pack Blister Case'],
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
             ProductTypes::HalfBoosterBox->value => ['half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
@@ -313,20 +338,21 @@ class PokemonHelper
             'ultra premium collection','Ultra-Premium-Kollektion','Ultra Premium Kollektion'],
             ProductTypes::SuperPremiumCollection->value => ['super-premium collection', 'super premium collection'],
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
-            ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection' ],
+            ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection', 'Premium Kollektion', 'Premium-Kollektion', 'Premium' ],
             ProductTypes::SpecialCollection->value => ['special collection', 'Regieleki V Box', 'Regidrago V Box'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
-            ProductTypes::PosterCollection->value => ['poster collection'],
-            ProductTypes::BinderCollection->value => ['binder collection'],
-            ProductTypes::PinCollection->value => ['pin collection'],
-            ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion'],
-            ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box'],
+            ProductTypes::PosterCollection->value => ['poster collection', 'Poster Kollektion'],
+            ProductTypes::BinderCollection->value => ['binder collection', 'Binder Kollektion'],
+            ProductTypes::PinCollection->value => ['pin collection', 'Pin - Kollektion'],
+            ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion', 'Spezial Illustration Rare Kollektion'],
+            ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box', 'Illustration Rare Kollektion', 'Illustrations Kollektion'],
             ProductTypes::TechStickerCollection->value =>
                 ['tech sticker collection', 'Tech Sticker Glaceon Collection', 'Tech Sticker Leafon Collection',
-                    'Tech Sticker Leafeon Collection', 'Tech Sticker Sylveon Collection'],
+                    'Tech Sticker Leafeon Collection', 'Tech Sticker Sylveon Collection', 'Tech Sticker Kollektion', 'Tech-Sticker-Kollektion'],
             ProductTypes::SurpriseBox->value => ['surprise box'],
-            ProductTypes::Collection->value => ['collection'],
+            ProductTypes::Collection->value => ['collection', 'Kollektion'],
+            ProductTypes::ExBox->value => ['ex box', 'ex Kollektion', 'ex-box'],
         ];
 
         // Normalize titles for consistent matching

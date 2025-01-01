@@ -15,11 +15,13 @@ enum ProductTypes: string
     case SleevedBooster = 'sleeved_booster';
     case SingleBlister = 'single_blister';
     case DoubleBlister = 'double_blister';
+    case ThreePackBlisterCase = 'three_pack_blister_case';
     case ThreePackBlister = 'three_pack_blister';
     case EliteTrainerBox = 'elite_trainer_box';
     case StackingTin = 'stacking_tin';
     case ThemeDeck = 'theme_deck';
     case SingleCard = 'single_card';
+    case ExBox = 'ex_box';
     case CollectionBox = 'collection_box';
     case Collection = 'collection';
     case PinCollection = 'pin_collection';
