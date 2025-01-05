@@ -398,6 +398,15 @@ class ProductVariantsSeeder extends Seeder
                 'en_name' => 'Bloodmoon Ursaluna EX Box',
                 'pack_count' => 4
             ],
+            // Kingambit Illustration Collection
+            [
+                'product_type' => ProductTypes::IllustrationCollection->value,
+                'en_short' => 'kingambit_illustration_collection',
+                'de_strings' => json_encode(['']),
+                'en_strings' => json_encode(['kingambit']),
+                'en_name' => 'Kingambit Illustration Collection',
+                'pack_count' => 4
+            ],
         ];
 
 

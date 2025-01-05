@@ -229,6 +229,12 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 4,
                 'mixed_sets' => false,
                 'en_name' => 'Ex Box',
+            ],
+            [
+                'product_type' => 'mini_tin_display',
+                'pack_count' => 20,
+                'mixed_sets' => false,
+                'en_name' => 'Mini Tin Display',
             ]
         ];
 

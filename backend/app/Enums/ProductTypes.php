@@ -29,6 +29,7 @@ enum ProductTypes: string
     case PencilCase = 'pencil_case';
     case FiveBoosterTin = 'five_booster_tin';
     case Tin = 'tin';
+    case MiniTinDisplay = 'mini_tin_display';
     case MiniTin = 'mini_tin';
     case PokeBallTin = 'poke_ball_tin';
     case SuperPremiumCollection = 'super_premium_collection';
