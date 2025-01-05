@@ -20,7 +20,12 @@ class SaveExternalProducts extends Command
 
     public function handle()
     {
-        $shops = DB::table('external_shops')->get(); 
+        // $shops = DB::table('external_shops')->get(); 
+        // get all shops sorted by last scraped at asc
+        $shops = DB::table('external_shops')
+            ->orderBy('last_scraped_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
         $totalNewProducts = 0; // Track total new products across all shops
 
         $this->pokemonHelper = new PokemonHelper();
@@ -43,7 +48,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge','ecwid'];
+        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge','ecwid','woocommerce'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -138,7 +143,68 @@ class SaveExternalProducts extends Command
                 ->update([
                     'last_scraped_at' => now(),
                 ]);
-            if($shop->shop_type === 'ecwid'){
+            if($shop->shop_type === 'woocommerce'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for WooCommerce...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                    $page = 1;
+                    $hasMorePages = true;
+                    while ($hasMorePages) {
+                        $paginatedUrl = $categoryUrl . 'page/' . $page;
+                        $this->info("Fetching page $page: $paginatedUrl");
+
+                        $response = Http::get($paginatedUrl);
+
+                        if ($response->failed()) {
+                            $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                            break;
+                        }
+
+                        $html = $response->body();
+
+                        // Parse HTML to extract data
+                        $crawler = new Crawler($html);
+
+                        // find all product-box elements
+                        $current_products = $crawler->filter('.product')->each(function (Crawler $node) use ($shop) {
+                            $product = [];
+                            // $product['id'] = $node->attr('data-product_id');
+                            // id data-product_id attribute of the <a> element with the class button product_type_simple add_to_cart_button ajax_add_to_cart
+                            try {
+                                $product['id'] = $node->filter('.button.product_type_simple.add_to_cart_button.ajax_add_to_cart')->attr('data-product_id');
+                            } catch (\Exception $e) {
+                                $product['id'] = null;
+                            }
+                            // find the product-price element
+                            $price = $node->filter('.price')->text();
+                            // replace everything that is not a number or a dot
+                            $price = preg_replace('/[^0-9.]/', '', $price);
+                            $product['price'] = floatval($price);
+                            // find the product-title element
+                            $product['title'] = $node->filter('.product-title')->text();
+
+                            // find the first href element
+                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            // replace the base url
+                            $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                            $product['available'] = true;
+
+                            $product['variants'] = [$product];
+
+                            return $product;
+                        });
+
+                        // merge the arrays
+                        $products = array_merge($products, $current_products);
+
+                        // Check if a link with the class "next page-numbers" exists
+                        $hasMorePages = $crawler->filter('.next.page-numbers')->count() > 0;
+                        $page++;
+                    }
+                }
+            }
+            else if($shop->shop_type === 'ecwid'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting parsing for Ecwid...");
 
@@ -201,8 +267,9 @@ class SaveExternalProducts extends Command
                             
                             // Detect sold-out status
                             try {
-                                $sold_out = $node->filter('.grid-product__button-hover.grid-product__buy-now')->text('') === '';
-                                $product['available'] = !$sold_out; // If the buy button is not found or empty, the product is sold out
+                                // there is an element: grid-product__button-hover grid-product__buy-now with a span that says Ausverkauft
+                                $product['available'] = !$node->filter('.grid-product__button-hover.grid-product__buy-now span:contains("Ausverkauft")')->count();
+
                             } catch (\Exception $e) {
                                 $product['available'] = false; // Assume unavailable if the hover button is not found
                             }

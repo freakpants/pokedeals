@@ -9,7 +9,21 @@ class ExternalShopsSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('external_shops')->insert([
+        $shops = [
+            [
+                'name' => 'TCG Shop',
+                'base_url' => 'https://tcgshop.ch',
+                'category_urls' => json_encode([
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-en/booster-displays-pokemon-en/',
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-en/decks-boxen-pokemon-en/',
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-de/booster-displays-pokemon-de/',
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-de/decks-boxen-pokemon-de/',
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-jp/booster-displays-pokemon-jp/',
+                    'https://www.tcgshop.ch/produkt-kategorie/pokemon/pokemon-jp/decks-boxen-pokemon-jp/',
+                ]),
+                'image' => 'tcgshop.png',
+                'shop_type' => 'woocommerce',       
+            ],
             [
                 'name' => 'The Uncommon Shop',
                 'base_url' => 'https://theuncommonshop.ch',
@@ -20,11 +34,12 @@ class ExternalShopsSeeder extends Seeder
                     'https://theuncommonshop.ch/shop/Tins-c123971257',
                     'https://theuncommonshop.ch/shop/Blister-Packs-c129993752',
                     'https://theuncommonshop.ch/shop/Decks-c37574009'
-            ]),
+                ]),
                 'image' => 'theuncommonshop.png',
                 'shop_type' => 'ecwid', 
             ],
-            [   'name' => 'Softridge',
+            [
+                'name' => 'Softridge',
                 'base_url' => 'https://www.softridge.ch',
                 'category_urls' => json_encode(['https://www.softridge.ch/api/shop/products?loadingType=79&languageId=2&navigationId=25783&filterByAllCategories=True&onlineExclusive=&displayType=1&sort=6&filter=null']),
                 'image' => 'softridge.png',
@@ -212,6 +227,12 @@ class ExternalShopsSeeder extends Seeder
                 'image' => 'spielezar.png',
                 'shop_type' => 'spielezar',
             ]
-        ]);
+        ];
+
+        foreach ($shops as $shop) {
+            if (!DB::table('external_shops')->where('base_url', $shop['base_url'])->exists()) {
+                DB::table('external_shops')->insert($shop);
+            }
+        }
     }
 }
