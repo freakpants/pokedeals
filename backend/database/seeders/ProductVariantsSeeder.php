@@ -33,7 +33,7 @@ class ProductVariantsSeeder extends Seeder
             [
                 'product_type' => ProductTypes::UltraPremiumCollection->value,
                 'en_short' => 'charizard_ultra_premium_collection',
-                'de_strings' => json_encode(['']),
+                'de_strings' => json_encode(['glurak']),
                 'en_strings' => json_encode(['charizard']),
                 'en_name' => 'Charizard Ultra Premium Collection'
             ],
@@ -240,7 +240,7 @@ class ProductVariantsSeeder extends Seeder
                 'product_type' => ProductTypes::PremiumCollection->value,
                 'en_short' => 'morpeko_vunion_premium_collection',
                 'de_strings' => json_encode(['']),
-                'en_strings' => json_encode(['morpeko']),
+                'en_strings' => json_encode(['morpeko','morpeko-v-union']),
                 'en_name' => 'Morpeko V-Union Premium Collection'
             ],
             [
@@ -407,9 +407,43 @@ class ProductVariantsSeeder extends Seeder
                 'en_name' => 'Kingambit Illustration Collection',
                 'pack_count' => 4
             ],
+            // Glaceon Tech Sticker Collection
+            [
+                'product_type' => ProductTypes::TechStickerCollection->value,
+                'en_short' => 'glaceon_tech_sticker_collection',
+                'de_strings' => json_encode(['glaziola']),
+                'en_strings' => json_encode(['glaceon']),
+                'en_name' => 'Glaceon Tech Sticker Collection',
+                'pack_count' => 3
+            ],
+            // Sylveon Tech Sticker Collection
+            [
+                'product_type' => ProductTypes::TechStickerCollection->value,
+                'en_short' => 'sylveon_tech_sticker_collection',
+                'de_strings' => json_encode(['feelinara']),
+                'en_strings' => json_encode(['sylveon']),
+                'en_name' => 'Sylveon Tech Sticker Collection',
+                'pack_count' => 3
+            ],
+            // Leafeon Tech Sticker Collection
+            [
+                'product_type' => ProductTypes::TechStickerCollection->value,
+                'en_short' => 'leafeon_tech_sticker_collection',
+                'de_strings' => json_encode(['folipurba']),
+                'en_strings' => json_encode(['leafeon']),
+                'en_name' => 'Leafeon Tech Sticker Collection',
+                'pack_count' => 3
+            ],
+            // prismatic mini tin display
+            [
+                'product_type' => ProductTypes::MiniTinDisplay->value,
+                'en_short' => 'prismatic_mini_tin_display',
+                'de_strings' => json_encode(['Prismatische Entwicklungen']),
+                'en_strings' => json_encode(['prismatic evolutions']),
+                'en_name' => 'Prismatic Evolutions Mini Tin Display',
+                'pack_count' => 16
+            ]
         ];
-
-
 
         foreach ($variants as $variant) {
             if (!DB::table('pokemon_product_variants')->where('en_short', $variant['en_short'])->exists()) {

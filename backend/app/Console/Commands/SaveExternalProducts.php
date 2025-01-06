@@ -65,7 +65,7 @@ class SaveExternalProducts extends Command
 
         $products = [];
 
-        $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader', 'sleeves'];
+        $continue_types = ["singles", "graded cards", "playmat", "binder", "sleeve", "plastic-model-kit", 'toploader', 'sleeves','Strategiespiele', 'painting'];
 
         // check if we have a json for this page and shop
         $shop_short = str_replace('.png', '', $shop->image);
@@ -176,8 +176,20 @@ class SaveExternalProducts extends Command
                             } catch (\Exception $e) {
                                 $product['id'] = null;
                             }
-                            // find the product-price element
-                            $price = $node->filter('.price')->text();
+
+                            // Find the price element, the last one with the specified class
+                            $priceElement = $node->filter('.woocommerce-Price-currencySymbol')->last();
+
+                            // Ensure the element exists
+                            if ($priceElement->count() > 0) {
+                                // Get the text of the parent node of the price element
+                                $price = $priceElement->ancestors()->first()->text();
+                                info("Price: " . $price);
+                            } else {
+                                info("Price element not found.");
+                            }
+
+
                             // replace everything that is not a number or a dot
                             $price = preg_replace('/[^0-9.]/', '', $price);
                             $product['price'] = floatval($price);
@@ -935,6 +947,33 @@ class SaveExternalProducts extends Command
                 $this->info("Product already exists: $title (ID: $externalId)");
                 continue;
             }
+
+            // try to get product type from body_html
+            if(isset($product['body_html'])){
+                $crawler = new Crawler($product['body_html']);
+
+                // when title contains tiny towns, debug
+                if(strpos($title, 'Bluebird') !== false){
+                    // $this->info("Tiny Towns found");
+                }
+    
+                // Define the list of product types to check
+                $productTypes = ['Brettspiel', 'Strategiespiel', 'Kartenspiel', 'Familienspiel', 'Gesellschaftsspiel', 'Puzzle',
+                    'Fantasiespiel', 'Kerze', 'Rollenspiel', 'Spielezubehör', 'Würfelspiel','Reaktionsspiel', 'Bretsspiel',
+                    'Geschicklichkeitsspiel', 'Spielematte', 'Lernspiel', 'Stategiespiel','Partyspiel', 'Abenteuerspiel','Figurenset',
+                    'Spielfigur', 'Farbpalette', 'Spieleaccessoire','Kerze', 'Bücher', 'Puzzle', 'Holzpuzzle', 'Holzspielerei',
+                    'Taschenbuch', 'Wandbild'];
+            
+                foreach ($productTypes as $type) {
+                    // Use regex to match the product type in the HTML
+                    if (preg_match('/<td[^>]*>.*?' . preg_quote($type, '/') . '.*?<\/td>/is', $product['body_html'])) {
+                        $product['product_type'] = $type;
+                        break;
+                    }
+                }
+            }
+            
+            
 
             $product_type = $this->pokemonHelper->determineProductCategory($product);
 

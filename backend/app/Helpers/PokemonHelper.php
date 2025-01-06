@@ -336,7 +336,7 @@ class PokemonHelper
             ProductTypes::StackingTin->value => ['stacking tin'],
             ProductTypes::Tin->value => ['tin'],
             ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection', 
-            'ultra premium collection','Ultra-Premium-Kollektion','Ultra Premium Kollektion'],
+            'ultra premium collection','Ultra-Premium-Kollektion','Ultra Premium Kollektion', 'Ultra Premium Glurak Kollektion'],
             ProductTypes::SuperPremiumCollection->value => ['super-premium collection', 'super premium collection'],
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
             ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection', 'Premium Kollektion', 'Premium-Kollektion', 'Premium' ],
@@ -344,14 +344,14 @@ class PokemonHelper
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
             ProductTypes::PosterCollection->value => ['poster collection', 'Poster Kollektion'],
-            ProductTypes::BinderCollection->value => ['binder collection', 'Binder Kollektion'],
+            ProductTypes::BinderCollection->value => ['binder collection', 'Binder Kollektion', 'Ordner Kollektion', '9-Pocket Portfolio Collection'],
             ProductTypes::PinCollection->value => ['pin collection', 'Pin - Kollektion'],
             ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion', 'Spezial Illustration Rare Kollektion'],
             ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box', 'Illustration Rare Kollektion', 'Illustrations Kollektion'],
             ProductTypes::TechStickerCollection->value =>
                 ['tech sticker collection', 'Tech Sticker Glaceon Collection', 'Tech Sticker Leafon Collection',
                     'Tech Sticker Leafeon Collection', 'Tech Sticker Sylveon Collection', 'Tech Sticker Kollektion', 'Tech-Sticker-Kollektion'],
-            ProductTypes::SurpriseBox->value => ['surprise box'],
+            ProductTypes::SurpriseBox->value => ['surprise box', 'Überraschungsbox'],
             ProductTypes::Collection->value => ['collection', 'Kollektion'],
             ProductTypes::ExBox->value => ['ex box', 'ex Kollektion', 'ex-box'],
         ];
@@ -390,14 +390,28 @@ class PokemonHelper
     {
         // try to detect the type of product
         $possible_product_types = [
-            'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'disney lorcana', "weiss schwarz", "psa 10", "mystery",
+            'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'lorcana', "weiss schwarz", "psa 10", "mystery",
             'union arena', "accessory", "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case',
             'Magnetic Holder', 'Card Holder', 'Battle Spirits', 'Build Divide', 'Funko Pop', 'Gundam', 'Panini', 'Naruto', 'Bandai', 'Yu-Gi-Oh',
             'Versandkosten', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro', 'Star Wars', 'Acryl Case', 'PRO-BINDER', 'KEYCHAIN',
             'Dragon Shield', 'Store Card', 'Duskmourn', 'Van Gogh', 'Plush', 'Sleeves', 'Gutschein', 'Attack On Titan', 'Bleach', 'Digimon',
             'Sidewinder 100+', 'Spendenaktion', 'ZipFolio', 'Sleeves', 'Altered TCG', 'Card Preserver', 'Flip\'n\'Tray', 'Nanoblock',
             'PSA Card', 'XenoSkin', 'Ultra Clear', 'gamegenic', 'ultimate guard', 'into the inklands', 'the first chapter',
-            'plushy'
+            'plushy', 'Legler', 'Trefl', 'Ravensburger', 'Puzzle', 'Plüsch', 'Quarter Century Stampede', 'Paramount War', 'Star Realms',
+            'A Song of Ice & Fire', '7te See', 'Grundregelwerk', 'White Goblin Games', 'Alien Artifacts', 'Alte dunkle Dinge', 'Altiplano', 'Andor', 'Kosmos',
+            'Antarctica', 'Acrylic', 'Stichkabinett', 'carta.media', 'painting', 'Wasgij', 'Warhammer','dobble', 'clementoni', 'eurographics',
+            'D&D', 'Räuchermischung', 'Armband', 'strampler', 'seife', 'Dusch', 'shampoo', 'baby','Räucherstäbchen','Spardose',
+            'socks', 'becher', 'Ätherisch', 'Teelichthalter', 'duftstein', 'Terra Mystica', 'vegas','penis','anhänger',
+            'schmidt', 'grablicht', 'kerze', 'katze', 'Metallschild', 'Knisterbad', 'Windlicht', 'Halskette',
+            'Brillenetui', 'Tasse', 'Wortlicht', 'Gedanken', 'Geschenktasche', 'Glückwunschkarte', 'Master Pieces',
+            'Wooden.City','Bluebird', 'Educa', 'Lais', 'Gasanzünder', 'Konfettikanone', 'Filztasche', 'Outdoorgrill', 'Body Wash',
+            'Flaschenöffner', 'Doppelmeter', 'Männerhandtasche', 'Mädelsabend', 'Grafika', 'Water Wow', 'Melissa&Doug', 'Glue',
+            'Castorland', 'Bigjigs', 'Windspiel', 'Tier-Memory', 'Portemonnaie', 'Kinder-Rucksack', 'by Laona', 'Wichtel',
+            'Bilderrahmen', 'engel', 'Servietten', 'Ohrschmuck', 'Kugelschreiber', 'Gürteltasche', 'Teelicht', 'Hochzeits',
+            'Schutzengel', 'Wespen Stop', 'Piraten Duell', 'Elfenland', 'Sun Catcher', 'Wetterstein', 'Schürze', 'Party Spiel',
+            'LED-Lichter', 'Sparschwein', 'Ich denke an dich', 'Braut-Herz', 'Geschenketasche', 'Feuerzeug', 'Holz-Herz',
+            'Dekorationsherz', 'Poly Gold', 'Crados'
+
         ];
 
         $title = $product['title'];

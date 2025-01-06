@@ -257,6 +257,15 @@
     ]
   },
   {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together 3 Booster Packs",
+    "sku": "journey-three-pack-blister",
+    "price": "£12.49",
+    "productUrl": "",
+    "images": [
+      "https://i.imgur.com/pWpSggC.png"
+    ]
+  },
+  {
     "title": "Pokémon TCG: Scarlet & Violet-Stellar Crown Booster Bundle (6 Packs)",
     "sku": "190-85920",
     "price": "£23.94",
@@ -579,12 +588,21 @@
     ]
   },
   {
-    "title": "Pokémon TCG: Prismatic Evolutions Mini tin",
-    "sku": "100-119-2",
+    "title": "Pokémon TCG: Prismatic Evolutions Mini Tin",
+    "sku": "prismatic-mini-tin",
     "price": "£8.99",
     "productUrl": "",
     "images": [
       "https://www.twomoons.ch/thumbnail/c6/94/df/1731166085/0196214105461_2110046_XL_9_800x800.webp?ts=1731166086"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Prismatic Evolutions Mini Tin Display",
+    "sku": "prismatic-mini-tin-display",
+    "price": "£71.92",
+    "productUrl": "",
+    "images": [
+      "https://poke-collect.com/cdn/shop/files/peminiset.png?v=1731524506&width=713"
     ]
   },
   {
@@ -1046,6 +1064,51 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9535_699-85615_05.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9535_699-85615_06.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9535_699-85615_07.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Tech Sticker Collection (Glaceon)",
+    "sku": "prismatic-tech-sticker-glaceon",
+    "price": "£15.99",
+    "productUrl": "",
+    "images": [
+      "https://www.toytans.ch/6363-large_default/pokemon-sv085-prismatic-evolutions-tech-sticker-collection-en.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Tech Sticker Collection (Assorted)",
+    "sku": "prismatic-tech-sticker-assorted",
+    "price": "£15.99",
+    "productUrl": "",
+    "images": [
+      "https://themanashop.ch/61841-large_default/pokemon-sv085-prismatic-evolutions-tech-sticker-collection-set.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Tech Sticker Collection (Sylveon)",
+    "sku": "prismatic-tech-sticker-sylveon",
+    "price": "£15.99",
+    "productUrl": "",
+    "images": [
+      "https://www.toytans.ch/6364-large_default/pokemon-sv085-prismatic-evolutions-tech-sticker-collection-en.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Tech Sticker Collection (Leafeon)",
+    "sku": "prismatic-tech-sticker-leafeon",
+    "price": "£15.99",
+    "productUrl": "",
+    "images": [
+      "https://www.toytans.ch/6365-large_default/pokemon-sv085-prismatic-evolutions-tech-sticker-collection-en.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Binder Collection",
+    "sku": "prismatic-binder-collection",
+    "price": "£24.99",
+    "productUrl": "",
+    "images": [
+      "https://d2j6dbq0eux0bg.cloudfront.net/images/15177319/4619255693.jpg"
     ]
   },
   {
@@ -2530,15 +2593,6 @@
     "price": "£54.99",
     "productUrl": "",
     "images": ["https://i.imgur.com/uny6yOs.png"
-    ]
-  },
-  {
-    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Binder Collection",
-    "sku": "100-10001",
-    "price": "0",
-    "productUrl": "",
-    "images": [
-      "https://d2j6dbq0eux0bg.cloudfront.net/images/15177319/4619255693.jpg"
     ]
   },
   {
@@ -5477,6 +5531,60 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9504_699-85648_01.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9504_699-85648_02.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P9504_699-85648_03.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Obsidian Flames 3 Booster Packs & Greavard Promo Card",
+    "sku": "699-85379",
+    "price": "£12.49",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-85379/pokemon-tcg-scarlet-and-violet-obsidian-flames-3-booster-packs-and-greavard-promo-card",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85379_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85379_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85379_03.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Obsidian Flames 3 Booster Packs & Eevee Promo Card",
+    "sku": "699-85380",
+    "price": "£12.49",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-85380/pokemon-tcg-scarlet-and-violet-obsidian-flames-3-booster-packs-and-eevee-promo-card",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85380_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85380_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_699-85380_03.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Obsidian Flames Build & Battle Stadium",
+    "sku": "186-85397",
+    "price": "£59.99",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/186-85397/pokemon-tcg-scarlet-and-violet-obsidian-flames-build-and-battle-stadium",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_05.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_06.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_07.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8979_186-85397_08.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Surprise Box",
+    "sku": "100-10096",
+    "price": "£19.99",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/100-10096/pokemon-tcg-scarlet-and-violet-prismatic-evolutions-surprise-box",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_05.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_06.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_07.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_08.jpg"
     ]
   }
 ]
