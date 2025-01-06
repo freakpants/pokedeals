@@ -5586,5 +5586,24 @@
       "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_07.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/High/10004/P10460_100-10096_08.jpg"
     ]
+  }, 
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Poster Collection",
+    "sku": "prismatic-poster-collection",
+    "price": "",
+    "productUrl": "",
+    "images": [
+      "https://d2j6dbq0eux0bg.cloudfront.net/images/15177319/4619254388.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Prismatic Evolutions Booster Pack (10 Cards)",
+    "sku": "prismatic-booster-pack",
+    "price": "3.99",
+    "productUrl": "",
+    "images": [
+      "https://www.goodgamesbern.ch/images/thumbnails/550/450/detailed/13/4619983174_w0lt-sa.jpg"
+    ]
+
   }
 ]
