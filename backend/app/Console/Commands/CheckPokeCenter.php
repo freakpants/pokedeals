@@ -13,7 +13,7 @@ class CheckPokeCenter extends Command
      *
      * @var string
      */
-    protected $signature = 'app:check-poke-center';
+    protected $signature = 'app:check-poke-center {--force-email}';
 
     /**
      * The console command description.
@@ -27,6 +27,9 @@ class CheckPokeCenter extends Command
      */
     public function handle()
     {
+
+        $forceEmail =  $this->option('force-email') ?? false;
+
         $url = "https://api.scraperapi.com/?api_key=36ab00a69c3659025119051957dac92a&url=https%3A%2F%2Fwww.pokemoncenter.com%2Fen-gb%2Fcategory%2Ftrading-card-game";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -43,6 +46,9 @@ class CheckPokeCenter extends Command
         }
 
         $domail = false;
+        if($forceEmail){
+            $domail = true;
+        }
         $headers = "From: pokedeals";
         $to = "freakpants@gmail.com";
 
