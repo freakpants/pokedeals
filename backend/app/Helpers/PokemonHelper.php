@@ -316,7 +316,7 @@ class PokemonHelper
             ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Trainer Box', 'Elite-Trainer-Box', 'Top-Trainer Box', 'Elite Trainer-Box'],
             ProductTypes::ThreePackBlisterCase->value => ['Three Pack Blister Case'],
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
-            ProductTypes::HalfBoosterBox->value => ['half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display'],
+            ProductTypes::HalfBoosterBox->value => ['half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display', 'Booster Box (18 Boosters)', 'Booster Display (18er)', 'Display Box (18 Packs)'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
             ProductTypes::DisplayBoxCase->value => ['Booster Display Case'],
             ProductTypes::MiniTinDisplay->value => ['mini tin display', 'mini tins display'],
