@@ -70,7 +70,7 @@ class IdentifyProducts extends Command
 
         // loop through each product
         foreach ($products as $product) {
-           
+
 
             // use the pokemon helper to identify the product
             $productDetails = $pokemonHelper->determineProductDetails($product->title);

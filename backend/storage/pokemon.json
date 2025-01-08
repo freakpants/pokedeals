@@ -4396,12 +4396,22 @@
   },
   {
     "title": "Pokémon TCG: Crown Zenith Mini Tin Display",
-    "sku": "699-85199-10",
+    "sku": "zenith_mini_tin_display",
     "price": "£89.90",
     "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-85199/pokemon-tcg-crown-zenith-mini-tin-sonia-and-yamper",
     "images": [
       "https://pikaversum.ch/cdn/shop/files/Pokemon-Crown-Zenith-Mini-Tins-Display-_EN_-Pokemon-82070274.jpg?v=1732864913&width=800"
     ]
+  },
+  {
+    "title": "Pokémon TCG: Shrouded Fable Mini Tin Display",
+    "sku": "shrouded_fable_mini_tin_display",
+    "price": "£89.90",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-85861/pokemon-tcg-scarlet-and-violet-shrouded-fable-mini-tin-zoroark-and-poltchageist",
+    "images": [
+      "https://cardmaniac.ch/cdn/shop/files/pokemon-tcg-nebel-der-sagen-mini-tin-box-display-404577.png?v=1724207671&width=900"
+    ]
+
   },
   {
     "title": "Pokémon TCG: Scarlet & Violet-151 Mini Tin (Machamp & Cubone)",

@@ -211,7 +211,7 @@ class ProductVariantsSeeder extends Seeder
             [
                 'product_type' => ProductTypes::EliteTrainerBox->value,
                 'en_short' => 'iron_leaves_etb',
-                'de_strings' => json_encode(['eisendorn', 'Temporal Forces ETB - DE - Grün']),
+                'de_strings' => json_encode(['eisenblatt', 'eisendorn', 'Temporal Forces ETB - DE - Grün']),
                 'en_strings' => json_encode(['iron leaves', 'Temporal Forces ETB - EN - Grün']),
                 'en_name' => 'Scarlet & Violet-Temporal Forces Elite Trainer Box (Iron Leaves)'
             ],
