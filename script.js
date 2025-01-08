@@ -350,20 +350,20 @@ const applyFilters = () => {
           ? new Date(set.release_date).toLocaleDateString('de-DE') 
           : '';
         const isSelected = filters.set.includes(set.set_identifier);
-  
+        
         // Calculate the total number of matches across all products for this set
         const offerCount = products
-        .filter(product => 
-          product.set_identifier === set.set_identifier && 
-          (filters.productType.length === 0 || filters.productType.includes(product.product_type)) &&
-          (filters.shop.length === 0 || product.matches.some(match => filters.shop.includes(match.shop_id)))
-        )
-        .reduce((sum, product) => 
-          sum + (product.matches || []).filter(match => 
-            filters.language.length === 0 || filters.language.includes(match.language)
-          ).length, 
-          0
-        );
+          .filter(product => 
+            product.set_identifier === set.set_identifier && 
+            (filters.productType.length === 0 || filters.productType.includes(product.product_type))
+          )
+          .reduce((sum, product) => 
+            sum + (product.matches || []).filter(match => 
+              (filters.shop.length === 0 || filters.shop.includes(match.shop_id)) &&
+              (filters.language.length === 0 || filters.language.includes(match.language))
+            ).length, 
+            0
+          );
 
         // if the count is 0, don't show the set
         if (offerCount === 0) return null;
