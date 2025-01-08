@@ -29,6 +29,7 @@ const parseQueryParams = () => {
     language: params.get('language') ? params.get('language').split(',') : [],
     set: params.get('set') ? params.get('set').split(',') : [],
     productType: params.get('productType') ? params.get('productType').split(',') : [],
+    shop: params.get('shop') ? params.get('shop').split(',') : [],
     sortKey: params.get('sortKey') || 'cheapest',
     sortOrder: params.get('sortOrder') || 'asc',
   };
@@ -40,6 +41,7 @@ const updateUrlParams = (filters, sortConfig) => {
   if (filters.language.length > 0) params.set('language', filters.language.join(','));
   if (filters.set.length > 0) params.set('set', filters.set.join(','));
   if (filters.productType.length > 0) params.set('productType', filters.productType.join(','));
+  if (filters.shop.length > 0) params.set('shop', filters.shop.join(','));
   params.set('sortKey', sortConfig.key);
   params.set('sortOrder', sortConfig.order);
 
@@ -60,6 +62,7 @@ const App = () => {
     language: ['en'], // Default selected languages
     set: [],
     productType: [],
+    shop: [],
   });
 
   const [sortConfig, setSortConfig] = useState({
@@ -165,7 +168,7 @@ const App = () => {
   const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [key]: key === 'set' || key === 'productType' ? value : value, // Ensure 'set' and 'productType' filters are always arrays
+      [key]: key === 'set' || key === 'productType' || key === 'shop' ? value : value, // Ensure 'set', 'productType', and 'shop' filters are always arrays
     }));
   };
 
@@ -192,6 +195,15 @@ const applyFilters = () => {
 
   if (filters.productType.length > 0) {
     result = result.filter((product) => filters.productType.includes(product.product_type));
+  }
+
+  if (filters.shop.length > 0) {
+    result = result
+      .map((product) => {
+        const filteredMatches = product.matches.filter((match) => filters.shop.includes(match.shop_id));
+        return filteredMatches.length > 0 ? { ...product, matches: filteredMatches } : null;
+      })
+      .filter((product) => product !== null);
   }
 
   totalOffers = result.reduce((count, product) => count + product.matches.length, 0);
@@ -238,13 +250,11 @@ const applyFilters = () => {
   };
 
   const renderProductTypeFilterOptions = () => {
-    // Filter product types to include only those with offers
     let filteredProductTypes = productTypes.filter(type => {
       const hasOffers = products.some(product => product.product_type === type.product_type);
       return hasOffers;
     });
   
-    // If sets are being filtered, further narrow down product types based on offers for those sets
     if (filters.set.length > 0) {
       filteredProductTypes = filteredProductTypes.filter(type => {
         const hasOffers = products.some(product =>
@@ -254,17 +264,27 @@ const applyFilters = () => {
       });
     }
   
-    // Calculate offer counts for each product type
+    if (filters.shop.length > 0) {
+      filteredProductTypes = filteredProductTypes.filter(type => {
+        const hasOffers = products.some(product =>
+          product.product_type === type.product_type && product.matches.some(match => filters.shop.includes(match.shop_id))
+        );
+        return hasOffers;
+      });
+    }
+  
     return filteredProductTypes.map(type => {
       const offerCount = products
         .filter(product =>
           product.product_type === type.product_type &&
-          (filters.set.length === 0 || filters.set.includes(product.set_identifier))
+          (filters.set.length === 0 || filters.set.includes(product.set_identifier)) &&
+          (filters.shop.length === 0 || product.matches.some(match => filters.shop.includes(match.shop_id)))
         )
-        .reduce((sum, product) => 
-          sum + (product.matches || []).filter(match => 
-            filters.language.length === 0 || filters.language.includes(match.language)
-          ).length, 
+        .reduce((sum, product) =>
+          sum + (product.matches || []).filter(match =>
+            filters.language.length === 0 || filters.language.includes(match.language) &&
+            (filters.shop.length === 0 || filters.shop.includes(match.shop_id))
+          ).length,
           0
         );
   
@@ -293,6 +313,14 @@ const applyFilters = () => {
     if (filters.productType.length > 0) {
       filteredSets = filteredSets.filter(set => {
         const hasOffers = products.some(product => product.set_identifier === set.set_identifier && filters.productType.includes(product.product_type));
+        return hasOffers;
+      });
+    }
+  
+    // if we are filtering by shops, also check if the set has offers for those shops
+    if (filters.shop.length > 0) {
+      filteredSets = filteredSets.filter(set => {
+        const hasOffers = products.some(product => product.set_identifier === set.set_identifier && product.matches.some(match => filters.shop.includes(match.shop_id)));
         return hasOffers;
       });
     }
@@ -327,7 +355,8 @@ const applyFilters = () => {
         const offerCount = products
         .filter(product => 
           product.set_identifier === set.set_identifier && 
-          (filters.productType.length === 0 || filters.productType.includes(product.product_type))
+          (filters.productType.length === 0 || filters.productType.includes(product.product_type)) &&
+          (filters.shop.length === 0 || product.matches.some(match => filters.shop.includes(match.shop_id)))
         )
         .reduce((sum, product) => 
           sum + (product.matches || []).filter(match => 
@@ -356,7 +385,34 @@ const applyFilters = () => {
       }),
     ]);
   };
-  
+
+  const renderShopFilterOptions = () => {
+    // Filter shops to include only those with offers
+    const filteredShops = Object.values(shops).filter(shop => {
+      const hasOffers = products.some(product => product.matches.some(match => match.shop_id === shop.id));
+      return hasOffers;
+    });
+
+    // Calculate offer counts for each shop
+    return filteredShops.map(shop => {
+      const offerCount = products
+        .reduce((sum, product) => 
+          sum + (product.matches || []).filter(match => 
+            match.shop_id === shop.id &&
+            (filters.language.length === 0 || filters.language.includes(match.language)) &&
+            (filters.set.length === 0 || filters.set.includes(product.set_identifier)) &&
+            (filters.productType.length === 0 || filters.productType.includes(product.product_type))
+          ).length, 
+          0
+        );
+
+      return offerCount > 0 ? React.createElement(
+        MenuItem,
+        { key: shop.id, value: shop.id },
+        `${shop.name} (${offerCount})`
+      ) : null;
+    });
+  };
 
   const renderOffer = (product, match, isCheapest) => {
     const shop = shops[match.shop_id] || {};
@@ -619,6 +675,44 @@ const DeleteIcon = (props) => (
             ),
         },
         renderProductTypeFilterOptions()
+      )
+    ),
+    React.createElement(
+      FormControl,
+      { sx: { minWidth: 300, marginBottom: 2 } },
+      React.createElement(InputLabel, { id: 'shop-filter-label' }, 'Shops'),
+      React.createElement(
+        Select,
+        {
+          labelId: 'shop-filter-label',
+          multiple: true,
+          value: filters.shop,
+          onChange: (e) => handleFilterChange('shop', e.target.value),
+          renderValue: (selected) =>
+            React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
+              selected.map(shopId => {
+                const shop = shops[shopId];
+                return shop ? (
+                  React.createElement(Chip, {
+                    key: shopId,
+                    label: shop.name,
+                    onDelete: (e) => {
+                      e.stopPropagation();
+                      handleFilterChange('shop', selected.filter(item => item !== shopId));
+                    },
+                    deleteIcon: React.createElement(DeleteIcon, {
+                      onMouseDown: (event) => event.stopPropagation(),
+                      style: { cursor: 'pointer', marginLeft: '5px' }
+                    }),
+                    style: { margin: '2px' },
+                    clickable: true,
+                    onClick: (e) => e.stopPropagation()
+                  })
+                ) : null;
+              })
+            ),
+        },
+        renderShopFilterOptions()
       )
     ),
     React.createElement(
