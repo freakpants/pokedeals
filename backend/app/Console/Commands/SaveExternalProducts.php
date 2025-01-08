@@ -724,7 +724,8 @@ class SaveExternalProducts extends Command
                             str_replace($shop->base_url, '', str_replace('www.', '', $product['url']));
 
                             // if there is a label-danger or label-warning, the product is out of stock
-                            if($node->filter('.label-danger')->count() || $node->filter('.label-warning')->count()){
+                            if($node->filter('.label-danger')->count() || $node->filter('.label-warning')->count() ||
+                                $node->filter('.product-unavailable')->count()){
                                 $product['available'] = false;
                             } else {
                                 $product['available'] = true;
