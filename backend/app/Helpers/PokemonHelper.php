@@ -319,7 +319,7 @@ class PokemonHelper
             ProductTypes::HalfBoosterBox->value => ['half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display', 'Booster Box (18 Boosters)', 'Booster Display (18er)', 'Display Box (18 Packs)'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
             ProductTypes::DisplayBoxCase->value => ['Booster Display Case'],
-            ProductTypes::MiniTinDisplay->value => ['mini tin display', 'mini tins display'],
+            ProductTypes::MiniTinDisplay->value => ['mini tin display', 'mini tins display', 'Mini-Tin-Box Display'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs', 'display'],
             ProductTypes::JapaneseDisplayBox->value => ['Box - Japanese', 'Booster Box (JPN)'],
             ProductTypes::BoosterBundleCase->value => ['booster bundle case'],
