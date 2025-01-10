@@ -130,13 +130,6 @@ class ExternalShopsSeeder extends Seeder
                 'shop_type' => 'shopify',
             ],
             [
-                'name' => 'Wild-Cards',
-                'base_url' => 'https://www.wild-cards.ch',
-                'category_urls' => null,
-                'image' => 'wildcards.png',
-                'shop_type' => 'shopify',
-            ],
-            [
                 'name' => 'Skyspell',
                 'base_url' => 'https://www.skyspell.ch',
                 'category_urls' => null,

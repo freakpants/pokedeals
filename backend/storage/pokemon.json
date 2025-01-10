@@ -316,14 +316,6 @@
     ]
   },
   {
-    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Booster Display Box (36 Packs)",
-    "sku": "journey-display-box",
-    "price": "£143.64",
-    "productUrl": "",
-    "images": ["https://i.imgur.com/PI0do2Q.png"
-    ]
-  },
-  {
     "title": "Pokémon TCG: Charizard ex League Battle Deck",
     "sku": "290-85883",
     "price": "£24.99",
@@ -2585,14 +2577,6 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_08.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_09.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10004/P10343_100-10019_10.jpg"
-    ]
-  },
-  {
-    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Pokémon Center Elite Trainer Box",
-    "sku": "journey-etb",
-    "price": "£54.99",
-    "productUrl": "",
-    "images": ["https://i.imgur.com/uny6yOs.png"
     ]
   },
   {
@@ -5035,20 +5019,6 @@
     ]
   },
   {
-    "title": "Pokémon TCG: Knock Out Collection (Boltund, Eiscue & Galarian Sirfetch'd)",
-    "sku": "699-17134",
-    "price": "£9.99",
-    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-17134/pokemon-tcg-knock-out-collection-boltund-eiscue-and-galarian-sirfetch-d",
-    "images": [
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_01.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_02.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_03.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_04.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_05.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_06.jpg"
-    ]
-  },
-  {
     "title": "Pokémon TCG: Bloodmoon Ursaluna ex Box",
     "sku": "290-85881",
     "price": "£19.99",
@@ -5277,20 +5247,6 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P7867_699-17177_04.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P7867_699-17177_05.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P7867_699-17177_06.jpg"
-    ]
-  },
-  {
-    "title": "Pokémon TCG: Knock Out Collection (Boltund, Eiscue & Galarian Sirfetch'd)",
-    "sku": "699-17134",
-    "price": "£9.99",
-    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-17134/pokemon-tcg-knock-out-collection-boltund-eiscue-and-galarian-sirfetch-d",
-    "images": [
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_01.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_02.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_03.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_04.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_05.jpg",
-      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10005/P8287_699-17134_06.jpg"
     ]
   },
   {
@@ -5577,5 +5533,69 @@
       "https://www.goodgamesbern.ch/images/thumbnails/550/450/detailed/13/4619983174_w0lt-sa.jpg"
     ]
 
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Pokémon Center Elite Trainer Box",
+    "sku": "100-10356",
+    "price": "£54.99",
+    "productUrl": "https://www.pokemoncenter.com/product/100-10356/pokemon-tcg-scarlet-and-violet-journey-together-pokemon-center-elite-trainer-box",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_05.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_06.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10356_07.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Enhanced Booster Display Box (36 Packs & 1 Promo Card)",
+    "sku": "N/A",
+    "price": "N/A",
+    "productUrl": "https://www.pokemoncenter.com/product/10-10125-102/pokemon-tcg-scarlet-and-violet-journey-together-enhanced-booster-display-box-36-packs-and-1-promo-card",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_10-10125-102_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_10-10125-102_02.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Booster Bundle (6 Packs)",
+    "sku": "100-10341",
+    "price": "N/A",
+    "productUrl": "https://www.pokemoncenter.com/product/100-10341/pokemon-tcg-scarlet-and-violet-journey-together-booster-bundle-6-packs",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10341_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10341_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10341_03.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Journey Together Sleeved Booster Pack (10 Cards)",
+    "sku": "100-10326",
+    "price": "$4.49",
+    "productUrl": "https://www.pokemoncenter.com/product/100-10326/pokemon-tcg-scarlet-and-violet-journey-together-sleeved-booster-pack-10-cards",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_05.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_06.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10006/P10344_100-10326_07.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Galarian Sirfetch'd V Box",
+    "sku": "290-80737",
+    "price": "$19.99",
+    "productUrl": "https://www.pokemoncenter.com/product/290-80737/pokemon-tcg-galarian-sirfetch-d-v-box",
+    "images": [
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P6101_290-80737_01.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P6101_290-80737_02.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P6101_290-80737_03.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P6101_290-80737_04.jpg",
+      "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P6101_290-80737_05.jpg"
+    ]
   }
 ]
