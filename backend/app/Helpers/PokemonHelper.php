@@ -320,6 +320,7 @@ class PokemonHelper
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
             ProductTypes::DisplayBoxCase->value => ['Booster Display Case'],
             ProductTypes::MiniTinDisplay->value => ['mini tin display', 'mini tins display', 'Mini-Tin-Box Display'],
+            ProductTypes::PokeBallTinDisplay->value => ['poke ball tin display'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs', 'display'],
             ProductTypes::JapaneseDisplayBox->value => ['Box - Japanese', 'Booster Box (JPN)'],
             ProductTypes::BoosterBundleCase->value => ['booster bundle case'],

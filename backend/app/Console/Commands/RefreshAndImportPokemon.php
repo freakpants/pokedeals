@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\PokemonHelper;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use App\Enums\ProductTypes;
 
 class RefreshAndImportPokemon extends Command
 {
@@ -37,7 +40,7 @@ class RefreshAndImportPokemon extends Command
         $this->info('Importing Pokémon products...');
         // Define the files to import
         $filePaths = [
-            storage_path('pokemon.json'),
+            storage_path('pokemon.json'),           
         ];
 
         foreach ($filePaths as $filePath) {
@@ -48,6 +51,104 @@ class RefreshAndImportPokemon extends Command
                 $this->error("File not found: {$filePath}");
             }
         }
+
+        // import the tcgplayerproducts json file, modify it then use it to call pokemon:import
+        $this->info('Importing TCGPlayer products...');
+        $tcgplayerProducts = json_decode(file_get_contents(storage_path('tcgplayerproducts.json')), true)['results'];
+
+        // Modify the TCGPlayer products to match the Pokémon products
+        $pokemonProducts = [];
+        foreach ($tcgplayerProducts as $tcgplayerProduct) {
+            /* 
+                "title": "Pokémon TCG: Knock Out Collection (Boltund, Eiscue & Galarian Sirfetch'd)",
+    "sku": "699-17134",
+    "price": "£9.99",
+    "productUrl": "https://www.pokemoncenter.com/en-gb/product/699-17134/pokemon-tcg-knock-out-collection-boltund-eiscue-and-galarian-sirfetch-d",
+    "images": [
+
+    */ 
+
+            $extendedData = $tcgplayerProduct['extendedData'];
+            // check if any of the extended data have a array property called displayName with the value "Card Number"
+            $cardNumber = null;
+            foreach ($extendedData as $data) {
+                if ($data['displayName'] === 'Card Number') {
+                    $cardNumber = $data['value'];
+                    break;
+                }
+            }
+
+            // if there is a card number, this is a card. so skip it
+            if ($cardNumber) {
+                continue;
+            }
+
+            $title = $tcgplayerProduct['name'];
+            $sku = $tcgplayerProduct['productId'];
+            $price = '';
+            $productUrl = $tcgplayerProduct['url'];
+            $images = [$tcgplayerProduct['imageUrl']];
+
+            $pokemonProducts[] = [
+                'title' => $title,
+                'sku' => $sku,
+                'price' => $price,
+                'productUrl' => $productUrl,
+                'images' => $images
+            ];
+
+            // use the pokemon helper to determine product details
+            $details = PokemonHelper::determineProductDetails($title);
+
+            /*
+                        [
+                'product_type' => ProductTypes::EliteTrainerBox->value,
+                'en_short' => 'roaring_moon_etb',
+                'de_strings' => json_encode(['donnersichel', 'Paradox Rift ETB - Deutsch - Blau']),
+                'en_strings' => json_encode(['roaring moon', 'Paradox Rift ETB - Englisch - Blau']),
+                'en_name' => 'Scarlet & Violet-Paradox Rift Elite Trainer Box (Roaring Moon)'
+            ],
+            */
+            // if the product type isnt other, create a variant for this
+            if ($details['product_type'] !== ProductTypes::Other->value) {
+                // use the clean name with _ as the en_short
+                $enShort = $tcgplayerProduct['cleanName'];
+                // replace spaces in enshort with _
+                $enShort = str_replace(' ', '_', $enShort);
+
+                // try the first two words for the en strings
+                $enStrings = explode(' ', $tcgplayerProduct['cleanName']);
+
+                if(count($enStrings) < 2) {
+                    $enStrings = $tcgplayerProduct['name'];
+                } else {
+                    $enStrings = $enStrings[0] . ' ' . $enStrings[1];
+                }
+
+                $variants[] = [
+                    'product_type' => $details['product_type'],
+                    'en_short' => $enShort,
+                    'de_strings' => json_encode([]),
+                    'en_strings' => json_encode([$enStrings]),
+                    'en_name' => $title
+                ];
+            }
+
+            
+
+        }
+
+        // save the variants
+        foreach ($variants as $variant) {
+            if (!DB::table('pokemon_product_variants')->where('en_short', $variant['en_short'])->exists()) {
+                DB::table('pokemon_product_variants')->insert($variant);
+            }
+        }
+
+        // create a temporary file for use with the pokemon:import command
+        file_put_contents(storage_path('tcg-processed.json'), json_encode($pokemonProducts));
+
+        $this->call('pokemon:import', ['file' => storage_path('tcg-processed.json')]);
 
         $this->info('All operations completed successfully!');
         return Command::SUCCESS;
