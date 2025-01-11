@@ -72,14 +72,18 @@ class CheckPokeCenter extends Command
                     // if the count isnt 603, send an email to freakpants@gmail.com
                     // Send email
 
-                    if ($totalProducts != 605) {
+                    if ($totalProducts != 586) {
                         $domail = true;
-                        $subject = "Pokemon Center has more than 605 TCG Products";
-                        $message = "The total product count is not 605. It is currently " . $totalProducts;
+                        if($totalProducts > 586){
+                            $subject = "Pokemon Center has more than 586 TCG Products";
+                        } else {
+                            $subject = "Pokemon Center has less than 586 TCG Products";
+                        }
+                        $message = "The total product count is not 586. It is currently " . $totalProducts;
 
                     } else {
                         // $domail = true;
-                        $subject = "Pokemon Center: Total product count is 605";
+                        $subject = "Pokemon Center: Total product count is 586";
                         $message = "No changes on Pokemon Center";
                     }
 

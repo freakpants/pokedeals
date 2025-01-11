@@ -399,8 +399,10 @@ class SaveExternalProducts extends Command
                             : null;
                         
                         // Check availability
-                        $product['available'] = !$node->filter('.ty-qty-out-of-stock')->count(); // If "Out of stock" is not found, it's available
-                        
+                        // Mark as out of stock if the "Buy Now" button is missing
+                        $buyButtonNode = $node->filter('button.ty-btn__add-to-cart');
+                        $product['available'] = $buyButtonNode->count() > 0 && !$node->filter('.ty-qty-out-of-stock')->count();
+
                         // Generate handle
                         $product['handle'] = $product['url'] 
                             ? str_replace($shop->base_url, '', $product['url']) 
