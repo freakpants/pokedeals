@@ -47,6 +47,16 @@ class PokemonHelper
             $title = str_replace('Scarlet & Violet - Set 9', 'Scarlet & Violet: Journey Together', $title);
         }
 
+        // Adventures Together => Journey Together
+        if (stripos($title, 'Adventures Together') !== false) {
+            $title = str_replace('Adventures Together', 'Journey Together', $title);
+        }
+
+        //Aventures Ensemble => Journey Together
+        if (stripos($title, 'Aventures Ensemble') !== false) {
+            $title = str_replace('Aventures Ensemble', 'Journey Together', $title);
+        }
+
         // Obsidianflammen => Obsidian Flammen
         if (stripos($title, 'Obsidianflammen') !== false) {
             $title = str_replace('Obsidianflammen', 'Obsidian Flammen', $title);
