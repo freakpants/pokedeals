@@ -241,6 +241,37 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 5,
                 'mixed_sets' => false,
                 'en_name' => 'Binder Collection',
+            ],
+            [
+                'product_type' => 'battle_deck',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Battle Deck',
+            ],
+            [
+                'product_type' => 'premium_collection_case',
+                'pack_count' => 20,
+                'mixed_sets' => true,
+                'en_name' => 'Premium Collection Case',
+            ],
+            [
+                'product_type' => 'single_card',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Single Card',
+            ],
+            [
+                'product_type' => 'collector_chest',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Collector Chest',
+            ],
+            [
+                'product_type' => 'other',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Other',
+
             ]
         ];
 

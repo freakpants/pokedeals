@@ -57,6 +57,7 @@ class ProductVariantsSeeder extends Seeder
                 'en_short' => 'charizard_ex_super_premium_collection',
                 'de_strings' => json_encode(['glurak ex super-premium kollektion','glurak ex super premium kollektion']),
                 'en_strings' => json_encode(['charizard ex super-premium collection','charizard ex super premium collection']),
+                'en_name' => 'Charizard EX Super Premium Collection',
             ],
             [
                 'product_type' => ProductTypes::PremiumCollection->value,

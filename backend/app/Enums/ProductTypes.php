@@ -36,9 +36,11 @@ enum ProductTypes: string
     case SuperPremiumCollection = 'super_premium_collection';
     case UltraPremiumCollection = 'ultra_premium_collection';
     case SpecialCollection = 'special_collection';
+    case PremiumCollectionCase = 'premium_collection_case';
     case PremiumCollection = 'premium_collection';
     case BuildBattleStadium = 'build_battle_stadium';
     case BuildBattleBox = 'build_battle_box';
+    case BattleDeck = 'battle_deck';
     case PremiumFigureCollection = 'premium_figure_collection';
     case PosterCollection = 'poster_collection';
     case BinderCollection = 'binder_collection';

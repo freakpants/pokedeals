@@ -47,6 +47,7 @@ class PokemonProductController extends Controller
             )
             ->where('pp.type', '<>', 'Other')
             ->where('ep.stock', '>', 0)
+            ->where('pt.pack_count', '>', 0)
             // where either set_identifier or variant is not other
             ->where(function ($query) {
                 $query->where('pp.set_identifier', '<>', 'Other')

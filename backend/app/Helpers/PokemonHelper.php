@@ -352,6 +352,7 @@ class PokemonHelper
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
             ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection', 'Premium Kollektion', 'Premium-Kollektion', 'Premium' ],
             ProductTypes::SpecialCollection->value => ['special collection', 'Regieleki V Box', 'Regidrago V Box'],
+            ProductTypes::BattleDeck->value => ['battle deck'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
             ProductTypes::PosterCollection->value => ['poster collection', 'Poster Kollektion', 'Poster-Kollektion'],
@@ -376,6 +377,13 @@ class PokemonHelper
         foreach ($productTypeKeywords as $productType => $keywords) {
             foreach ($keywords as $keyword) {
                 if (stripos($normalizedTitle, $keyword) !== false || stripos($normalizedVariantTitle, $keyword) !== false) {
+                    // make sure tinkaton/victini isnt matched as a tin
+                    if (stripos($normalizedTitle, 'tinkaton') !== false || stripos($normalizedTitle, 'victini') !== false) {
+                        if($productType === ProductTypes::Tin->value) {
+                            continue;
+                        }
+                    }
+                    // same for 
                     self::$product_type = ProductTypes::from($productType);
                     $match = true;
                     break 2;

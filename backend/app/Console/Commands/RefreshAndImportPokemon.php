@@ -115,6 +115,8 @@ class RefreshAndImportPokemon extends Command
                 $enShort = $tcgplayerProduct['cleanName'];
                 // replace spaces in enshort with _
                 $enShort = str_replace(' ', '_', $enShort);
+                // lowercase the enshort
+                $enShort = strtolower($enShort);
 
                 // try the first two words for the en strings
                 $enStrings = explode(' ', $tcgplayerProduct['cleanName']);
@@ -123,6 +125,11 @@ class RefreshAndImportPokemon extends Command
                     $enStrings = $tcgplayerProduct['name'];
                 } else {
                     $enStrings = $enStrings[0] . ' ' . $enStrings[1];
+                }
+
+                // check if there is a variant with this en_short
+                if (DB::table('pokemon_product_variants')->where('en_short', $enShort)->exists()) {
+                    continue;
                 }
 
                 $variants[] = [

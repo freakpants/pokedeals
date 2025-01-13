@@ -47,6 +47,15 @@ class ImportPokemonProducts extends Command
             $set_identifier = $details['set_identifier'];
             $product_type = $details['product_type'];
 
+            // if another product with the same type AND the same variant (that is not other) exists, skip this product
+            if (PokemonProduct::where('type', $product_type)
+                ->where('variant', $details['variant'])
+                ->where('variant', '<>', 'Other')
+                ->exists()) {
+                $this->warn("Duplicate product found: {$product['sku']}");
+                continue;
+            }
+
             PokemonProduct::updateOrCreate(
                 ['sku' => $product['sku']], // Use SKU as the primary key and unique constraint
                 [
