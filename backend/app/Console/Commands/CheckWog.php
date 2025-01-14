@@ -54,16 +54,17 @@ class CheckWog extends Command
             // echo the amount of data['products']
             $productCount = count($data['products']);
             echo $productCount;
-            if($productCount === 126){
+            $previousCount = 130;
+            if($productCount === $previousCount){
                 // $domail = true;
-                $subject = "WOG: Product Count is 126";
+                $subject = "WOG: Product Count is " . $previousCount;
                 $message = "No changes on WOG";
             } else {
                 $domail = true;
-                if($productCount > 126){
-                    $subject = "WOG: Product count increased from 126 to " . $productCount;
+                if($productCount > $previousCount){
+                    $subject = "WOG: Product count increased from " . $previousCount . " to " . $productCount;
                 } else {
-                    $subject = "WOG: Product count decreased from 126 to " . $productCount;
+                    $subject = "WOG: Product count decreased from " . $previousCount . " to " . $productCount;
                 }
                 $message = "The product count on WOG has changed to " . $productCount;
             }
