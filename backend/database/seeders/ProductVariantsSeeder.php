@@ -443,7 +443,16 @@ class ProductVariantsSeeder extends Seeder
                 'en_strings' => json_encode(['prismatic evolutions']),
                 'en_name' => 'Prismatic Evolutions Mini Tin Display',
                 'pack_count' => 16
-            ]
+            ],
+            // Prismatic Evolutions Accessory Pouch Special Collection
+            [
+                'product_type' => ProductTypes::SpecialCollection->value,
+                'en_short' => 'prismatic_accessory_pouch_special_collection',
+                'de_strings' => json_encode(['Zubehör-Beutel']),
+                'en_strings' => json_encode(['Accessory Pouch']),
+                'en_name' => 'Prismatic Evolutions Accessory Pouch Special Collection',
+                'pack_count' => 5
+            ],
         ];
 
         foreach ($variants as $variant) {

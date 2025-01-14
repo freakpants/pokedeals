@@ -351,7 +351,7 @@ class PokemonHelper
             ProductTypes::SuperPremiumCollection->value => ['super-premium collection', 'super premium collection'],
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
             ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection', 'Premium Kollektion', 'Premium-Kollektion', 'Premium' ],
-            ProductTypes::SpecialCollection->value => ['special collection', 'Regieleki V Box', 'Regidrago V Box'],
+            ProductTypes::SpecialCollection->value => ['Spezial-Kollektion', 'special collection', 'Regieleki V Box', 'Regidrago V Box'],
             ProductTypes::BattleDeck->value => ['battle deck'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
@@ -410,7 +410,7 @@ class PokemonHelper
         // try to detect the type of product
         $possible_product_types = [
             'basketball', 'pokemon', 'yugioh', 'magic', 'one piece', 'lorcana', "weiss schwarz", "psa 10", "mystery",
-            'union arena', "accessory", "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case',
+            'union arena', "MTG", "dragon ball", "Postal Stamp", 'plüsch', 'Squishmallows', 'Weiß Schwarz', 'Card Case',
             'Magnetic Holder', 'Card Holder', 'Battle Spirits', 'Build Divide', 'Funko Pop', 'Gundam', 'Panini', 'Naruto', 'Bandai', 'Yu-Gi-Oh',
             'Versandkosten', 'Ultra Pro', 'Ultra-Pro', 'Ulta Pro', 'Star Wars', 'Acryl Case', 'PRO-BINDER', 'KEYCHAIN',
             'Dragon Shield', 'Store Card', 'Duskmourn', 'Van Gogh', 'Plush', 'Sleeves', 'Gutschein', 'Attack On Titan', 'Bleach', 'Digimon',
