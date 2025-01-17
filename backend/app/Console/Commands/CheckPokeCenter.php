@@ -90,14 +90,14 @@ class CheckPokeCenter extends Command
                     }
 
                 } else {
-                    $domail = true;
+                    // $domail = true;
                     echo "Total product count not found in subtitle." . PHP_EOL;
                     $subject = "Pokemon Center product count not found";
                     $message = "The total product count was not found in the subtitle.";
                 }
                 
             } else {
-                $domail = true;
+                // $domail = true;
                 echo "Category subtitle not found." . PHP_EOL;
                 $subject = "Pokemon Center category subtitle not found";
                 $message = "The category subtitle was not found.";
