@@ -11,6 +11,13 @@ class ExternalShopsSeeder extends Seeder
     {
         $shops = [
             [
+                'name' => 'Interdiscount',
+                'base_url' => 'https://www.interdiscount.ch',
+                'category_urls' => json_encode(['https://www.interdiscount.ch/de/search?search=Pokemon&brand=POK%C3%89MON']),
+                'image' => 'interdiscount.png',
+                'shop_type' => 'interdiscount',
+            ],
+            [
                 'name' => 'TCG Shop',
                 'base_url' => 'https://tcgshop.ch',
                 'category_urls' => json_encode([

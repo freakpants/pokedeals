@@ -17,6 +17,7 @@ enum ShopTypes: string
     case Wog = 'wog';
     case CsCart = 'cs-cart';
     case Softridge = 'softridge';
+    case Interdiscount = 'interdiscount';
     case Other = 'other';
 
 

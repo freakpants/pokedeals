@@ -48,7 +48,7 @@ class SaveExternalProducts extends Command
 
     private function processShop($shop, $totalNewProducts)
     {
-        $supported_shops = ['shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge','ecwid','woocommerce'];
+        $supported_shops = ['interdiscount', 'shopify', 'websell', 'shopware', 'prestashop', 'spielezar', 'kidz', 'galaxy','wog','cs-cart','softridge','ecwid','woocommerce'];
         // output info and skip if the shop type is neither websell nor shopify
         if (!in_array($shop->shop_type, $supported_shops)) {
             $this->warn("Skipping shop {$shop->name} with unsupported type: {$shop->shop_type}");
@@ -355,6 +355,40 @@ class SaveExternalProducts extends Command
                     }
                 }
             }    
+            else if($shop->shop_type === 'interdiscount'){
+                $categoryUrls = json_decode($shop->category_urls);
+                $this->info("Starting HTML parsing for Interdiscount...");
+
+                foreach ($categoryUrls as $categoryUrl) {
+                     // request the json
+                    $response = Http::get($categoryUrl);
+                    if ($response->failed()) {
+                        $this->error("Failed to fetch page $page. Status: {$response->status()}");
+                        break;
+                    }
+
+                    $json = $response->json();
+
+                    $products = [];
+                    foreach($json['products'] as $product){
+                        $productArray = [];
+                        $productArray['id'] = $product['code'];
+
+                        try {
+                            $productArray['price'] = $product['productPriceData']['prices'][0]['finalPrice']['value'];
+                        } catch (\Exception $e) {
+                            $productArray['price'] = null;
+                        }
+                        $productArray['title'] = $product['name'];
+                        $productArray['url'] = $shop->base_url . "/de/product/" . $product['code'];
+                        $productArray['available'] = true;
+                        $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
+                        $productArray['variants'] = [$productArray];
+
+                        $products[] = $productArray;
+                    }
+                }
+            }
             else if($shop->shop_type === 'cs-cart'){
                 $categoryUrls = json_decode($shop->category_urls);
                 $this->info("Starting HTML parsing for CS-Cart...");
