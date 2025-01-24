@@ -271,8 +271,13 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 0,
                 'mixed_sets' => true,
                 'en_name' => 'Other',
-
-            ]
+            ],
+            [
+                'product_type' => 'eraser_blister',
+                'pack_count' => 2,
+                'mixed_sets' => true,
+                'en_name' => 'Eraser Blister',
+            ],
         ];
 
         foreach ($productTypes as $type) {

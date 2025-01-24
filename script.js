@@ -49,6 +49,118 @@ const updateUrlParams = (filters, sortConfig) => {
   window.history.replaceState(null, '', newUrl); // Update the URL
 };
 
+const darkThemeStyles = `
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  .product-card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+  }
+  .product-card h2 {
+    color: #ffffff;
+  }
+  .product-details span {
+    color: #b0b0b0;
+  }
+  .offer {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+  }
+  .offer .shop-info strong {
+    color: #ffffff;
+  }
+  .offer .product-price {
+    color: #ffffff;
+  }
+  .offer .price-per-pack {
+    color: #b0b0b0;
+  }
+  .offer .language-and-title a {
+    color: #90caf9;
+    text-decoration: none;
+  }
+  .offer .language-and-title a:hover {
+    color: #90caf9;
+    text-decoration: underline;
+  }
+  .product-details a {
+    color: #90caf9;
+    text-decoration: none;
+    border: 1px solid #90caf9;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .product-details a:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+  .flag-icon {
+    filter: brightness(0.8);
+  }
+  .selected-set {
+    background-color: #333;
+    color: #ffffff;
+  }
+  .toggle-button {
+    background-color: #333;
+    color: #ffffff;
+  }
+  .toggle-button:hover {
+    background-color: #444;
+  }
+  .matches {
+    border-top: 1px solid #444;
+  }
+  .main-image {
+    border: 1px solid #444;
+    background-color: #ffffff; /* Add white background to images */
+    padding: 5px; /* Add padding to separate image from border */
+    filter: brightness(0.9); /* Reduce contrast for better integration */
+    border-radius: 10px; /* Add rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add shadow for a cool effect */
+  }
+  #filters {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+  }
+  #filters .MuiFormControl-root {
+    background-color: #2c2c2c;
+  }
+  #filters .MuiInputLabel-root {
+    color: #ffffff; /* Make labels more readable */
+  }
+  #filters .MuiSelect-root {
+    color: #ffffff;
+  }
+  #filters .MuiSelect-icon {
+    color: #ffffff;
+  }
+  #filters .MuiMenuItem-root {
+    background-color: #2c2c2c;
+    color: #ffffff;
+  }
+  #filters .MuiMenuItem-root:hover {
+    background-color: #333;
+  }
+  #filters .MuiChip-root {
+    background-color: #333;
+    color: #ffffff;
+  }
+  #filters .MuiChip-deleteIcon {
+    color: #ffffff;
+  }
+  #last-updated {
+    color: #b0b0b0;
+  }
+  #result-count, #offer-count {
+    color: #b0b0b0;
+  }
+`;
+
 const App = () => {
   const [shops, setShops] = useState({});
   const [products, setProducts] = useState([]);
@@ -101,6 +213,12 @@ const App = () => {
       }
     }
   }, [shops]);
+
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = darkThemeStyles;
+    document.head.appendChild(styleElement);
+  }, []);
 
   const fetchInitialData = async () => {
     await Promise.all([fetchShops(), fetchSets(), fetchSeries(), fetchProductTypes(), fetchProducts()]);
@@ -542,7 +660,7 @@ const DeleteIcon = (props) => (
   React.createElement(SvgIcon, props,
     React.createElement('circle', { cx: '12', cy: '12', r: '10', stroke: '#666', strokeWidth: '2', fill: 'none' }),
     React.createElement('line', { x1: '8', y1: '8', x2: '16', y2: '16', stroke: '#666', strokeWidth: '2' }),
-    React.createElement('line', { x1: '8', y1: '16', x2: '16', y2: '8', stroke: '#666', strokeWidth: '2' })
+    React.createElement('line', { x1: '8', y1: '16', x2: '16', y1: '8', stroke: '#666', strokeWidth: '2' })
   )
 );
 

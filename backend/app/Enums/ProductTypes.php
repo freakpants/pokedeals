@@ -48,6 +48,7 @@ enum ProductTypes: string
     case IllustrationCollection = 'illustration_collection';
     case TechStickerCollection = 'tech_sticker_collection';
     case SurpriseBox = 'surprise_box';
+    case EraserBlister = 'eraser_blister';
     case Other = 'other';
 
 

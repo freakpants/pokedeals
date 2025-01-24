@@ -13,7 +13,7 @@ class ExternalShopsSeeder extends Seeder
             [
                 'name' => 'Interdiscount',
                 'base_url' => 'https://www.interdiscount.ch',
-                'category_urls' => json_encode(['https://www.interdiscount.ch/de/search?search=Pokemon&brand=POK%C3%89MON']),
+                'category_urls' => json_encode(['https://www.interdiscount.ch/idocc/occ/id/products/search?lang=de&query=pokemon%3Arelevance%3Abrand%3APOK%C3%89MON&pageSize=800']),
                 'image' => 'interdiscount.png',
                 'shop_type' => 'interdiscount',
             ],
