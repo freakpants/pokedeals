@@ -83,7 +83,15 @@ class SaveExternalProducts extends Command
                 $this->info("Checking for new products on page $page...");
                 // sleep for 1 second to not get rate limited
                 sleep(1);
-                $response = Http::get("$baseUrl/products.json", [
+                
+                $url = "$baseUrl/products.json";
+
+                if(isset($shop->category_urls)){
+                    $categoryUrls = json_decode($shop->category_urls);
+                    $url = $categoryUrls[0];
+                }
+                
+                $response = Http::get($url, [
                     'page' => $page,
                     'limit' => $perPage,
                 ]);
@@ -935,7 +943,12 @@ class SaveExternalProducts extends Command
                 do {
                     try{
                         $this->info("Fetching products from {$shop->name} (Page: $page)...");
-                        $response = Http::get("$baseUrl/products.json", [
+                        $url = "$baseUrl/products.json";
+                        if(isset($shop->category_urls) && $shop->category_urls !== null){
+                            $categoryUrls = json_decode($shop->category_urls);
+                            $url = $categoryUrls[0];
+                        }
+                        $response = Http::get($url, [
                         'page' => $page,
                         'limit' => $perPage,
                     ]);
@@ -1044,6 +1057,10 @@ class SaveExternalProducts extends Command
             }
             else if($shop->shop_type === 'shopify'){
                 $url = "{$baseUrl}/products/{$product['handle']}";
+                if(isset($shop->category_urls)){
+                    $categoryUrls = json_decode($shop->category_urls);
+                    $url = $categoryUrls[0];
+                }
             } else {
                 $url = $product['url'];
             }

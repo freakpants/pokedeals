@@ -11,6 +11,13 @@ class ExternalShopsSeeder extends Seeder
     {
         $shops = [
             [
+                'name' => 'Skyspell',
+                'base_url' => 'https://www.skyspell.ch',
+                'category_urls' => json_encode(['https://www.skyspell.ch/collections/pokemon-1/products.json']),
+                'image' => 'skyspell.png',
+                'shop_type' => 'shopify',
+            ],
+            [
                 'name' => 'Interdiscount',
                 'base_url' => 'https://www.interdiscount.ch',
                 'category_urls' => json_encode(['https://www.interdiscount.ch/idocc/occ/id/products/search?lang=de&query=pokemon%3Arelevance%3Abrand%3APOK%C3%89MON&pageSize=800']),
@@ -134,13 +141,6 @@ class ExternalShopsSeeder extends Seeder
                 'base_url' => 'https://www.sparkleaf.ch',
                 'category_urls' => null,
                 'image' => 'sparkleaf.png',
-                'shop_type' => 'shopify',
-            ],
-            [
-                'name' => 'Skyspell',
-                'base_url' => 'https://www.skyspell.ch',
-                'category_urls' => null,
-                'image' => 'skyspell.png',
                 'shop_type' => 'shopify',
             ],
             [
