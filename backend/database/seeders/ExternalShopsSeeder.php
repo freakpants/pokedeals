@@ -11,6 +11,12 @@ class ExternalShopsSeeder extends Seeder
     {
         $shops = [
             [
+                'name' => 'Collectara',
+                'base_url' => 'https://collectara.ch/',
+                'image' => 'collectara.png',
+                'shop_type' => 'shopify'
+            ],
+            [
                 'name' => 'Skyspell',
                 'base_url' => 'https://www.skyspell.ch',
                 'category_urls' => json_encode(['https://www.skyspell.ch/collections/pokemon-1/products.json']),
