@@ -54,7 +54,7 @@ class CheckWog extends Command
             // echo the amount of data['products']
             $productCount = count($data['products']);
             echo $productCount;
-            $previousCount = 116;
+            $previousCount = 122;
             if($productCount === $previousCount){
                 // $domail = true;
                 $subject = "WOG: Product Count is " . $previousCount;

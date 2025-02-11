@@ -89,6 +89,17 @@ class PokemonSetSeeder extends Seeder
             'release_date' => '2025-01-24',
         ]);
 
+        // manually add destined rivals
+        $sets->push([
+            'id' => 'sv10',
+            'set_identifier' => 'destined_rivals',
+            'series_id' => 'sv',
+            'title_de' => 'Vorbestimmte Rivalen',
+            'title_en' => 'Destined Rivals',
+            'title_ja' => '',
+            'release_date' => '2025-05-30',
+        ]);
+
 
         // manually add an other set
         $sets->push([
