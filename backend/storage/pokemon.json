@@ -308,6 +308,15 @@
     ]
   },
   {
+    "title": "Pokémon TCG: Scarlet & Violet-Destined Rivals Booster Display Box (36 Packs)",
+    "sku": "destined-rivals-display-box",
+    "price": "£143.64",
+    "productUrl": "",
+    "images": [
+      ""
+    ]
+  },
+  {
     "title": "Pokémon TCG: Scarlet & Violet-Stellar Crown Booster Display Case (216 Packs)",
     "sku": "699-42279-6",
     "price": "£861.84",
@@ -319,6 +328,14 @@
   {
     "title": "Pokémon TCG: Scarlet & Violet-Journey Together Booster Display Case (216 Packs)",
     "sku": "journey-booster-case",
+    "price": "£861.84",
+    "productUrl": "",
+    "images": ["https://i.imgur.com/WLGiaSf.png"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Destined Rivals Booster Display Case (216 Packs)",
+    "sku": "destined-rivals-case",
     "price": "£861.84",
     "productUrl": "",
     "images": ["https://i.imgur.com/WLGiaSf.png"
@@ -442,6 +459,14 @@
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8981_187-85417_05.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8981_187-85417_06.jpg",
       "https://www.pokemoncenter.com/images/DAMRoot/Full-Size/10000/P8981_187-85417_07.jpg"
+    ]
+  },
+  {
+    "title": "Pokémon TCG: Scarlet & Violet-Destined Rivals Elite Trainer Box",
+    "sku": "destined-rivals-etb",
+    "price": "£49.99",
+    "productUrl": "",
+    "images": [
     ]
   },
   {
