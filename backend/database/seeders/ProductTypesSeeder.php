@@ -262,7 +262,7 @@ class ProductTypesSeeder extends Seeder
             ],
             [
                 'product_type' => 'collector_chest',
-                'pack_count' => 0,
+                'pack_count' => 5,
                 'mixed_sets' => true,
                 'en_name' => 'Collector Chest',
             ],

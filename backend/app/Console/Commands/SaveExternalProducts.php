@@ -1057,10 +1057,10 @@ class SaveExternalProducts extends Command
             }
             else if($shop->shop_type === 'shopify'){
                 $url = "{$baseUrl}/products/{$product['handle']}";
-                if(isset($shop->category_urls)){
+                /* if(isset($shop->category_urls)){
                     $categoryUrls = json_decode($shop->category_urls);
                     $url = $categoryUrls[0];
-                }
+                } */
             } else {
                 $url = $product['url'];
             }
@@ -1147,7 +1147,11 @@ class SaveExternalProducts extends Command
         if (!is_dir($json_dir)) {
             mkdir($json_dir, 0755, true); // Create the directory with recursive flag
         }
-        file_put_contents($json_file, json_encode($products));
+
+        // only save if it isnt an empty array
+        if(count($products) > 0){
+            file_put_contents($json_file, json_encode($products));
+        }
 
         $this->info("Processing {$shop->name}...");
 

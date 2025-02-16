@@ -242,7 +242,8 @@ class ProductVariantsSeeder extends Seeder
                 'en_short' => 'morpeko_vunion_premium_collection',
                 'de_strings' => json_encode(['']),
                 'en_strings' => json_encode(['morpeko','morpeko-v-union']),
-                'en_name' => 'Morpeko V-Union Premium Collection'
+                'en_name' => 'Morpeko V-Union Premium Collection',
+                'pack_count' => 4
             ],
             [
                 'product_type' => ProductTypes::SpecialCollection->value,
@@ -452,6 +453,16 @@ class ProductVariantsSeeder extends Seeder
                 'en_strings' => json_encode(['Accessory Pouch']),
                 'en_name' => 'Prismatic Evolutions Accessory Pouch Special Collection',
                 'pack_count' => 5
+            ],
+
+            // Collectors Chest Fall 2024
+            [
+                'product_type' => ProductTypes::CollectorChest->value,
+                'en_short' => 'collectors_chest_fall_2024',
+                'de_strings' => json_encode([]),
+                'en_strings' => json_encode(['fall 2024', 'pikachu']),
+                'en_name' => 'Collectors Chest Fall 2024',
+                'pack_count' => 6
             ],
         ];
 

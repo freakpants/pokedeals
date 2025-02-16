@@ -57,6 +57,16 @@ class PokemonHelper
             $title = str_replace('Aventures Ensemble', 'Journey Together', $title);
         }
 
+        // Karmesin & Purpur: Set 10 => Karmesin & Purpur: Vorbestimmte Rivalen
+        if (stripos($title, 'Karmesin & Purpur: Set 10') !== false) {
+            $title = str_replace(' Karmesin & Purpur: Set 10', 'Karmesin & Purpur: Vorbestimmte Rivalen', $title);
+        }
+
+        // Scarlet & Violet: Set 10 => Scarlet & Violet: Destined Rivals$
+        if (stripos($title, 'Scarlet & Violet: Set 10') !== false) {
+            $title = str_replace('Scarlet & Violet: Set 10', 'Scarlet & Violet: Destined Rivals', $title);
+        }
+
         // Obsidianflammen => Obsidian Flammen
         if (stripos($title, 'Obsidianflammen') !== false) {
             $title = str_replace('Obsidianflammen', 'Obsidian Flammen', $title);
@@ -341,7 +351,7 @@ class PokemonHelper
             ProductTypes::DoubleBlister->value => ['2 booster packs'],
             ProductTypes::FiveBoosterTin->value => ['5 booster tin', 'collectors tin', 'US tin'],
             ProductTypes::BoosterPack->value => ['booster pack', 'single pack', 'booster'],
-            ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer', 'Collector\'s Chest'],
+            ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer', 'Collector\'s Chest', 'Collector’s Chest'],
             ProductTypes::PencilCase->value => ['pencil case', 'pencil tin'],
             ProductTypes::MiniTin->value => ['mini tin'],
             ProductTypes::PokeBallTin->value => ['ball tin'],
