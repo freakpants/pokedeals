@@ -182,10 +182,15 @@ class SaveExternalProducts extends Command
                             try {
                                 $product['id'] = $node->filter('.button.product_type_simple.add_to_cart_button.ajax_add_to_cart')->attr('data-product_id');
                             } catch (\Exception $e) {
-                                $product['id'] = null;
+                                // look for a element with class product instead
+                                // that element has a class post-<id>
+                                $classes = $node->filter('.product')->attr('class');
+                                // extract the id
+                                $product['id'] = preg_replace('/.*?post-(\d+).*/', '$1', $classes);
                             }
 
                             // Find the price element, the last one with the specified class
+
                             $priceElement = $node->filter('.woocommerce-Price-currencySymbol')->last();
 
                             // Ensure the element exists
@@ -194,23 +199,54 @@ class SaveExternalProducts extends Command
                                 $price = $priceElement->ancestors()->first()->text();
                                 info("Price: " . $price);
                             } else {
-                                info("Price element not found.");
+                                $priceElement = $node->filter('p.append-woo-symbol a');
+                                if($priceElement->count() > 0){
+                                    $price = $priceElement->text();
+                                } else {
+                                    $price = null;
+                                    info("Price element not found.");
+                                }
+
                             }
 
 
                             // replace everything that is not a number or a dot
                             $price = preg_replace('/[^0-9.]/', '', $price);
                             $product['price'] = floatval($price);
-                            // find the product-title element
-                            $product['title'] = $node->filter('.product-title')->text();
 
-                            // find the first href element
-                            $product['url'] = $node->filter('a')->first()->attr('href');
+                            try {
+                            // find the product-title element
+                                $product['title'] = $node->filter('.product-title')->text();
+
+                                // find the first href element
+                                $product['url'] = $node->filter('a')->first()->attr('href');
+
+                            } catch (\Exception $e) {
+                                // Look for a paragraph with class 'gb-headline-text' and extract the text from its <a> tag
+                                $titleElement = $node->filter('p.gb-headline-text a');
+
+                                if ($titleElement->count() > 0) {
+                                    $product['title'] = trim($titleElement->text());
+                                } else {
+                                    $product['title'] = null;
+                                }
+
+                                $linkElement = $node->filter('p.gb-headline-text a');
+
+                                if ($linkElement->count() > 0) {
+                                    $product['url'] = $linkElement->attr('href');
+                                } else {
+                                    $product['url'] = null;
+                                }
+                                
+                            }
+
                             // replace the base url
                             $product['handle'] = str_replace($shop->base_url, '', $product['url']);
                             $product['available'] = true;
 
                             $product['variants'] = [$product];
+
 
                             return $product;
                         });

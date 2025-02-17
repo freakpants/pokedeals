@@ -11,6 +11,13 @@ class ExternalShopsSeeder extends Seeder
     {
         $shops = [
             [
+                'name' => 'Cardcollectors',
+                'base_url' => 'https://cardcollectors.ch',
+                'category_urls' => json_encode(['https://cardcollectors.ch/pokemon/']),
+                'image' => 'cardcollectors.png',
+                'shop_type' => 'woocommerce',
+            ],
+            [
                 'name' => 'Collectara',
                 'base_url' => 'https://collectara.ch/',
                 'image' => 'collectara.png',
