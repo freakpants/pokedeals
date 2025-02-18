@@ -353,7 +353,7 @@ class PokemonHelper
             ProductTypes::BoosterPack->value => ['booster pack', 'single pack', 'booster'],
             ProductTypes::CollectorChest->value => ['collector chest', 'Sammelkoffer', 'Collector\'s Chest', 'Collector’s Chest'],
             ProductTypes::PencilCase->value => ['pencil case', 'pencil tin'],
-            ProductTypes::MiniTin->value => ['mini tin'],
+            ProductTypes::MiniTin->value => ['mini tin, Mini-Tin'],
             ProductTypes::PokeBallTin->value => ['ball tin'],
             ProductTypes::StackingTin->value => ['stacking tin'],
             ProductTypes::Tin->value => ['tin'],
