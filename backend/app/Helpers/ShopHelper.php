@@ -15,6 +15,17 @@ class ShopHelper{
         $this->pokemonHelper = new PokemonHelper(); 
     }
 
+    public function retrieveProductsFromShop($shop){
+        switch($shop->shop_type){
+            case 'wog':
+                return $this->retrieveProductsFromWog($shop);
+            break;
+            case 'interdiscount':
+                return $this->retrieveProductsFromInterdiscount($shop);
+            break;
+        }
+    }
+
     public function retrieveProductsFromInterdiscount($shop){
         $categoryUrls = json_decode($shop->category_urls);
         $this->command->info("Starting HTML parsing for Interdiscount...");
@@ -45,10 +56,68 @@ class ShopHelper{
                 $productArray['url'] = $shop->base_url . "/de/product/" . $product['code'];
                 $productArray['available'] = true;
                 $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
+                
+                // Add largest image URL to metadata
+                $largestImage = null;
+                if (isset($product['customImageData']) && is_array($product['customImageData'])) {
+                    foreach ($product['customImageData'] as $imageData) {
+                        if (isset($imageData['sizes']) && is_array($imageData['sizes'])) {
+                            foreach ($imageData['sizes'] as $size) {
+                                if ($largestImage === null || $size['size'] > $largestImage['size']) {
+                                    $largestImage = $size;
+                                }
+                            }
+                        }
+                    }
+                }
+                $productArray['largest_image_url'] = $largestImage ? $shop->base_url . $largestImage['url'] : null;
+
                 $productArray['variants'] = [$productArray];
 
                 $products[] = $productArray;
             }
+        }
+        return $products;
+    }
+
+    public function retrieveProductsFromWog($shop){
+        // wog
+        $response = Http::withHeaders([
+            'Accept' => '*/*',
+            'Content-Type' => 'multipart/form-data',
+        ])->asForm()->post('https://www.wog.ch/index.cfm/ajax.productList', [
+            'type' => 'Toys',
+            'developerID' => '7688',
+            'productTypeID' => '3',
+            'productFormTypeName' => '',
+            'displayTypeID' => '3',
+            'listType' => 'developers',
+            'maxRows' => '48',
+            'page' => '1',
+            'forceTileView' => 'false',
+        ]);
+        
+        if ($response->successful()) {
+            $data = $response->json();
+            // Handle your response data
+            // loop all products
+            $products = [];
+            foreach($data['products'] as $product){
+                $productArray = [];
+                $productArray['id'] = $product['productID'];
+                $productArray['price'] = $product['unitPrice'];
+                $productArray['title'] = $product['fullTitle'];
+                $productArray['url'] = $product['linkTo'];
+                $productArray['available'] = $product['deliveryDetail'] !== 'crossIcon';
+                $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
+                $productArray['variants'] = [$productArray];
+                $productArray['largest_image_url'] = 'https://wog.ch/' . $product['coverImage'];
+                
+                $products[] = $productArray;
+            }
+        } else {
+            // Handle errors
+            dd($response->status(), $response->body());
         }
         return $products;
     }

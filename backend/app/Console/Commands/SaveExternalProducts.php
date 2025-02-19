@@ -467,43 +467,7 @@ class SaveExternalProducts extends Command
 
             }
             else if($shop->shop_type === 'wog'){
-                // wog
-                $response = Http::withHeaders([
-                    'Accept' => '*/*',
-                    'Content-Type' => 'multipart/form-data',
-                ])->asForm()->post('https://www.wog.ch/index.cfm/ajax.productList', [
-                    'type' => 'Toys',
-                    'developerID' => '7688',
-                    'productTypeID' => '3',
-                    'productFormTypeName' => '',
-                    'displayTypeID' => '3',
-                    'listType' => 'developers',
-                    'maxRows' => '48',
-                    'page' => '1',
-                    'forceTileView' => 'false',
-                ]);
-                
-                if ($response->successful()) {
-                    $data = $response->json();
-                    // Handle your response data
-                    // loop all products
-                    $products = [];
-                    foreach($data['products'] as $product){
-                        $productArray = [];
-                        $productArray['id'] = $product['productID'];
-                        $productArray['price'] = $product['unitPrice'];
-                        $productArray['title'] = $product['fullTitle'];
-                        $productArray['url'] = $product['linkTo'];
-                        $productArray['available'] = $product['deliveryDetail'] !== 'crossIcon';
-                        $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
-                        $productArray['variants'] = [$productArray];
-
-                        $products[] = $productArray;
-                    }
-                } else {
-                    // Handle errors
-                    dd($response->status(), $response->body());
-                }
+                $products = $this->shopHelper->retrieveProductsFromWog($shop);
             }
             else if($shop->shop_type === 'galaxy'){
                 // galaxy
