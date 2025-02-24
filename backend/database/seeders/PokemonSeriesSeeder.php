@@ -52,12 +52,14 @@ class PokemonSeriesSeeder extends Seeder
 
             // insert into series table
             foreach ($series as $id => $data) {
-                DB::table('pokemon_series')->insert([
-                    'id' => $id,
-                    'name_de' => $data['name_de'],
-                    'name_en' => $data['name_en'],
-                    'name_ja' => $data['name_ja']
-                ]);
+                DB::table('pokemon_series')->updateOrInsert(
+                    ['id' => (string)$id],
+                    [
+                        'name_de' => $data['name_de'],
+                        'name_en' => $data['name_en'],
+                        'name_ja' => $data['name_ja']
+                    ]
+                );
             }
 
 

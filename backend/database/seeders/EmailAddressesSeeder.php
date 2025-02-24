@@ -16,11 +16,11 @@ class EmailAddressesSeeder extends Seeder
             ['email' => 'freakpants@gmail.com'],
             ['email' => 'leimann.m@gmail.com'],
             ['email' => 'luny.92@hotmail.com'],
-            ['email' => 'Naruto7@gmx.ch'].
+            ['email' => 'Naruto7@gmx.ch'],
             ['email' => 'Cedibat@hispeed.ch'],
             ['email' => 'lawrence.morillo@gmail.com'],
             ['email' => 'noah.paixao@gmail.com'],
-            
+            ['email' => 'janbaumann.basi@gmail.com'],
         ]);
     }
 }

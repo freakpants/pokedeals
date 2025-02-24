@@ -58,6 +58,7 @@ class RefreshAndImportPokemon extends Command
 
         // Modify the TCGPlayer products to match the Pokémon products
         $pokemonProducts = [];
+        $variants = [];
         foreach ($tcgplayerProducts as $tcgplayerProduct) {
             /* 
                 "title": "Pokémon TCG: Knock Out Collection (Boltund, Eiscue & Galarian Sirfetch'd)",
@@ -190,7 +191,7 @@ class RefreshAndImportPokemon extends Command
             if (!DB::table('pokemon_product_variants')->where('en_short', $variant['en_short'])->exists()) {
                 DB::table('pokemon_product_variants')->insert($variant);
             }
-        }
+        } 
 
         // create a temporary file for use with the pokemon:import command
         file_put_contents(storage_path('tcg-processed.json'), json_encode($pokemonProducts));
