@@ -355,7 +355,7 @@ class PokemonHelper
             ProductTypes::PencilCase->value => ['pencil case', 'pencil tin'],
             ProductTypes::MiniTin->value => ['mini tin', 'Mini-Tin'],
             ProductTypes::PokeBallTin->value => ['ball tin'],
-            ProductTypes::StackingTin->value => ['stacking tin'],
+            ProductTypes::StackingTin->value => ['stacking tin', 'Stackable Tins'],
             ProductTypes::Tin->value => ['tin'],
             ProductTypes::UltraPremiumCollection->value => ['ultra-premium collection', 'ultra-premium collection', 
             'ultra premium collection','Ultra-Premium-Kollektion','Ultra Premium Kollektion', 'Ultra Premium Glurak Kollektion'],

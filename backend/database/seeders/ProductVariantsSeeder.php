@@ -464,6 +464,43 @@ class ProductVariantsSeeder extends Seeder
                 'en_name' => 'Collectors Chest Fall 2024',
                 'pack_count' => 6
             ],
+            // stackable tins 2025
+            [
+                'product_type' => ProductTypes::StackingTin->value,
+                'en_short' => 'stackable_tins_2025',
+                'de_strings' => json_encode(['']),
+                'en_strings' => json_encode(['Stackable Tins 2025']),
+                'en_name' => 'Stackable Tins 2025 - Treasures of Ruin/Paradox Pokemon/Ogerpon',
+                'pack_count' => 3
+            ],
+            // 'Ogerpon', 'Paradox Pokemon', 'Treasures of Ruin'
+            // stackable tins 2025
+            [
+                'product_type' => ProductTypes::StackingTin->value,
+                'en_short' => 'stackable_tins_2025_ogerpon',
+                'de_strings' => json_encode(['']),
+                'en_strings' => json_encode(['Ogerpon']),
+                'en_name' => 'Stackable Tins 2025 - Ogerpon',
+                'pack_count' => 3
+            ],
+            // stackable tins 2025
+            [
+                'product_type' => ProductTypes::StackingTin->value,
+                'en_short' => 'stackable_tins_2025_paradox_pokemon',
+                'de_strings' => json_encode(['']),
+                'en_strings' => json_encode(['Paradox Pokemon']),
+                'en_name' => 'Stackable Tins 2025 - Paradox Pokemon',
+                'pack_count' => 3
+            ],
+            // stackable tins 2025
+            [
+                'product_type' => ProductTypes::StackingTin->value,
+                'en_short' => 'stackable_tins_2025_treasures_of_ruin',
+                'de_strings' => json_encode(['']),
+                'en_strings' => json_encode(['Treasures of Ruin']),
+                'en_name' => 'Stackable Tins 2025 - Treasures of Ruin',
+                'pack_count' => 3
+            ],
         ];
 
         foreach ($variants as $variant) {
