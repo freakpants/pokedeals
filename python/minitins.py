@@ -22,7 +22,7 @@ for shop in availability_data["shops"]:
         store = store_details[store_id]
         city = store["address"]["town"]
         address = store["address"]["formattedAddress"]
-        phone = store["address"]["phone"]
+        phone = store["address"].get("phone", "N/A")
         available = shop["available"]
         last_modified = datetime.strptime(shop["lastModifiedDateTime"], "%Y-%m-%dT%H:%M:%S.%f")
         last_modified_human = last_modified.strftime("%Y-%m-%d %H:%M:%S")
