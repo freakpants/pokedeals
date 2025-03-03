@@ -501,6 +501,16 @@ class ProductVariantsSeeder extends Seeder
                 'en_name' => 'Stackable Tins 2025 - Treasures of Ruin',
                 'pack_count' => 3
             ],
+            // prismatic super premium collection
+            [
+                'product_type' => ProductTypes::SuperPremiumCollection->value,
+                'en_short' => 'prismatic_super_premium_collection',
+                'de_strings' => json_encode(['Prismatische Entwicklungen']),
+                'en_strings' => json_encode(['Prismatic Evolutions']),
+                'en_name' => 'Prismatic Evolutions Super Premium Collection',
+                'pack_count' => 15,
+                'set' => 'prismatic_evolutions'
+            ],
         ];
 
         foreach ($variants as $variant) {

@@ -13,7 +13,7 @@ class ExternalShopsSeeder extends Seeder
             [
                 'name' => 'CardCollectors',
                 'base_url' => 'https://cardcollectors.ch',
-                'category_urls' => json_encode(['https://cardcollectors.ch/pokemon/', 'https://cardcollectors.ch/preorder/']),
+                'category_urls' => json_encode(['https://cardcollectors.ch/pokemon/', 'https://cardcollectors.ch/preorder/', 'https://cardcollectors.ch/product-category/pokemon-tcg-sets/']),
                 'image' => 'cardcollectors.png',
                 'shop_type' => 'woocommerce',
             ],

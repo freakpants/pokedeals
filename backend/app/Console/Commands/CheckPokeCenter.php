@@ -72,7 +72,7 @@ class CheckPokeCenter extends Command
                     // if the count isnt 603, send an email to freakpants@gmail.com
                     // Send email
 
-                    $previousCount = 638;
+                    $previousCount = 639;
 
                     if ($totalProducts != $previousCount) {
                         $domail = true;

@@ -243,6 +243,11 @@ class SaveExternalProducts extends Command
                                 
                             }
 
+                            // if the title is still unknown title, look for woocommerce-loop-product__title
+                            if($product['title'] === 'Unknown Title'){
+                                $product['title'] = $node->filter('.woocommerce-loop-product__title')->text();
+                            } 
+
                             // replace the base url
                             $product['handle'] = str_replace($shop->base_url, '', $product['url']);
                             $product['available'] = true;
