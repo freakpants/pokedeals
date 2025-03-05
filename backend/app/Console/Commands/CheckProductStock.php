@@ -52,9 +52,28 @@ class CheckProductStock extends Command
 
         // Find all product entries
         $products = $crawler->filter('a')->each(function (Crawler $node) {
-            // the link must contain "https://www.pokemoncenter.com/en-gb/product/"
-            // we also need to look at the p above, if it includes 
-            
+            $link = $node->attr('href');
+            $text = $node->text();
+
+            // Extract stock status, title, and price
+            // log the text
+            Log::info("Product text: {$text}");
+            $isSoldOut = strpos($text, ' SOLD OUT') !== false;
+            preg_match('/£[0-9\.]+/', $text, $priceMatches);
+            $price = $priceMatches[0] ?? null;
+
+            // Ensure the product data is valid
+            $title = trim(preg_replace('/SOLD OUT|Quick View|£[0-9\.]+/', '', $text));
+            if (empty($title)) {
+                return null;
+            }
+
+            return [
+                'title' => $title,
+                'link' => $link,
+                'price' => $price,
+                'in_stock' => !$isSoldOut,
+            ];
         });
 
         // output a log line for each product
