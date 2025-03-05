@@ -13,17 +13,12 @@ const products = [
 ];
 
 const BATCH_SIZE = 10; // Maximum number of cost centers per request
+const TEN_MINUTES = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 // Function to read cost centers from the JSON file
 async function getCostCenters() {
     const data = fs.readFileSync(costCentersFile, 'utf-8');
-    const jsonData = JSON.parse(data);
-
-    if (typeof jsonData !== 'object' || Array.isArray(jsonData)) {
-        throw new Error('The provided JSON file does not contain an object of cost centers.');
-    }
-
-    return jsonData;
+    return JSON.parse(data);
 }
 
 // Function to fetch stock data for a batch of cost centers
@@ -53,15 +48,15 @@ function saveStockDataToFile(stockData) {
     fs.writeFileSync(outputFile, JSON.stringify(stockData, null, 2), 'utf-8');
 }
 
-// Function to display progress
-function showProgress(current, total, message = '') {
-    const percentage = ((current / total) * 100).toFixed(2);
-    process.stdout.write(`\r${message} ${current}/${total} (${percentage}%)`);
-}
-
 // Function to create a delay
 function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Function to show progress status
+function showProgress(current, total, message = '') {
+    const percentage = ((current / total) * 100).toFixed(2);
+    process.stdout.write(`\r${message} ${current}/${total} (${percentage}%)`);
 }
 
 // Main function to orchestrate the fetching and saving of stock data
@@ -69,72 +64,80 @@ async function fetchAllStockData() {
     try {
         const { token: leshopchToken } = await MigrosAPI.account.oauth2.getGuestToken();
 
-        if (!leshopchToken) {
-            throw new Error('❌ Failed to retrieve `leshopch` token.');
-        }
-
         const costCenterInfo = await getCostCenters();
         const costCenters = Object.keys(costCenterInfo);
         const totalRequests = products.length * Math.ceil(costCenters.length / BATCH_SIZE);
-        
-        const delayPerRequest = (55000 / totalRequests).toFixed(0); // Calculate delay in ms
 
-        // Load existing stock data
-        let existingData = {};
-        if (fs.existsSync(outputFile)) {
-            try {
-                existingData = JSON.parse(fs.readFileSync(outputFile, 'utf-8'));
-            } catch (error) {
-                console.error('⚠️ Error reading existing stock data file:', error.message);
-            }
-        }
+        let existingData = fs.existsSync(outputFile)
+            ? JSON.parse(fs.readFileSync(outputFile, 'utf-8'))
+            : {};
 
-        const stockData = {};
-        const previousStock = existingData;
-
+        const now = Date.now();
         let requestCount = 0;
 
         for (const product of products) {
             const { id: productId, type: productType } = product;
-
-            stockData[productId] = { availabilities: [] };
 
             for (let i = 0; i < costCenters.length; i += BATCH_SIZE) {
                 const batch = costCenters.slice(i, i + BATCH_SIZE);
                 const batchData = await fetchStockDataForBatch(productId, batch, leshopchToken);
 
                 if (batchData && batchData.availabilities) {
-                    batchData.availabilities.forEach(({ id, stock }) => {
-                        if (previousStock[productId]?.availabilities?.some(item => item.id === id)) {
-                            const oldStock = previousStock[productId].availabilities.find(item => item.id === id)?.stock;
+                    batch.forEach((costCenterId) => {
+                        const stockInfo = batchData.availabilities.find(({ id }) => id === costCenterId);
+                        const stock = stockInfo ? stockInfo.stock : 0;
+                        const existingStock = existingData[productId]?.availabilities?.find(item => item.id === costCenterId);
+
+                        let outputChange = true;
+
+                        if (existingStock) {
+                            const oldStock = existingStock.stock;
                             if (stock !== oldStock) {
-                                const storeInfo = costCenterInfo[id]?.info;
+                                const changeType = stock > oldStock ? 'increase' : 'decrease';
+                                const storeInfo = costCenterInfo[costCenterId]?.info;
                                 if (storeInfo) {
-                                    const { city, address } = storeInfo;
-                                    const changeType = stock > oldStock ? 'increase' : 'decrease';
-                                    console.log(`\n${productType} at ${city}, ${address}: Stock ${changeType} from ${oldStock} to ${stock}`);
+                                    const { zip, city, address } = storeInfo;
+
+                                    if (changeType === 'increase' && existingStock.lastDecreaseAmount) {
+                                        const { lastDecreaseAmount, timestamp } = existingStock;
+                                        if ((oldStock + lastDecreaseAmount === stock) && (now - new Date(timestamp).getTime()) < TEN_MINUTES) {
+                                            console.log(`\n⏳ Ignoring temporary stock increase for ${productType} at ${city}, ${address}`);
+                                            outputChange = false;
+                                        } 
+                                    }
+
+                                    if(outputChange) {
+                                        console.log(`\n${productType} at ${zip} ${city}, ${address}: Stock ${changeType} from ${oldStock} to ${stock}`);
+                                    }
+
+                                    if (changeType === 'decrease') {
+                                        existingStock.lastDecreaseAmount = oldStock - stock;
+                                        existingStock.timestamp = new Date().toISOString();
+                                    }
+                                }
+                                if(outputChange){
+                                    existingStock.stock = stock;
                                 }
                             }
+                        } else {
+                            existingData[productId] = existingData[productId] || { availabilities: [] };
+                            existingData[productId].availabilities.push({ id: costCenterId, stock });
                         }
-                        stockData[productId].availabilities.push({ id, stock });
                     });
                 }
 
                 requestCount++;
                 showProgress(requestCount, totalRequests, `Fetching stock data for ${productType}`);
-                
-                // Introduce delay between requests
-                await delay(delayPerRequest);
+                await delay(100);
             }
         }
 
-        saveStockDataToFile(stockData);
+        saveStockDataToFile(existingData);
         console.log('\n✅ Stock data fetching completed!');
     } catch (error) {
         console.error('❌ Error during fetching stock data:', error.message);
     }
 }
-
 
 // Run the main function
 fetchAllStockData();
