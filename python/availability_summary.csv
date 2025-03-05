@@ -1,78 +1,15 @@
 City,Store ID,Available,Last Modified,Address,Phone
-Lugano,2999,11,2025-02-26 08:50:46,"Via Ginevra 1, Lugano, 6900",+41 91 924 07 61
-Nyon,3098,3,2025-02-26 08:25:42,"C.C. La Combe / Rue de la Morâche 6, Nyon, 1260",+41 22 990 00 01
-Muralto,3003,4,2025-02-26 07:50:39,"Piazza Stazione 4, Muralto, 6600",+41 91 730 10 41
-Yverdon,3056,8,2025-02-26 07:40:43,"Bel-Air Centre / Rue d'Orbe 1, Yverdon, 1400",+41 24 425 22 27
-Baden,2970,4,2025-02-25 17:35:46,"Bahnhof / Langhaus 5, Baden, 5400",+41 56 221 37 31
-Dietikon,6091,8,2025-02-25 17:30:41,"Silbernstrasse 9, Dietikon, 8953",N/A
-Tenero,3536,4,2025-02-25 17:25:37,"Centro Commerciale / Via Brere 8, Tenero, 6598",+41 91 735 16 01
-Genève,4020,10,2025-02-25 16:55:51,"Rue Jargonnant 5, Genève, 1207",+41 22 840 13 41
-Zürich-Flughafen,4141,6,2025-02-25 16:45:59,"Airport Shopping / Postfach, Zürich-Flughafen, 8060",+41 43 819 45 01
-Luzern,3001,7,2025-02-25 16:35:45,"Railcity, Luzern, 6003",+41 41 220 09 41
-Bellinzona,2994,3,2025-02-25 16:20:41,"Piazza del Sole 7, Bellinzona, 6500",+41 91 825 67 76
-Langenthal,5681,3,2025-02-25 16:05:52,"St. Urbanstrasse 3, Langenthal, 4900",+41 62 923 50 41
-Widnau,2940,6,2025-02-25 15:55:43,"Bahnhofstrasse 2, Widnau, 9443",+41 71 722 77 81
-Sierre,3072,6,2025-02-25 15:40:50,"Centre Commercial Manor, Sierre, 3960",+41 27 456 85 11
-Crissier,3752,4,2025-02-25 15:40:50,"CC Léman-Centre / Chemin de Saugy 1, Crissier, 1023",+41 21 671 72 01
-Bern,3038,2,2025-02-25 15:15:48,"Waisenhausplatz 6, Bern, 3011",+41 31 311 20 62
-Villars-sur-Glâne,4284,4,2025-02-25 15:10:48,"Route de Moncor 1, Villars-sur-Glâne, 1752",+41 26 401 30 71
-Cham,4068,6,2025-02-25 14:35:45,"Neudorf Center / Zugerstrasse 15/17, Cham, 6330",+41 41 781 59 11
-Basel,3013,5,2025-02-25 14:31:12,"Gundeli / Güterstrasse 177, Basel, 4053",+41 61 363 00 51
-Bassecourt,3057,4,2025-02-25 14:16:03,"C. commercial / Rue de l'Abbé-Monnin, Bassecourt, 2854",+41 32 426 92 61
-Gstaad,4122,7,2025-02-25 14:05:42,"Untergstaadstrasse 20, Gstaad, 3780",+41 33 748 19 75
-Murten,4139,8,2025-02-25 13:20:51,"Bernstrasse 14, Murten, 3280",+41 26 670 73 11
-Visp,3034,6,2025-02-25 13:15:53,"Coop Centerpark / Brückenweg 1, Visp, 3930",+41 27 946 16 61
-Winterthur,2945,7,2025-02-25 12:50:51,"Grüzemarkt / Rudolf-Diesel-Str. 19, Winterthur, 8404",+41 52 233 19 92
-Amriswil,2927,10,2025-02-25 12:35:45,"Amriville / Kirchstrasse 11, Amriswil, 8580",+41 71 410 00 11
-Burgdorf,3044,7,2025-02-25 12:25:51,"Mergele / Lyssachstrasse 23, Burgdorf, 3400",+41 34 423 91 41
-Prilly,4690,7,2025-02-25 12:25:51,"Route de Cossonay 28, Prilly, 1008",+41 21 625 34 01
-Bern,3386,8,2025-02-25 11:55:55,"Papiermühlestrasse 71, Bern, 3014",+41 31 335 89 21
-Lyss,5571,8,2025-02-25 11:46:07,"Bielstrasse 9, Lyss, 3250",+41 32 386 10 11
-Solothurn,3026,8,2025-02-25 11:31:11,"Hauptgasse 37-39, Solothurn, 4500",+41 32 621 04 31
-Montagny,3068,8,2025-02-25 11:16:02,"Expo-Centre Migros / En chamard, Montagny, 1442",+41 24 445 00 01
-Pfäffikon SZ,2922,2,2025-02-25 11:01:11,"Seedamm-Center, Pfäffikon SZ, 8808",+41 55 410 35 40
-Sissach,3007,8,2025-02-25 10:35:51,"Coop Bau + Hobby Markt / Gewerbestr, Sissach, 4450",+41 61 975 19 91
-St. Moritz,4215,7,2025-02-25 10:15:55,"Plazza da Scuola 6/8, St. Moritz, 7500",+41 81 834 45 91
-Brig,3042,7,2025-02-25 10:05:40,"Bahnhofstrasse 4, Brig, 3900",+41 27 924 99 51
-Lachen,4124,8,2025-02-25 09:45:40,"EKZ  Obersee Lachen / Feldstrasse 6, Lachen, 8853",+41 55 462 10 41
-Thun,3055,3,2025-02-25 09:21:04,"Strättligen Markt / Schulstrasse 32, Thun, 3604",+41 33 334 08 71
-Signy,3102,8,2025-02-25 09:10:59,"Centre commercial / En fléchère, Signy, 1274",+41 22 363 04 21
-Biel,3040,8,2025-02-25 08:31:17,"Bahnhofstrasse 12, Biel, 2502",+41 32 325 30 31
-Chur,4499,8,2025-02-25 08:20:30,"Raschärenstrasse 35, Chur, 7000",+41 81 252 05 61
-Collombey,3058,8,2025-02-25 08:15:43,"Z.A. Pré Jacquet 1, Collombey, 1868",+41 24 471 94 51
-Martigny,3384,3,2025-02-25 08:11:11,"C. C. Cristal / Av. de Fully 53, Martigny, 1920",+41 27 723 15 71
+Bern,3386,1,2025-03-03 14:10:49,"Papiermühlestrasse 71, Bern, 3014",+41 31 335 89 21
+Wettingen,3788,4,2025-03-03 13:16:05,"Jurastrasse 42, Wettingen, 5430",+41 56 430 04 81
+Burgdorf,3044,4,2025-03-03 10:20:39,"Mergele / Lyssachstrasse 23, Burgdorf, 3400",+41 34 423 91 41
+Winterthur,2945,6,2025-03-03 08:01:12,"Grüzemarkt / Rudolf-Diesel-Str. 19, Winterthur, 8404",+41 52 233 19 92
+Solothurn,3026,2,2025-02-28 15:20:44,"Hauptgasse 37-39, Solothurn, 4500",+41 32 621 04 31
+Genève,3089,2,2025-02-28 14:51:09,"Rue de Carouge 46, Genève, 1205",+41 22 800 02 61
+Brig,3042,1,2025-02-28 09:35:46,"Bahnhofstrasse 4, Brig, 3900",+41 27 924 99 51
+Martigny,3384,1,2025-02-28 08:10:57,"C. C. Cristal / Av. de Fully 53, Martigny, 1920",+41 27 723 15 71
+Lachen,4124,3,2025-02-27 17:55:37,"EKZ  Obersee Lachen / Feldstrasse 6, Lachen, 8853",+41 55 462 10 41
+Lenzburg,2996,1,2025-02-27 13:26:34,"Zeughausstrasse 2, Lenzburg, 5600",+41 62 892 90 21
 Thusis,4548,8,2025-02-25 08:00:54,"Neudorfstrasse 67, Thusis, 7430",+41 81 651 23 81
-Altdorf,2993,8,2025-02-25 07:40:31,"Marktgasse 4, Altdorf, 6460",+41 41 872 11 91
-Lenzburg,2996,8,2025-02-24 17:25:26,"Zeughausstrasse 2, Lenzburg, 5600",+41 62 892 90 21
-Netstal,2920,8,2025-02-24 17:20:29,"Wiggis-Park / Molliserstrasse 41, Netstal, 8754",+41 55 650 10 31
-Zürich,3387,8,2025-02-24 16:40:34,"Kalanderplatz 1, Zürich, 8045",+41 43 243 06 61
-Brugg,2972,8,2025-02-24 16:30:48,"Neumarktplatz 7, Brugg, 5200",+41 56 441 28 77
-Baar,4668,8,2025-02-24 16:10:31,"Bahnhofstrasse 13, Baar, 6340",+41 41 761 58 11
-Regensdorf,3579,8,2025-02-24 16:00:50,"Einkaufszentrum Regensdorf, Regensdorf, 8105",+41 44 884 15 31
-Chur,2924,8,2025-02-24 15:50:36,"Einkaufszentrum Quader / Masanserstrasse 14, Chur, 7000",+41 81 252 25 11
-Würenlingen,3382,7,2025-02-24 15:45:52,"Coop Aarepark / Kuhgässlistrasse, Würenlingen, 5303",+41 56 297 10 91
-Frauenfeld,2950,8,2025-02-24 15:45:32,"Thurgi-Park / Zürcherstrasse 297, Frauenfeld, 8500",+41 52 722 40 53
-Vaduz,4067,8,2025-02-24 14:55:29,"Mühleholzmarkt / Landstrasse 117, Vaduz, 9490",+4232312191
-Seewen SZ,2986,8,2025-02-24 14:35:27,"Seewen-Markt, Seewen SZ, 6423",+41 41 818 31 01
-Frick,4181,8,2025-02-24 13:10:35,"Hauptstrasse 37, Frick, 5070",+41 62 286 97 51
-Wettingen,3788,8,2025-02-24 13:10:35,"Jurastrasse 42, Wettingen, 5430",+41 56 430 04 81
 Affoltern am Albis,3857,8,2025-02-24 13:00:48,"Büelstrasse 15, Affoltern am Albis, 8910",+41 44 760 11 01
 Montreux,4549,1,2025-02-24 12:20:45,"C.C. Forum / Pl. du Marché 6B, Montreux, 1820",+41 21 963 52 41
-Vevey,3075,14,2025-02-24 09:55:37,"Centre Manor / Av. Général-Guisan 15, Vevey, 1800",+41 21 931 10 31
-Delémont,5887,5,2025-02-24 09:30:58,"Route de Bâle 16, Delémont, 2800",+41 32 423 00 11
-Sion,3073,8,2025-02-24 08:20:30,"Avenue de la gare 19, Sion, 1950",+41 27 323 95 11
-Egerkingen,3535,3,2025-02-22 14:45:50,"Gäupark / Hausimollstrasse 3, Egerkingen, 4622",+41 62 398 08 40
-Bulle,3062,7,2025-02-22 14:30:53,"Rte de Riaz 21, Bulle, 1630",+41 26 912 44 66
-Davos Platz,4794,8,2025-02-22 12:30:38,"Bahnhofstrasse 1+3, Davos Platz, 7270",+41 81 403 50 61
-Wattwil,5652,6,2025-02-22 11:40:45,"Bahnhofstrasse 13, Wattwil, 9630",+41 71 985 06 01
-Heerbrugg,2932,5,2025-02-22 11:25:36,"Coop Super-Center / Balgacherstrasse 2, Heerbrugg, 9435",+41 71 722 50 32
-La Chaux-de-Fonds,3065,8,2025-02-22 10:50:35,"Av. Léopold-Robert 25, La Chaux-de-Fonds, 2300",+41 32 916 10 21
 Basel,3015,8,2025-02-21 19:10:44,"Webergasse 35, Basel, 4058",+41 61 681 14 05
-Neuchâtel,3263,8,2025-02-21 17:00:44,"Rue de Pierre-à-Mazel 10, Neuchâtel, 2000",+41 32 724 68 21
-Basel,4078,8,2025-02-21 15:10:34,"Freie Strasse 52, Basel, 4001",+41 61 335 42 21
-Münsingen,3050,8,2025-02-21 14:25:24,"Alte Bahnhofstrasse 9, Münsingen, 3110",+41 31 722 00 11
-Bern-Bethlehem,3030,8,2025-02-21 14:00:39,"Kasparstrasse 7+9, Bern-Bethlehem, 3027",+41 31 992 42 46
-Jegenstorf,3047,8,2025-02-21 13:50:27,"Bernstrasse 92, Jegenstorf, 3303",+41 31 762 00 11
-Genève,3086,8,2025-02-21 13:20:30,"Promenade de l'Europe 11, Genève, 1203",+41 22 940 19 41
-St. Gallen,4282,8,2025-02-21 12:10:44,"Shopping Arena / Zürcherstrasse 462, St. Gallen, 9015",+41 71 310 05 71
-La Chaux-de-Fonds,3383,8,2025-02-21 10:50:28,"Les Entilles / Av. Léopold-Robert 151, La Chaux-de-Fonds, 2300",+41 32 924 57 21

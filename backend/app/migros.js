@@ -53,6 +53,17 @@ function saveStockDataToFile(stockData) {
     fs.writeFileSync(outputFile, JSON.stringify(stockData, null, 2), 'utf-8');
 }
 
+// Function to display progress
+function showProgress(current, total, message = '') {
+    const percentage = ((current / total) * 100).toFixed(2);
+    process.stdout.write(`\r${message} ${current}/${total} (${percentage}%)`);
+}
+
+// Function to create a delay
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // Main function to orchestrate the fetching and saving of stock data
 async function fetchAllStockData() {
     try {
@@ -64,6 +75,9 @@ async function fetchAllStockData() {
 
         const costCenterInfo = await getCostCenters();
         const costCenters = Object.keys(costCenterInfo);
+        const totalRequests = products.length * Math.ceil(costCenters.length / BATCH_SIZE);
+        
+        const delayPerRequest = (55000 / totalRequests).toFixed(0); // Calculate delay in ms
 
         // Load existing stock data
         let existingData = {};
@@ -77,6 +91,8 @@ async function fetchAllStockData() {
 
         const stockData = {};
         const previousStock = existingData;
+
+        let requestCount = 0;
 
         for (const product of products) {
             const { id: productId, type: productType } = product;
@@ -96,21 +112,29 @@ async function fetchAllStockData() {
                                 if (storeInfo) {
                                     const { city, address } = storeInfo;
                                     const changeType = stock > oldStock ? 'increase' : 'decrease';
-                                    console.log(`${productType} at ${city}, ${address}: Stock ${changeType} from ${oldStock} to ${stock}`);
+                                    console.log(`\n${productType} at ${city}, ${address}: Stock ${changeType} from ${oldStock} to ${stock}`);
                                 }
                             }
                         }
                         stockData[productId].availabilities.push({ id, stock });
                     });
                 }
+
+                requestCount++;
+                showProgress(requestCount, totalRequests, `Fetching stock data for ${productType}`);
+                
+                // Introduce delay between requests
+                await delay(delayPerRequest);
             }
         }
 
         saveStockDataToFile(stockData);
+        console.log('\n✅ Stock data fetching completed!');
     } catch (error) {
         console.error('❌ Error during fetching stock data:', error.message);
     }
 }
+
 
 // Run the main function
 fetchAllStockData();
