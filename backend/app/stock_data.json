@@ -15,9 +15,9 @@
       },
       {
         "id": "0033630",
-        "stock": 3,
+        "stock": 27,
         "lastDecreaseAmount": 3,
-        "timestamp": "2025-03-05T12:21:54.684Z"
+        "timestamp": "2025-03-05T12:26:01.675Z"
       },
       {
         "id": "0044470",
@@ -175,7 +175,9 @@
       },
       {
         "id": "0150011",
-        "stock": 104
+        "stock": 100,
+        "lastDecreaseAmount": 4,
+        "timestamp": "2025-03-05T12:34:13.381Z"
       },
       {
         "id": "0150183",
@@ -267,7 +269,9 @@
       },
       {
         "id": "0150170",
-        "stock": 23
+        "stock": 21,
+        "lastDecreaseAmount": 2,
+        "timestamp": "2025-03-05T12:42:42.352Z"
       },
       {
         "id": "0150153",
@@ -731,7 +735,9 @@
       },
       {
         "id": "0090452",
-        "stock": 31
+        "stock": 29,
+        "lastDecreaseAmount": 2,
+        "timestamp": "2025-03-05T12:40:36.881Z"
       },
       {
         "id": "0150160",
@@ -839,7 +845,9 @@
       },
       {
         "id": "0084260",
-        "stock": 28
+        "stock": 25,
+        "lastDecreaseAmount": 3,
+        "timestamp": "2025-03-05T12:37:55.870Z"
       },
       {
         "id": "0084292",
@@ -1007,7 +1015,9 @@
       },
       {
         "id": "0084721",
-        "stock": 25
+        "stock": 25,
+        "lastDecreaseAmount": 25,
+        "timestamp": "2025-03-05T12:29:33.964Z"
       },
       {
         "id": "0034803",
@@ -1135,7 +1145,9 @@
       },
       {
         "id": "0024630",
-        "stock": 24
+        "stock": 22,
+        "lastDecreaseAmount": 2,
+        "timestamp": "2025-03-05T12:35:46.336Z"
       },
       {
         "id": "0023230",
@@ -1499,7 +1511,9 @@
       },
       {
         "id": "0090450",
-        "stock": 22
+        "stock": 18,
+        "lastDecreaseAmount": 18,
+        "timestamp": "2025-03-05T12:29:35.838Z"
       },
       {
         "id": "0090363",
@@ -1783,7 +1797,9 @@
       },
       {
         "id": "0084210",
-        "stock": 12
+        "stock": 11,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:44:30.630Z"
       },
       {
         "id": "0034230",
@@ -2083,7 +2099,9 @@
       },
       {
         "id": "0123810",
-        "stock": 21
+        "stock": 20,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:37:30.558Z"
       },
       {
         "id": "0123710",
@@ -2103,7 +2121,9 @@
       },
       {
         "id": "0124290",
-        "stock": 12
+        "stock": 9,
+        "lastDecreaseAmount": 3,
+        "timestamp": "2025-03-05T12:40:05.043Z"
       },
       {
         "id": "0123660",
@@ -2127,7 +2147,9 @@
       },
       {
         "id": "0123880",
-        "stock": 12
+        "stock": 11,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:40:05.044Z"
       },
       {
         "id": "0124270",
@@ -2231,7 +2253,9 @@
       },
       {
         "id": "0063690",
-        "stock": 14
+        "stock": 13,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:40:05.475Z"
       },
       {
         "id": "0063910",
@@ -2251,7 +2275,9 @@
       },
       {
         "id": "0063620",
-        "stock": 88
+        "stock": 84,
+        "lastDecreaseAmount": 4,
+        "timestamp": "2025-03-05T12:42:49.594Z"
       },
       {
         "id": "0063720",
@@ -2323,7 +2349,9 @@
       },
       {
         "id": "0063840",
-        "stock": 23
+        "stock": 22,
+        "lastDecreaseAmount": 22,
+        "timestamp": "2025-03-05T12:29:39.260Z"
       },
       {
         "id": "0064350",
@@ -2475,7 +2503,9 @@
       },
       {
         "id": "0044550",
-        "stock": 15
+        "stock": 13,
+        "lastDecreaseAmount": 2,
+        "timestamp": "2025-03-05T12:48:55.433Z"
       },
       {
         "id": "0044600",
@@ -2483,7 +2513,9 @@
       },
       {
         "id": "0044530",
-        "stock": 20
+        "stock": 44,
+        "lastDecreaseAmount": 20,
+        "timestamp": "2025-03-05T12:26:04.106Z"
       },
       {
         "id": "0044860",
@@ -3535,7 +3567,9 @@
       },
       {
         "id": "0084710",
-        "stock": 55
+        "stock": 53,
+        "lastDecreaseAmount": 2,
+        "timestamp": "2025-03-05T12:37:35.715Z"
       },
       {
         "id": "0083850",
@@ -4851,7 +4885,9 @@
       },
       {
         "id": "0065000",
-        "stock": 11
+        "stock": 10,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:40:15.208Z"
       },
       {
         "id": "0063690",
@@ -5267,9 +5303,9 @@
     "availabilities": [
       {
         "id": "0150018",
-        "stock": 16,
+        "stock": 15,
         "lastDecreaseAmount": 1,
-        "timestamp": "2025-03-05T12:11:40.800Z"
+        "timestamp": "2025-03-05T12:44:48.799Z"
       },
       {
         "id": "0064340",
@@ -5385,7 +5421,9 @@
       },
       {
         "id": "0150016",
-        "stock": 10
+        "stock": 2,
+        "lastDecreaseAmount": 8,
+        "timestamp": "2025-03-05T12:44:48.799Z"
       },
       {
         "id": "0150327",
@@ -5689,7 +5727,7 @@
       },
       {
         "id": "0150079",
-        "stock": 7
+        "stock": 17
       },
       {
         "id": "0150189",
@@ -6757,7 +6795,9 @@
       },
       {
         "id": "0090450",
-        "stock": 7
+        "stock": 7,
+        "lastDecreaseAmount": 7,
+        "timestamp": "2025-03-05T12:29:25.588Z"
       },
       {
         "id": "0090363",
@@ -7489,7 +7529,9 @@
       },
       {
         "id": "0065000",
-        "stock": 25
+        "stock": 24,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:42:39.756Z"
       },
       {
         "id": "0063690",
@@ -7501,7 +7543,9 @@
       },
       {
         "id": "0063655",
-        "stock": 1
+        "stock": 0,
+        "lastDecreaseAmount": 1,
+        "timestamp": "2025-03-05T12:42:39.756Z"
       },
       {
         "id": "0064330",

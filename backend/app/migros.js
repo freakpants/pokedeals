@@ -13,7 +13,7 @@ const products = [
 ];
 
 const BATCH_SIZE = 10; // Maximum number of cost centers per request
-const TEN_MINUTES = 10 * 60 * 1000; // 10 minutes in milliseconds
+const TEN_MINUTES = 15 * 60 * 1000; // 10 minutes in milliseconds
 
 // Function to read cost centers from the JSON file
 async function getCostCenters() {
@@ -78,6 +78,8 @@ async function fetchAllStockData() {
         for (const product of products) {
             const { id: productId, type: productType } = product;
 
+            let totalProducts = 0;
+
             for (let i = 0; i < costCenters.length; i += BATCH_SIZE) {
                 const batch = costCenters.slice(i, i + BATCH_SIZE);
                 const batchData = await fetchStockDataForBatch(productId, batch, leshopchToken);
@@ -88,6 +90,8 @@ async function fetchAllStockData() {
                         const stock = stockInfo ? stockInfo.stock : 0;
                         const existingStock = existingData[productId]?.availabilities?.find(item => item.id === costCenterId);
 
+                        totalProducts += stock;
+
                         let outputChange = true;
 
                         if (existingStock) {
@@ -96,28 +100,40 @@ async function fetchAllStockData() {
                                 const changeType = stock > oldStock ? 'increase' : 'decrease';
                                 const storeInfo = costCenterInfo[costCenterId]?.info;
                                 if (storeInfo) {
-                                    const { zip, city, address } = storeInfo;
+                                    const { zip, name, address } = storeInfo;
 
-                                    if (changeType === 'increase' && existingStock.lastDecreaseAmount) {
-                                        const { lastDecreaseAmount, timestamp } = existingStock;
-                                        if ((oldStock + lastDecreaseAmount === stock) && (now - new Date(timestamp).getTime()) < TEN_MINUTES) {
-                                            console.log(`\n⏳ Ignoring temporary stock increase for ${productType} at ${city}, ${address}`);
-                                            outputChange = false;
-                                        } 
+                                
+                                    let changeTypeFormatted;
+                                    if (changeType === 'increase') {
+                                        // If lastChange exists and is the exact opposite of current change
+                                        if (existingStock.lastChange && existingStock.lastChange === (oldStock - stock)) {
+                                            changeTypeFormatted = '\x1b[1m\x1b[33mincrease\x1b[0m'; // yellow
+                                        } else {
+                                            changeTypeFormatted = '\x1b[1m\x1b[32mincrease\x1b[0m'; // green
+                                        }
+                                    } else {
+                                        changeTypeFormatted = 'decrease';
+                                    }
+                                    console.log(`\n${productType} at ${zip} ${name}, ${address}: Stock ${changeTypeFormatted} from ${oldStock} to ${stock}`);
+                                    // output details of previous change
+                                    if (existingStock.lastChange) {
+                                        // calculate when the stock last changed
+                                        const lastChangeAgo = now - new Date(existingStock.timestamp).getTime();
+                                        const lastChangeMinutes = Math.floor(lastChangeAgo / 60000);
+                                        const lastChangeSeconds = Math.floor((lastChangeAgo % 60000) / 1000);
+                                        const lastChangeType = existingStock.lastChange > 0 ? 'increase' : 'decrease';
+                                        const lastChangeAmount = Math.abs(existingStock.lastChange);
+                                        console.log(`\tPrevious change: ${lastChangeType} of ${lastChangeAmount} units ${lastChangeMinutes} minutes and ${lastChangeSeconds} seconds ago`);
                                     }
 
-                                    if(outputChange) {
-                                        console.log(`\n${productType} at ${zip} ${city}, ${address}: Stock ${changeType} from ${oldStock} to ${stock}`);
-                                    }
 
-                                    if (changeType === 'decrease') {
-                                        existingStock.lastDecreaseAmount = oldStock - stock;
-                                        existingStock.timestamp = new Date().toISOString();
-                                    }
+                                    
+                                    existingStock.lastChange = stock - oldStock; 
+                                    existingStock.timestamp = new Date().toISOString();
+                                    
                                 }
-                                if(outputChange){
-                                    existingStock.stock = stock;
-                                }
+                                
+                                existingStock.stock = stock;
                             }
                         } else {
                             existingData[productId] = existingData[productId] || { availabilities: [] };
@@ -128,8 +144,10 @@ async function fetchAllStockData() {
 
                 requestCount++;
                 showProgress(requestCount, totalRequests, `Fetching stock data for ${productType}`);
-                await delay(100);
+                const delayPerRequest = (55000 / totalRequests).toFixed(0);
+                await delay(delayPerRequest);
             }
+            console.log(`\nTotal stock for ${productType}: ${totalProducts}`);
         }
 
         saveStockDataToFile(existingData);
