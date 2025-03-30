@@ -25,7 +25,7 @@
         }
     </style>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFotlcw_Jvl2PHDZl6f57kq5-FcYWEwJ8"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}"></script>
 </head>
 <body>
 
