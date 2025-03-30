@@ -72,7 +72,7 @@ class CheckPokeCenter extends Command
                     // if the count isnt 603, send an email to freakpants@gmail.com
                     // Send email
 
-                    $previousCount = 640;
+                    $previousCount = 647;
 
                     if ($totalProducts != $previousCount) {
                         $domail = true;
@@ -97,7 +97,7 @@ class CheckPokeCenter extends Command
                 }
                 
             } else {
-                $domail = true;
+                //  $domail = true;
                 echo "Category subtitle not found." . PHP_EOL;
                 $subject = "Pokemon Center category subtitle not found";
                 $message = "The category subtitle was not found.";
