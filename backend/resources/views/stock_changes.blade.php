@@ -65,10 +65,26 @@
             $changeValue = $change->change ?? 0;
             $highlightClass = 'neutral';
 
+            $thisChangeTimestamp = $change->timestamp ?? 0;
+            $previousChangeTimestamp = $latestChanges[$storeId]->timestamp ?? 0;
+
+            // determine the difference in minutes (unless it's the first entry)
+            if ($previousChangeTimestamp > 0) {
+                $diffInMinutes = (strtotime($thisChangeTimestamp) - strtotime($previousChangeTimestamp)) / 60;
+            } else {
+                $diffInMinutes = 0;
+            }
+
+
             if ($storeId !== null && isset($latestChanges[$storeId])) {
                 $previousChange = $latestChanges[$storeId]->change ?? 0;
                 if ($previousChange === -$changeValue) {
-                    $highlightClass = 'contradiction';
+                    // if we are an increase, and we are more than 30 minutes after the previous change
+                    if ($changeValue > 0 && $diffInMinutes > 30) {
+                        $highlightClass = 'increase';
+                    } else {
+                        $highlightClass = 'contradiction';
+                    }
                 }
             }
 

@@ -22,6 +22,7 @@ class EmailAddressesSeeder extends Seeder
             ['email' => 'noah.paixao@gmail.com'],
             ['email' => 'janbaumann.basi@gmail.com'],
             ['email' => 'iwan.muentener@hotmail.com'],
+            ['email' => 'maurizio.bersanini@gmail.com']
         ]);
     }
 }
