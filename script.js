@@ -14,6 +14,8 @@ const languageToCountryCode = {
   de: 'de',
   fr: 'fr',
   ja: 'jp',
+  zh: 'cn',
+  kr: 'kr',
 };
 
 const languageToDisplayName = {
@@ -21,6 +23,9 @@ const languageToDisplayName = {
   de: 'German',
   fr: 'French',
   ja: 'Japanese',
+  zh: '(Simplified/Traditional) Chinese',
+  kr: 'Korean',  
+
 };
 
 const parseQueryParams = () => {
@@ -656,13 +661,15 @@ const filterUniqueOffers = (matches) => {
   };
 
 // Define the SvgIcon for the delete icon using React.createElement
-const DeleteIcon = (props) => (
-  React.createElement(SvgIcon, props,
-    React.createElement('circle', { cx: '12', cy: '12', r: '10', stroke: '#666', strokeWidth: '2', fill: 'none' }),
-    React.createElement('line', { x1: '8', y1: '8', x2: '16', y2: '16', stroke: '#666', strokeWidth: '2' }),
-    React.createElement('line', { x1: '8', y1: '16', x2: '16', y1: '8', stroke: '#666', strokeWidth: '2' })
-  )
-);
+const DeleteIcon = (props) =>
+  React.createElement(SvgIcon, {
+    ...props,
+    style: { fontSize: '18px', color: '#ccc', ...props.style }
+  },
+    React.createElement('circle', { cx: '12', cy: '12', r: '10', stroke: '#ccc', strokeWidth: '2', fill: 'none' }),
+    React.createElement('line', { x1: '8', y1: '8', x2: '16', y2: '16', stroke: '#ccc', strokeWidth: '2' }),
+    React.createElement('line', { x1: '8', y1: '16', x2: '16', y2: '8', stroke: '#ccc', strokeWidth: '2' })
+  );
 
   const filtersComponent = React.createElement(
     'div',
@@ -677,6 +684,7 @@ const DeleteIcon = (props) => (
           labelId: 'language-filter-label',
           multiple: true,
           value: filters.language,
+          label: 'Languages',
           onChange: (e) => handleFilterChange('language', e.target.value),
           renderValue: (selected) =>
             React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '5px' } },
