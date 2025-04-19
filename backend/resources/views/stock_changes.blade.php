@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Migros Mini Tin Stocks</title>
+    <title>{{ $productId == '100007250' ? 'Migros Sleeved Booster Stocks' : 'Migros Mini Tin Stocks' }}</title>
+   
     <style>
         body { font-family: Arial, sans-serif; }
         #map { height: 600px; width: 100%; margin-top: 20px; }
@@ -29,7 +30,7 @@
 </head>
 <body>
 
-<h2>Migros Mini Tin Stocks</h2>
+<h2>{{ $productId == '100007250' ? 'Migros Sleeved Booster Stocks' : 'Migros Mini Tin Stocks' }}</h2>
 
 @php
     $storeHistories = [];
@@ -79,8 +80,8 @@
             if ($storeId !== null && isset($latestChanges[$storeId])) {
                 $previousChange = $latestChanges[$storeId]->change ?? 0;
                 if ($previousChange === -$changeValue) {
-                    // if we are an increase, and we are more than 30 minutes after the previous change
-                    if ($changeValue > 0 && $diffInMinutes > 30) {
+                    // if we are an increase, and we are more than 60 minutes after the previous change
+                    if ($changeValue > 0 && $diffInMinutes > 60) {
                         $highlightClass = 'increase';
                     } else {
                         $highlightClass = 'contradiction';
@@ -143,7 +144,7 @@
     <p>This project is using the <a href="https://github.com/aliyss/migros-api-wrapper">Migros API Wrapper</a> by aliyss to get the stock data.</p>
     <p><strong>Click a store name to filter entries for that store.</strong> Click again to reset.</p>
     <p>Yellow changes within 20 minutes of a previous change are usually a glitch by the migros system and the stock hasn’t actually changed.</p>
-    <p>It is completely random which mini tins a store gets. It can be anything from Shrouded Fable / Vibrant Paldea / 151 / Paldean Fates / Prismatic Evolutions.</p>
+    <p>It is completely random which {{ $productId == '100007250' ? 'sleeved boosters' : 'mini tins' }} a store gets. It can be anything from {{ $productId == '100007250' ? 'Temporal Forces / Twilight Masquerade / Stellar Crown / Surging Sparks / Journey Together' : 'Shrouded Fable / Vibrant Paldea / 151 / Paldean Fates / Prismatic Evolutions' }}.</p>
     <p>Stock data can be out of date because of theft. Some stores never fix that.</p>
     <p>It can take a while from a restock to being on the actual shelf. When in doubt, ask customer service.</p>
     <p><b>Please be patient and friendly with employees, they often don't understand how it works.</b></p>
