@@ -28,14 +28,14 @@ class RefreshAndImportPokemon extends Command
      */
     public function handle(): int
     {
-        $this->info('Rolling back all migrations...');
+        /* $this->info('Rolling back all migrations...');
         $this->call('migrate:rollback', ['--force' => true]);
 
         $this->info('Running migrations...');
         $this->call('migrate', ['--force' => true]);
 
         $this->info('Seeding the database...');
-        $this->call('db:seed', ['--force' => true]); 
+        $this->call('db:seed', ['--force' => true]);  */
 
         $this->info('Importing Pokémon products...');
         // Define the files to import

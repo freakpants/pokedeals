@@ -10,67 +10,82 @@ use App\Mail\NewProductsMail;
 
 class CheckShop extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:check-shop {shopType}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Check a shop website for new products';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $shopType = $this->argument('shopType');
         $shopHelper = new ShopHelper($this);
 
         $shop = DB::table('external_shops')->where('shop_type', $shopType)->first();
+        if (!$shop) {
+            $this->error("No shop found for type: " . $shopType);
+            return;
+        }
+
         $products = $shopHelper->retrieveProductsFromShop($shop);
 
-        // output the number of products
-        $this->info("Found " . count($products) . " products on " . ucfirst($shopType));
-
-        // check if we have all ids in the database 
-        $ids = array_map(function($product){
-            return $product['id'];
-        }, $products);
-
-        $existingProducts = DB::table('external_products')->whereIn('external_id', $ids)->get();
-        $existingIds = $existingProducts->map(function($product){
-            return $product->external_id;
+        $positiveStockProducts = collect($products)->filter(function ($product) {
+            return ($product['stock'] ?? 0) > 0 || ($product['available'] ?? false) === true;
         });
 
-        $newProducts = array_filter($products, function($product) use ($existingIds){
+        $this->info("Found " . count($products) . " products on " . ucfirst($shopType));
+
+        $ids = collect($products)->pluck('id');
+        $existingProducts = DB::table('external_products')->whereIn('external_id', $ids)->get();
+        $existingIds = $existingProducts->pluck('external_id');
+
+        $newProducts = collect($products)->filter(function ($product) use ($existingIds) {
             return !$existingIds->contains($product['id']);
         });
 
+        $outOfStockProducts = $existingProducts->filter(function ($product) {
+            return $product->stock == 0;
+        });
+
+        $this->info("Found " . count($existingProducts) . " existing products on " . ucfirst($shopType));
+        $this->info("Found " . count($outOfStockProducts) . " out of stock products on " . ucfirst($shopType));
+
+        // Determine products that were out of stock and are now back in stock
+        $inStockProducts = $positiveStockProducts->filter(function ($product) use ($outOfStockProducts) {
+            return $outOfStockProducts->contains('external_id', $product['id']);
+        });
+
+        $this->info("Found " . count($inStockProducts) . " products that are now in stock on " . ucfirst($shopType));
         $this->info("Found " . count($newProducts) . " new products on " . ucfirst($shopType));
 
-        // send email to every email address in the email_addresses table
-        if (count($newProducts) > 0) {
-            
-            $subject = 'New Product(s) on ' . ucfirst($shopType); // Custom subject
-            
-            $emailAddresses = DB::table('email_addresses')->pluck('email');
-            foreach ($emailAddresses as $email) {
-                Mail::to($email)->send(new NewProductsMail($newProducts,$shop, $subject));
-            }
-            // add the product to the database
-            foreach ($newProducts as $product) {
+        // Notify about new products
+        if ($newProducts->isNotEmpty()) {
+            $subject = 'New Product(s) on ' . ucfirst($shopType);
+            $this->notifyByEmail($newProducts, $shop, $subject);
+
+
+        }
+
+        // Notify about back-in-stock products
+        if ($inStockProducts->isNotEmpty()) {
+            $subject = 'Product(s) back in stock on ' . ucfirst($shopType);
+            $this->notifyByEmail($inStockProducts, $shop, $subject);
+
+
+        }
+
+        // Save new products to the database
+        foreach ($products as $product) {
+            if (isset($product['variants'])) {
                 foreach ($product['variants'] as $variant) {
-                    $url = $product['url'];
-                    $original_title = $product['title'];
-                    $shopHelper->saveVariant($variant, $shop, $url, $original_title);
+                    $shopHelper->saveVariant($variant, $shop, $product['url'], $product['title']);
                 }
             }
+        }
+    }
+
+    private function notifyByEmail($products, $shop, $subject)
+    {
+        $emailAddresses = DB::table('email_addresses')->pluck('email');
+        foreach ($emailAddresses as $email) {
+            Mail::to($email)->send(new NewProductsMail($products, $shop, $subject));
         }
     }
 }

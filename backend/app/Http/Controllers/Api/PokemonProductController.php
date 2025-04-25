@@ -8,10 +8,7 @@ use App\Http\Controllers\Controller;
 class PokemonProductController extends Controller
 {
     public function index()
-    {
-
-
-        
+    {  
         $products = DB::table('external_products as ep')
             ->join('pokemon_products as pp', function ($join) {
                 $join->on('pp.type', '=', 'ep.type')

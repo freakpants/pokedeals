@@ -45,7 +45,8 @@ class ImportPokemonProducts extends Command
             $skus[] = $product['sku'];
 
             $set_identifier = $details['set_identifier'];
-            $product_type = $details['product_type'];
+
+            $product_type = $product['type'] ?? $details['product_type'];
 
             // if another product with the same type AND the same variant (that is not other) exists, skip this product
             if (PokemonProduct::where('type', $product_type)
