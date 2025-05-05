@@ -14,7 +14,7 @@ const languageToCountryCode = {
   de: 'de',
   fr: 'fr',
   ja: 'jp',
-  zh: 'cn',
+  cn: 'cn',
   kr: 'kr',
 };
 
@@ -23,7 +23,7 @@ const languageToDisplayName = {
   de: 'German',
   fr: 'French',
   ja: 'Japanese',
-  zh: '(Simplified/Traditional) Chinese',
+  cn: '(Simplified/Traditional) Chinese',
   kr: 'Korean',  
 
 };
@@ -363,10 +363,6 @@ const applyFilters = () => {
     }));
   };
 
-  const renderSortOrderIcon = (key) => {
-    if (sortConfig.key !== key) return '↕';
-    return sortConfig.order === 'asc' ? '↑' : '↓';
-  };
 
   const renderProductTypeFilterOptions = () => {
     let filteredProductTypes = productTypes.filter(type => {
