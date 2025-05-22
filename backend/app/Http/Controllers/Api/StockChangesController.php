@@ -28,7 +28,8 @@ class StockChangesController extends Controller
                 'stock_data.timestamp'
             )
             ->where('stock_data.product_id', $productId)
-            ->where('stock_data.timestamp', '>=', '2025-04-15 00:01:00')
+            ->where('stock_data.timestamp', '>=', '2025-05-10 00:01:00')
+            ->where('stock_data.set_identifier', '=', 'none')
             ->orderBy('stock_data.timestamp', 'desc')
             ->get();
 

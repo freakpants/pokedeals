@@ -440,7 +440,7 @@ class PokemonHelper
             'Bilderrahmen', 'engel', 'Servietten', 'Ohrschmuck', 'Kugelschreiber', 'Gürteltasche', 'Teelicht', 'Hochzeits',
             'Schutzengel', 'Wespen Stop', 'Piraten Duell', 'Elfenland', 'Sun Catcher', 'Wetterstein', 'Schürze', 'Party Spiel',
             'LED-Lichter', 'Sparschwein', 'Ich denke an dich', 'Braut-Herz', 'Geschenketasche', 'Feuerzeug', 'Holz-Herz',
-            'Dekorationsherz', 'Poly Gold', 'Crados'
+            'Dekorationsherz', 'Poly Gold', 'Crados', 'Secret Lair'
 
         ];
 

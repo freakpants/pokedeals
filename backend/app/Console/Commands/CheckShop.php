@@ -15,12 +15,16 @@ class CheckShop extends Command
 
     public function handle()
     {
-        $shopType = $this->argument('shopType');
+        $shopIdentifier = $this->argument('shopType');
         $shopHelper = new ShopHelper($this);
 
-        $shop = DB::table('external_shops')->where('shop_type', $shopType)->first();
+        $shop = DB::table('external_shops')
+        ->where('shop_type', $shopIdentifier)
+        ->orWhere('name', $shopIdentifier)
+        ->first();
+
         if (!$shop) {
-            $this->error("No shop found for type: " . $shopType);
+            $this->error("No shop found for type or name: " . $shopIdentifier);
             return;
         }
 
@@ -30,7 +34,7 @@ class CheckShop extends Command
             return ($product['stock'] ?? 0) > 0 || ($product['available'] ?? false) === true;
         });
 
-        $this->info("Found " . count($products) . " products on " . ucfirst($shopType));
+        $this->info("Found " . count($products) . " products on " . $shop->name);
 
         $ids = collect($products)->pluck('id');
         $existingProducts = DB::table('external_products')->whereIn('external_id', $ids)->get();
@@ -44,20 +48,20 @@ class CheckShop extends Command
             return $product->stock == 0;
         });
 
-        $this->info("Found " . count($existingProducts) . " existing products on " . ucfirst($shopType));
-        $this->info("Found " . count($outOfStockProducts) . " out of stock products on " . ucfirst($shopType));
-
+        $this->info("Found " . count($existingProducts) . " existing products on " . $shop->name);
+        $this->info("Found " . count($outOfStockProducts) . " out of stock products on " . $shop->name);
+    
         // Determine products that were out of stock and are now back in stock
         $inStockProducts = $positiveStockProducts->filter(function ($product) use ($outOfStockProducts) {
             return $outOfStockProducts->contains('external_id', $product['id']);
         });
 
-        $this->info("Found " . count($inStockProducts) . " products that are now in stock on " . ucfirst($shopType));
-        $this->info("Found " . count($newProducts) . " new products on " . ucfirst($shopType));
+ $this->info("Found " . count($inStockProducts) . " products that are now in stock on " . $shop->name);
+    $this->info("Found " . count($newProducts) . " new products on " . $shop->name);
 
         // Notify about new products
         if ($newProducts->isNotEmpty()) {
-            $subject = 'New Product(s) on ' . ucfirst($shopType);
+            $subject = 'New Product(s) on ' . ucfirst($shop->name);
             $this->notifyByEmail($newProducts, $shop, $subject);
 
 
@@ -65,7 +69,7 @@ class CheckShop extends Command
 
         // Notify about back-in-stock products
         if ($inStockProducts->isNotEmpty()) {
-            $subject = 'Product(s) back in stock on ' . ucfirst($shopType);
+            $subject = 'Product(s) back in stock on ' . ucfirst($shop->name);
             $this->notifyByEmail($inStockProducts, $shop, $subject);
 
 

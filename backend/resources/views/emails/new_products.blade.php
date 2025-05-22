@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>New Products on Interdiscount</title>
+    <title>{{ $subject }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,12 +43,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>New Product(s) on {{ $shop->name }}</h1>
+        <h1>{{ $subject }}</h1>
         <ul>
             @foreach ($products as $product)
                 <li>
                     <a href="{{ $product['url'] }}">{{ $product['title'] }} - {{ $product['price'] }}</a>
-                    <img src="{{ $product['largest_image_url'] }}" />
+                    @if (!empty($product['largest_image_url']))
+                        <img src="{{ $product['largest_image_url'] }}" />
+                    @endif
                 </li>
             @endforeach
         </ul>
