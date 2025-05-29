@@ -541,19 +541,25 @@ let productUrl = '';
 if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
   productUrl = rawUrl;
 } else if (rawUrl.startsWith('/')) {
-  const shopDomain = shops[match.shop_id]?.url;
-  if (shopDomain) {
-    productUrl = new URL(rawUrl, shopDomain).toString();
+  const baseUrl = shops[match.shop_id]?.base_url;
+  if (baseUrl) {
+    try {
+      productUrl = new URL(rawUrl, baseUrl).toString();
+    } catch (err) {
+      console.warn(`Failed to build full URL from ${rawUrl} and ${baseUrl}`, match);
+      productUrl = '';
+    }
   } else {
-    // Missing shop domain: skip rendering the link or leave it blank
-    console.warn(`Missing shop domain for shop ID ${match.shop_id}`, match);
-    productUrl = ''; // or maybe null
+    console.warn(`Missing base_url for shop ID ${match.shop_id}`, match);
+    productUrl = '';
   }
 } else {
-  // Invalid or unsupported URL format
-  console.warn(`Unexpected URL format for match:`, match);
+  // Unexpected format (e.g. no protocol, not relative)
+  console.warn(`Unhandled URL format for match:`, match);
   productUrl = '';
 }
+
+
 
 
 
