@@ -313,8 +313,8 @@ class ShopHelper{
                         break;
                     }
                 }
-                $priceValue = preg_replace('/[^0-9.,]/', '', $priceText);
-                $product['price'] = $priceValue !== '' ? floatval(str_replace(',', '.', $priceValue)) : 0;
+
+                $product['price'] = self::cleanPriceString($priceText);
 
                 // Check out-of-stock classes
                 $classAttr = $node->attr('class') ?? '';
@@ -956,5 +956,25 @@ public function retrieveProductsFromGalaxy($shop)
     return $products;
 }
 
+
+public static function cleanPriceString(?string $raw): float
+{
+    if (!$raw) return 0.0;
+
+    // Replace non-breaking spaces and narrow no-break spaces
+    $raw = str_replace(["\u{00A0}", ' ', ' ', '&nbsp;', 'CHF'], '', $raw);
+
+    // Remove all but digits, dots and commas
+    $cleaned = preg_replace('/[^\d.,]/', '', $raw);
+
+    // If comma is used as decimal, fix it
+    if (substr_count($cleaned, ',') === 1 && substr_count($cleaned, '.') === 0) {
+        $cleaned = str_replace(',', '.', $cleaned);
+    } else {
+        $cleaned = str_replace(',', '', $cleaned); // remove thousands sep
+    }
+
+    return floatval($cleaned);
+}
 
 }
