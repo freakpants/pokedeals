@@ -53,7 +53,7 @@ class ImportPokemonProducts extends Command
                 ->where('variant', $details['variant'])
                 ->where('variant', '<>', 'Other')
                 ->exists()) {
-                $this->warn("Duplicate product found: {$product['sku']}");
+                // $this->warn("Duplicate product found: {$product['sku']}");
                 continue;
             }
 

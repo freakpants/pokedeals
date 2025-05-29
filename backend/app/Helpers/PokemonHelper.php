@@ -397,7 +397,10 @@ class PokemonHelper
             foreach ($keywords as $keyword) {
                 if (stripos($normalizedTitle, $keyword) !== false || stripos($normalizedVariantTitle, $keyword) !== false) {
                     // make sure tinkaton/victini isnt matched as a tin
-                    if (stripos($normalizedTitle, 'tinkaton') !== false || stripos($normalizedTitle, 'victini') !== false) {
+                    if (stripos($normalizedTitle, 'tinkaton') !== false || 
+                        stripos($normalizedTitle, 'victini') !== false ||
+                        stripos($normalizedTitle, 'giratina') !== false
+                    ) {
                         if($productType === ProductTypes::Tin->value) {
                             continue;
                         }
@@ -417,6 +420,15 @@ class PokemonHelper
         }
 
         if ($match) {
+            return;
+        }
+
+        if (
+            preg_match('/\b[A-Z]{2,4}\s?\d{1,3}\b/', $normalizedTitle) ||  // e.g. LOR136
+            preg_match('/\d{1,3}\/\d{1,3}/', $normalizedTitle) ||          // e.g. 130/196
+            preg_match('/\b(NM|LP|MP|HP|DMG)\b/i', $normalizedTitle)       // Card conditions
+        ) {
+            self::$product_type = ProductTypes::SingleCard;
             return;
         }
 
@@ -448,7 +460,7 @@ class PokemonHelper
             'Bilderrahmen', 'engel', 'Servietten', 'Ohrschmuck', 'Kugelschreiber', 'Gürteltasche', 'Teelicht', 'Hochzeits',
             'Schutzengel', 'Wespen Stop', 'Piraten Duell', 'Elfenland', 'Sun Catcher', 'Wetterstein', 'Schürze', 'Party Spiel',
             'LED-Lichter', 'Sparschwein', 'Ich denke an dich', 'Braut-Herz', 'Geschenketasche', 'Feuerzeug', 'Holz-Herz',
-            'Dekorationsherz', 'Poly Gold', 'Crados', 'Secret Lair'
+            'Dekorationsherz', 'Poly Gold', 'Crados', 'Secret Lair', 'dragonball', 'metazoo'
 
         ];
 

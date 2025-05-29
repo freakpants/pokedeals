@@ -61,11 +61,29 @@ class ShopHelper{
             $products = [];
     }
 
+
+    
+
     $filteredProducts = [];
     $discardedCount = 0;
 
     foreach ($products as $product) {
         $category = PokemonHelper::determineProductCategory($product);
+
+        $details = $this->pokemonHelper->determineProductDetails($product['title'], $product['variants'][0]['title'] ?? null);
+$productType = $details['product_type'];
+$setIdentifier = $details['set_identifier'];
+$language = $details['language'];
+$variant = $details['variant'];
+
+if ($details['product_type'] === \App\Enums\ProductTypes::Other && preg_match('/LOR\s?\d{1,3}/i', $product['title'])) {
+
+    $this->command->line("DEBUG: {$product['title']}");
+    $this->command->line("  → Type: {$productType->value}");
+    $this->command->line("  → Set: {$setIdentifier}");
+    $this->command->line("  → Language: {$language}");
+    $this->command->line("  → Variant: {$variant}");
+}
 
         if ($category === 'pokemon' || $category === 'unknown') {
             $filteredProducts[] = $product;
