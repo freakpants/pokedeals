@@ -536,10 +536,21 @@ const applyFilters = () => {
     const countryCode = languageToCountryCode[match.language] || 'unknown';
   
     // Ensure valid URL
-    const productUrl = match.external_product.url.startsWith("http")
-      ? match.external_product.url
-      : `https://fallbackurl.com${match.external_product.url}`;
-  
+    const rawUrl = match.external_product?.url || '';
+    const shopDomain = shops[match.shop_id]?.url || '';
+
+    let productUrl = '';
+
+    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+      productUrl = rawUrl;
+    } else if (rawUrl.startsWith('/')) {
+      productUrl = shopDomain
+        ? new URL(rawUrl, shopDomain).toString()
+        : `https://fallbackurl.com${rawUrl}`; // Fallback if shopDomain is missing
+    } else {
+      productUrl = `https://${rawUrl}`;
+    }
+
     return React.createElement(
       'div',
       { className: `offer ${isCheapest ? 'cheapest-offer' : ''}`, key: match.id },

@@ -30,7 +30,7 @@ class CheckShop extends Command
         }
 
         try {
-                $products = $shopHelper->retrieveProductsFromShop($shop);
+            $products = $shopHelper->retrieveProductsFromShop($shop);
         } catch (\Throwable $e) {
             $this->error("Error retrieving products: " . $e->getMessage());
             return; // Exit early, don't update last_scraped_at

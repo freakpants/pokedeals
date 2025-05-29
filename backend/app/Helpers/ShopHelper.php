@@ -37,6 +37,24 @@ class ShopHelper{
         case 'websell':
             $products = $this->retrieveProductsFromWebsell($shop);
             break;
+        case 'prestashop':
+            $products = $this->retrieveProductsFromPrestaShop($shop);
+            break;
+        case 'ecwid':
+            $products = $this->retrieveProductsFromEcwid($shop);
+            break;
+        case 'softridge':
+             $products = $this->retrieveProductsFromSoftridge($shop);
+            break;
+        case 'cs-cart':
+            $products = $this->retrieveProductsFromCsCart($shop);
+            break; 
+        case 'kidz':
+            $products = $this->retrieveProductsFromKidz($shop);
+            break;
+        case 'galaxy':
+            $products = $this->retrieveProductsFromGalaxy($shop);
+            break;
         default:
             $products = [];
     }
@@ -542,9 +560,401 @@ public function retrieveProductsFromSpielezar($shop)
     return $products;
 }
 
+public function retrieveProductsFromPrestaShop($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting HTML parsing for PrestaShop...");
 
+    $products = [];
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
 
+        while ($hasMorePages) {
+            sleep(1); // Avoid hammering the server
+            $isMana = $shop->name === 'The Mana Shop';
+            $paginatedUrl = $isMana ? $categoryUrl . '&n=1000' : $categoryUrl . '?page=' . $page;
+
+            $this->command->info("Fetching page $page: $paginatedUrl");
+            $response = Http::get($paginatedUrl);
+
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $crawler = new Crawler($response->body());
+            $productClass = $isMana ? '.product-container' : '.product-miniature';
+
+            $current_products = $crawler->filter($productClass)->each(function (Crawler $node) use ($shop, $isMana) {
+                $product = [];
+
+                $product['id'] = $node->attr('data-id-product') ?? $node->filter('.addToWishlist')->attr('rel');
+                if (!$product['id']) return null;
+
+                $priceNode = $node->filter('.product-price-and-shipping .price');
+                if (!$priceNode->count()) {
+                    $priceNode = $node->filter('.product-price.price');
+                }
+
+                $price = $priceNode->count() ? $priceNode->text() : '0.00';
+                $price = preg_replace('/[^0-9.]/', '', $price);
+                $product['price'] = floatval($price);
+
+                $productTitleNode = $node->filter('.product-title');
+                if (!$productTitleNode->count()) {
+                    $productTitleNode = $node->filter('.product-name');
+                }
+                $product['title'] = $isMana ? $productTitleNode->attr('title') : $productTitleNode->text();
+
+                $product['url'] = $node->filter('a')->first()->attr('href');
+                $product['handle'] = str_replace($shop->base_url, '', str_replace('www.', '', $product['url']));
+
+                $product['available'] = !(
+                    $node->filter('.label-danger')->count() ||
+                    $node->filter('.label-warning')->count() ||
+                    $node->filter('.product-unavailable')->count()
+                );
+
+                $product['variants'] = [$product];
+
+                return $product;
+            });
+
+            $current_products = array_filter($current_products);
+            $products = array_merge($products, $current_products);
+
+            $hasMorePages = $crawler->filter('.next')->count() > 0 && !$isMana;
+            $page++;
+        }
+    }
+
+    return $products;
+}
+
+public function retrieveProductsFromEcwid($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting HTML parsing for Ecwid...");
+
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $offset = 0;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl;
+            if ($offset) {
+                $paginatedUrl .= '&offset=' . $offset;
+            }
+
+            $this->command->info("Fetching offset $offset: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page at offset $offset. Status: {$response->status()}");
+                break;
+            }
+
+            $crawler = new Crawler($response->body());
+
+            $current_products = $crawler->filter('.grid-product')->each(function (Crawler $node) use ($shop) {
+                $product = [];
+
+                $product['id'] = $node->filter('.grid-product__wrap')->attr('data-product-id');
+
+                try {
+                    $price = $node->filter('.grid-product__price-value')->text();
+                    $price = preg_replace('/[^0-9.]/', '', $price);
+                    $product['price'] = floatval($price);
+                } catch (\Exception $e) {
+                    $product['price'] = null;
+                }
+
+                try {
+                    $product['title'] = $node->filter('.grid-product__title-inner')->text();
+                } catch (\Exception $e) {
+                    $product['title'] = null;
+                }
+
+                try {
+                    $product['url'] = $node->filter('a')->first()->attr('href');
+                    $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                } catch (\Exception $e) {
+                    $product['url'] = null;
+                    $product['handle'] = null;
+                }
+
+                try {
+                    $soldOutNode = $node->filter('.grid-product__button-hover.grid-product__buy-now span');
+                    $product['available'] = $soldOutNode->count() && stripos($soldOutNode->text(), 'Ausverkauft') !== false
+                        ? false
+                        : true;
+                } catch (\Exception $e) {
+                    $product['available'] = false;
+                }
+
+                $product['variants'] = [$product];
+
+                return $product;
+            });
+
+            $hasMorePages = $crawler->filter('.pager__button-text')->reduce(function (Crawler $node) {
+                return trim($node->text()) === 'Nächste';
+            })->count() > 0;
+
+            $products = array_merge($products, $current_products);
+            $offset += 60;
+        }
+    }
+
+    return $products;
+}
+
+public function retrieveProductsFromSoftridge($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting parsing for Softridge...");
+
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . '&page=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $json = $response->json();
+
+            foreach ($json['products'] as $product) {
+                $productArray = [];
+                $productArray['id'] = $product['id'];
+
+                $priceText = $product['salesPriceText'] ?? '';
+                $priceText = str_replace('.–', '', $priceText);
+                $priceText = preg_replace('/[^0-9.]/', '', $priceText);
+                $productArray['price'] = floatval($priceText);
+
+                $productArray['title'] = $product['fullTitle'] . ' ' . $product['regionCode'];
+                $productArray['handle'] = $product['linkUrl'];
+                $productArray['url'] = $shop->base_url . $productArray['handle'];
+                $productArray['available'] = $product['statusColor'] !== 'Gray';
+
+                $productArray['variants'] = [$productArray];
+
+                $products[] = $productArray;
+            }
+
+            $hasMorePages = $json['hasMore'] ?? false;
+            $page++;
+        }
+    }
+
+    return $products;
+}
     
+public function retrieveProductsFromCsCart($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting HTML parsing for CS-Cart...");
+
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $response = Http::get($categoryUrl);
+
+        if ($response->failed()) {
+            $this->command->error("Failed to fetch CS-Cart category: $categoryUrl. Status: {$response->status()}");
+            continue;
+        }
+
+        $htmlFragment = $response->json()['html']['pagination_contents'] ?? '';
+        $crawler = new Crawler($htmlFragment);
+
+        $current_products = $crawler->filter('.ut2-gl__item')->each(function (Crawler $node) use ($shop) {
+            $product = [];
+
+            $product['id'] = $node->filter('input[name^="product_data"]')->count()
+                ? $node->filter('input[name^="product_data"]')->attr('value')
+                : null;
+
+            $priceText = $node->filter('.ty-price')->count()
+                ? $node->filter('.ty-price')->text()
+                : '';
+            $product['price'] = floatval(trim(str_replace('CHF', '', preg_replace('/[^0-9.]/', '', $priceText))));
+
+            $product['title'] = $node->filter('.product-title')->count()
+                ? trim($node->filter('.product-title')->text())
+                : null;
+
+            $product['url'] = $node->filter('.product-title')->count()
+                ? $node->filter('.product-title')->attr('href')
+                : null;
+
+            $product['handle'] = $product['url']
+                ? str_replace($shop->base_url, '', $product['url'])
+                : null;
+
+            $product['available'] = $node->filter('button.ty-btn__add-to-cart')->count() > 0 &&
+                                    $node->filter('.ty-qty-out-of-stock')->count() === 0;
+
+            $product['variants'] = [$product];
+
+            return $product;
+        });
+
+        $products = array_merge($products, $current_products);
+    }
+
+    return $products;
+}
+
+public function retrieveProductsFromKidz($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting HTML parsing for Kidz...");
+
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . '&page=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $crawler = new Crawler($response->body());
+
+            $current_products = $crawler->filter('.card--card')->each(function (Crawler $node) use ($shop) {
+                try {
+                    $product = [];
+
+                    $titleNode = $node->filter('.card__heading a');
+                    $product['title'] = trim($titleNode->text());
+                    $product['url'] = $titleNode->attr('href');
+                    $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+
+                    // ID from hidden input
+                    $idNode = $node->filter('input.product-variant-id');
+                    $product['id'] = $idNode->count() ? $idNode->attr('value') : md5($product['url']);
+
+                    // Price (prefer sale, fallback to regular)
+                    $priceNode = $node->filter('.price-item--sale.price-item--last');
+                    if (!$priceNode->count()) {
+                        $priceNode = $node->filter('.price-item--regular');
+                    }
+                    $price = preg_replace('/[^0-9.]/', '', $priceNode->text());
+                    $product['price'] = floatval($price);
+
+                    // Availability: check disabled button or "Ausverkauft" text
+                    $isDisabled = $node->filter('.quick-add__submit')->attr('disabled') !== null;
+                    $badgeText = strtolower($node->filter('.badge')->text(''));
+                    $product['available'] = !$isDisabled && !str_contains($badgeText, 'ausverkauft');
+
+                    // Optional image
+                    $imgNode = $node->filter('img');
+                    if ($imgNode->count()) {
+                        $product['largest_image_url'] = 'https:' . $imgNode->attr('src');
+                    }
+
+                    $product['variants'] = [$product];
+
+                    return $product;
+                } catch (\Exception $e) {
+                    return null; // Skip if structure breaks
+                }
+            });
+
+            $products = array_merge($products, array_filter($current_products));
+
+            $hasMorePages = $crawler->filter('.pagination__item--prev')->count() > 0;
+            $page++;
+        }
+    }
+
+    return $products;
+}
+
+public function retrieveProductsFromGalaxy($shop)
+{
+    $categoryUrls = json_decode($shop->category_urls);
+    $this->command->info("Starting HTML parsing for Galaxy...");
+
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . '&page=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $crawler = new Crawler($response->body());
+
+            $current_products = $crawler->filter('.product-block')->each(function (Crawler $node) use ($shop) {
+                try {
+                    $product = [];
+
+                    $product['id'] = $node->attr('data-product-id') ?? md5($node->text());
+
+                    if ($node->filter('.amount.theme-money')->count()) {
+                        $price = $node->filter('.amount.theme-money')->text();
+                    } elseif ($node->filter('.price')->count()) {
+                        $price = $node->filter('.price')->text();
+                    } else {
+                        return null;
+                    }
+
+                    $price = preg_replace('/[^0-9.]/', '', $price);
+                    $product['price'] = floatval($price);
+
+                    $product['title'] = $node->filter('.title')->text('');
+                    $product['url'] = $node->filter('a')->first()->attr('href');
+                    $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                    $product['available'] = true;
+
+                    $product['variants'] = [$product];
+
+                    return $product;
+                } catch (\Exception $e) {
+                    return null;
+                }
+            });
+
+            $products = array_merge($products, array_filter($current_products));
+
+            // Galaxy hides the next button when there are no more pages
+            $hasMorePages = $crawler->filter('.linkless.next')->count() < 1;
+            $page++;
+        }
+    }
+
+    return $products;
+}
 
 
 }
