@@ -55,6 +55,8 @@ class ShopHelper{
         case 'galaxy':
             $products = $this->retrieveProductsFromGalaxy($shop);
             break;
+        case 'shopware':
+            return $this->retrieveProductsFromShopware($shop);
         default:
             $products = [];
     }
@@ -975,6 +977,75 @@ public static function cleanPriceString(?string $raw): float
     }
 
     return floatval($cleaned);
+}
+
+public function retrieveProductsFromShopware($shop)
+{
+    $this->command->info("Starting HTML parsing for Shopware...");
+
+    $products = [];
+    $categoryUrls = json_decode($shop->category_urls);
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . '?p=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $html = $response->body();
+            $crawler = new Crawler($html);
+
+            $current_products = $crawler->filter('.product-box')->each(function (Crawler $node) use ($shop) {
+                try {
+                    $product = json_decode($node->attr('data-product-information'), true);
+                    if (!$product) return null;
+
+                    $priceNode = $node->filter('.product-price');
+                    $price = $priceNode->count() ? $priceNode->text() : '';
+                    $price = preg_replace('/[^0-9.]/', '', $price);
+                    $product['price'] = floatval($price);
+
+                    $variantNode = $node->filter('.product-variant-characteristics-text');
+                    $variant = $variantNode->count() ? $variantNode->text() : '';
+
+                    if ($product['name'] === $variant || !$variant) {
+                        $product['title'] = $product['name'];
+                    } else {
+                        $product['title'] = $product['name'] . ' - ' . $variant;
+                    }
+
+                    $urlNode = $node->filter('a')->first();
+                    $product['url'] = $urlNode->count() ? $urlNode->attr('href') : null;
+                    $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+                    $product['available'] = true;
+                    $product['variants'] = [$product];
+
+                    return $product;
+                } catch (\Exception $e) {
+                    $this->command->warn("Error parsing a product: " . $e->getMessage());
+                    return null;
+                }
+            });
+
+            $current_products = array_filter($current_products);
+            $products = array_merge($products, $current_products);
+
+            $hasMorePages = $crawler->filter('.page-item.page-next')->count() > 0;
+
+            $page++;
+        }
+    }
+
+    return $products;
 }
 
 }
