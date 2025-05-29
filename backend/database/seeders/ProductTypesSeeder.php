@@ -56,6 +56,24 @@ class ProductTypesSeeder extends Seeder
                 'en_name' => 'Booster Pack',
             ],
             [
+                'product_type' => 'five_booster_pack_art_bundle',
+                'pack_count' => 5,
+                'mixed_sets' => false,
+                'en_name' => 'Five Booster Pack Art Bundle',
+            ],
+            [
+                'product_type' => 'four_booster_pack_art_bundle',
+                'pack_count' => 4,
+                'mixed_sets' => false,
+                'en_name' => 'Four Booster Pack Art Bundle',
+            ],
+            [
+                'product_type' => 'double_blister',
+                'pack_count' => 2,
+                'mixed_sets' => false,
+                'en_name' => 'Double Blister',
+            ],
+            [
                 'product_type' => 'sleeved_booster_case',
                 'pack_count' => 24,
                 'mixed_sets' => false,
@@ -66,6 +84,18 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 1,
                 'mixed_sets' => false,
                 'en_name' => 'Sleeved Booster',
+            ],
+            [
+                'product_type' => 'four_sleeved_booster_pack_art_bundle',
+                'pack_count' => 4,
+                'mixed_sets' => false,
+                'en_name' => 'Four Sleeved Booster Pack Art Bundle',
+            ],
+                        [
+                'product_type' => 'five_sleeved_booster_pack_art_bundle',
+                'pack_count' => 5,
+                'mixed_sets' => false,
+                'en_name' => 'Five Sleeved Booster Pack Art Bundle',
             ],
             [
                 'product_type' => 'single_blister',
@@ -157,6 +187,12 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 4,
                 'mixed_sets' => false,
                 'en_name' => 'Build & Battle Box',
+            ],
+                        [
+                'product_type' => 'build_battle_box_display',
+                'pack_count' => 40,
+                'mixed_sets' => false,
+                'en_name' => 'Build & Battle Box Display',
             ],
             [
                 'product_type' => 'collection_box',

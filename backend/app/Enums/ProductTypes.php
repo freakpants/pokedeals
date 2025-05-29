@@ -10,8 +10,12 @@ enum ProductTypes: string
     case JapaneseDisplayBox = 'japanese_display_box';
     case BoosterBundleCase = 'booster_bundle_case';
     case BoosterBundle = 'booster_bundle';
+    case FiveBoosterPackArtBundle = 'five_booster_pack_art_bundle';
+    case FourBoosterPackArtBundle = 'four_booster_pack_art_bundle';
     case BoosterPack = 'booster_pack';
     case SleevedBoosterCase = 'sleeved_booster_case';
+    case FiveSleevedBoosterPackArtBundle = 'five_sleeved_booster_pack_art_bundle';
+    case FourSleevedBoosterPackArtBundle = 'four_sleeved_booster_pack_art_bundle';
     case SleevedBooster = 'sleeved_booster';
     case SingleBlister = 'single_blister';
     case DoubleBlister = 'double_blister';
@@ -40,6 +44,7 @@ enum ProductTypes: string
     case PremiumCollection = 'premium_collection';
     case BuildBattleStadium = 'build_battle_stadium';
     case BuildBattleBox = 'build_battle_box';
+    case BuildBattleBoxDisplay = 'build_battle_box_display';
     case BattleDeck = 'battle_deck';
     case PremiumFigureCollection = 'premium_figure_collection';
     case PosterCollection = 'poster_collection';

@@ -34,6 +34,9 @@ class ShopHelper{
         case 'spielezar':
             $products = $this->retrieveProductsFromSpielezar($shop);
             break;
+        case 'websell':
+            $products = $this->retrieveProductsFromWebsell($shop);
+            break;
         default:
             $products = [];
     }
@@ -468,6 +471,77 @@ public function retrieveProductsFromSpielezar($shop)
 
         return $products;
     }
+
+    public function retrieveProductsFromWebsell($shop)
+{
+    $this->command->info("Crawling Kabooom via HTML...");
+
+    $categoryUrls = json_decode($shop->category_urls);
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . '?page=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $html = $response->body();
+            $crawler = new Crawler($html);
+
+            $current_products = $crawler->filter('article.product-card')->each(function (Crawler $node) use ($shop) {
+                $product = [];
+
+                $product['id'] = $node->attr('data-sku');
+
+                try {
+                    $product['title'] = trim($node->filter('.productnameTitle')->text());
+                } catch (\Exception $e) {
+                    $product['title'] = 'Unknown Title';
+                }
+
+                try {
+                    $relativeUrl = $node->filter('a')->attr('href');
+                    $product['url'] = $shop->base_url . $relativeUrl;
+                    $product['handle'] = $relativeUrl;
+                } catch (\Exception $e) {
+                    $product['url'] = null;
+                    $product['handle'] = null;
+                }
+
+                try {
+                    $priceRaw = $node->filter('.text-pricespecial')->text();
+                    $priceClean = preg_replace('/[^0-9.]/', '', $priceRaw);
+                    $product['price'] = floatval($priceClean);
+                } catch (\Exception $e) {
+                    $product['price'] = 0;
+                }
+
+                $classAttr = $node->attr('class') ?? '';
+                $product['available'] = strpos($classAttr, 'out-of-stock') === false;
+
+                $product['variants'] = [$product];
+
+                return $product;
+            });
+
+            $products = array_merge($products, $current_products);
+
+            $hasMorePages = $crawler->filter('.btn.btn-default.next')->count() > 0;
+            $page++;
+        }
+    }
+
+    return $products;
+}
+
 
 
     
