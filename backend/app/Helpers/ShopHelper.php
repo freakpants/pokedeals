@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ShopHelper{
 
@@ -29,6 +30,9 @@ class ShopHelper{
             break;
         case 'shopify':
             $products = $this->retrieveProductsFromShopify($shop);
+            break;
+        case 'spielezar':
+            $products = $this->retrieveProductsFromSpielezar($shop);
             break;
         default:
             $products = [];
@@ -406,6 +410,64 @@ public function retrieveProductsFromShopify($shop)
     return $products;
 }
 
+public function retrieveProductsFromSpielezar($shop)
+    {
+        $categoryUrls = json_decode($shop->category_urls);
+        $this->command->info("Starting HTML parsing for Spielezar...");
+
+        $products = [];
+        foreach ($categoryUrls as $categoryUrl) {
+            $offset = 0;
+            $hasMorePages = true;
+
+            while ($hasMorePages) {
+                $explodedUrl = explode('?', $categoryUrl);
+                $filter = $explodedUrl[1] ?? '';
+                $paginatedUrl = $explodedUrl[0] . '?offset=' . $offset . '&' . $filter;
+                $this->command->info("Fetching offset $offset: $paginatedUrl");
+
+                $response = Http::get($paginatedUrl);
+
+                if ($response->failed()) {
+                    $this->command->error("Failed to fetch page at offset $offset. Status: {$response->status()}");
+                    break;
+                }
+
+                $html = $response->body();
+                $crawler = new Crawler($html);
+
+                $current_products = $crawler->filter('.ajax_block_product')->each(function (Crawler $node) use ($shop) {
+                    $product = [];
+
+                    $product['id'] = $node->attr('data-id-product');
+                    $price = $node->filter('.price_default')->text();
+                    $price = str_replace(',', '.', $price);
+                    $price = preg_replace('/[^0-9.]/', '', $price);
+                    $product['price'] = floatval($price);
+
+                    $product['title'] = $node->filter('h3')->text();
+                    $product['url'] = $node->filter('a')->first()->attr('href');
+                    $product['handle'] = str_replace($shop->base_url, '', $product['url']);
+
+                    $isOutOfStock = $node->filter('.button_small.line-through')->reduce(function (Crawler $btn) {
+                        return stripos(trim($btn->text()), 'nicht auf lager') !== false;
+                    })->count() > 0;
+
+                    $product['available'] = !$isOutOfStock;
+
+                    $product['variants'] = [$product];
+
+                    return $product;
+                });
+
+                $products = array_merge($products, $current_products);
+                $hasMorePages = $crawler->filter('#show_more')->count() > 0;
+                $offset += 30;
+            }
+        }
+
+        return $products;
+    }
 
 
     

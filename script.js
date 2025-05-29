@@ -625,13 +625,13 @@ const filterUniqueOffers = (matches) => {
     const productDetails = React.createElement(
       'div',
       { className: 'product-details' },
-      React.createElement('span', null, `Pokemon Center Price: ${product.price || 'Price not available'}`),
+      // React.createElement('span', null, `Pokemon Center Price: ${product.price || 'Price not available'}`),
       React.createElement('span', null, `Packs in product: ${product.pack_count}`),
-      React.createElement(
+      /* React.createElement(
         'a',
         { href: product.product_url, target: '_blank' },
         'View on Pokemon Center'
-      )
+      ) */
     );
 
     return React.createElement(
