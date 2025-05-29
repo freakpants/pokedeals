@@ -46,6 +46,7 @@ class PokemonSetSeeder extends Seeder
             return null; // Skip if no English equivalent
         })->filter(); // Remove null entries
 
+
         // manually add prismatic evolutions
         $sets->push([
             'id' => 'sv08.5',
@@ -98,6 +99,28 @@ class PokemonSetSeeder extends Seeder
             'title_en' => 'Destined Rivals',
             'title_ja' => '',
             'release_date' => '2025-05-30',
+        ]);
+
+        // manually add black bolt
+        $sets->push([
+            'id' => 'sv10.5b',
+            'set_identifier' => 'black_bolt',
+            'series_id' => 'sv',
+            'title_de' => '',
+            'title_en' => 'Black Bolt',
+            'title_ja' => '',
+            'release_date' => '2025-07-18',
+        ]);
+
+        // manually add white flare
+        $sets->push([
+            'id' => 'sv10.5w',
+            'set_identifier' => 'white_flare',
+            'series_id' => 'sv',
+            'title_de' => '',
+            'title_en' => 'White Flare',
+            'title_ja' => '',
+            'release_date' => '2025-07-18',
         ]);
 
 

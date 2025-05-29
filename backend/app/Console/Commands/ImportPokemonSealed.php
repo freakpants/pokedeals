@@ -40,14 +40,29 @@ foreach ($groups as $group) {
         continue;
     }
 
+    // inform about the current group and its name
+    // $this->info("Fetching products for group ID {$groupId} ({$group['name']})...");
+
     $products = $productsResponse->json()['results'] ?? [];
 
+    $debug = false;
     foreach ($products as $product) {
+        // if groupid is 24269, debug
+        if ($groupId == 24269) {
+            $debug = true;
+        }
         $isCard = false;
 
         if (!empty($product['extendedData'])) {
             foreach ($product['extendedData'] as $data) {
-                if (strtolower($data['displayName']) !== 'description') {
+                if (strtolower($data['displayName']) === 'card number') {
+                    // if debug is true, print the data
+                    if ($debug) {
+                        // we are skipping this product
+                        $this->info('Skipping product: ' . $product['name']);
+                        // displayname was
+                        $this->info('Display name: ' . $data['displayName']);
+                    }
                     $isCard = true;
                     break;
                 }
