@@ -535,21 +535,27 @@ const applyFilters = () => {
     const pricePerPack = (match.price / packCount).toFixed(2);
     const countryCode = languageToCountryCode[match.language] || 'unknown';
   
-    // Ensure valid URL
-    const rawUrl = match.external_product?.url || '';
-    const shopDomain = shops[match.shop_id]?.url || '';
+const rawUrl = match.external_product?.url || '';
+let productUrl = '';
 
-    let productUrl = '';
+if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+  productUrl = rawUrl;
+} else if (rawUrl.startsWith('/')) {
+  const shopDomain = shops[match.shop_id]?.url;
+  if (shopDomain) {
+    productUrl = new URL(rawUrl, shopDomain).toString();
+  } else {
+    // Missing shop domain: skip rendering the link or leave it blank
+    console.warn(`Missing shop domain for shop ID ${match.shop_id}`, match);
+    productUrl = ''; // or maybe null
+  }
+} else {
+  // Invalid or unsupported URL format
+  console.warn(`Unexpected URL format for match:`, match);
+  productUrl = '';
+}
 
-    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
-      productUrl = rawUrl;
-    } else if (rawUrl.startsWith('/')) {
-      productUrl = shopDomain
-        ? new URL(rawUrl, shopDomain).toString()
-        : `https://fallbackurl.com${rawUrl}`; // Fallback if shopDomain is missing
-    } else {
-      productUrl = `https://${rawUrl}`;
-    }
+
 
     return React.createElement(
       'div',
