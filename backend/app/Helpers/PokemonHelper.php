@@ -333,16 +333,19 @@ class PokemonHelper
     {
         // Map of product types to their associated keywords
         $productTypeKeywords = [
+            ProductTypes::CodeCard->value => ['code card', 'Code-Karte', 'Code Card'],
             ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Trainer Box', 'Elite-Trainer-Box', 'Top-Trainer Box', 'Elite Trainer-Box'],
             ProductTypes::ThreePackBlisterCase->value => ['Three Pack Blister Case'],
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
             ProductTypes::HalfBoosterBox->value => ['18 Booster Display','half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display', 'Booster Box (18 Boosters)', 'Booster Display (18er)', 'Display Box (18 Packs)'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
+            ProductTypes::EnhancedDisplayBoxCase->value => ['Enhanced Display Box Case', 'Enhanced Booster Box Case'],
             ProductTypes::DisplayBoxCase->value => ['Booster Display Case', 'Booster Box Case'],
             ProductTypes::MiniTinDisplay->value => ['Mini-Tin 8er Set','Alle 8 Mini Tins', 'mini tin display', 'mini tins display', 'Mini-Tin-Box Display'],
             ProductTypes::PokeBallTinDisplay->value => ['poke ball tin display'],
             ProductTypes::BoosterBundleCase->value => ['booster bundle case', 'booster bundle display'],
             ProductTypes::BuildBattleBoxDisplay->value => ['build & battle box display', 'build & battle box display'],
+            ProductTypes::EnhancedDisplayBox->value => ['enhanced display box', 'enhanced booster box', 'enhanced booster display', 'enhanced display'],
             ProductTypes::DisplayBox->value => ['booster display box', 'booster box', '36 packs', 'display'],
             ProductTypes::JapaneseDisplayBox->value => ['Box - Japanese', 'Booster Box (JPN)'],
             ProductTypes::BoosterBundle->value => ['booster bundle'],

@@ -26,6 +26,18 @@ class ProductTypesSeeder extends Seeder
                 'en_name' => 'Display Box Case',
             ],
             [
+                'product_type' => 'enhanced_display_box_case',
+                'pack_count' => 216,
+                'mixed_sets' => false,
+                'en_name' => 'Enhanced Display Box Case',
+            ],
+            [
+                'product_type' => 'enhanced_display_box',
+                'pack_count' => 36,
+                'mixed_sets' => false,
+                'en_name' => 'Enhanced Display Box',
+            ],
+            [
                 'product_type' => 'half_booster_box',
                 'pack_count' => 18,
                 'mixed_sets' => false,
@@ -283,6 +295,12 @@ class ProductTypesSeeder extends Seeder
                 'pack_count' => 0,
                 'mixed_sets' => true,
                 'en_name' => 'Battle Deck',
+            ],
+            [
+                'product_type' => 'code_card',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Code Card',
             ],
             [
                 'product_type' => 'premium_collection_case',

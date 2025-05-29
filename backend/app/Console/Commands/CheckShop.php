@@ -21,6 +21,7 @@ class CheckShop extends Command
         $shop = DB::table('external_shops')
         ->where('shop_type', $shopIdentifier)
         ->orWhere('name', $shopIdentifier)
+        ->orderBy('last_scraped_at', 'asc')
         ->first();
 
         if (!$shop) {
@@ -28,7 +29,12 @@ class CheckShop extends Command
             return;
         }
 
-        $products = $shopHelper->retrieveProductsFromShop($shop);
+        try {
+                $products = $shopHelper->retrieveProductsFromShop($shop);
+        } catch (\Throwable $e) {
+            $this->error("Error retrieving products: " . $e->getMessage());
+            return; // Exit early, don't update last_scraped_at
+        }
 
         $positiveStockProducts = collect($products)->filter(function ($product) {
             return ($product['stock'] ?? 0) > 0 || ($product['available'] ?? false) === true;
@@ -83,6 +89,11 @@ class CheckShop extends Command
                 }
             }
         }
+
+        // mark the shop as checked
+        DB::table('external_shops')
+            ->where('id', $shop->id)
+            ->update(['last_scraped_at' => now()]);
     }
 
     private function notifyByEmail($products, $shop, $subject)

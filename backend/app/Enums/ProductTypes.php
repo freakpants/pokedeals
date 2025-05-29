@@ -5,6 +5,8 @@ namespace App\Enums;
 enum ProductTypes: string
 {
     case DisplayBoxCase = 'display_box_case';
+    case EnhancedDisplayBoxCase = 'enhanced_display_box_case';
+    case EnhancedDisplayBox = 'enhanced_display_box';
     case DisplayBox = 'display_box';
     case HalfBoosterBox = 'half_booster_box';
     case JapaneseDisplayBox = 'japanese_display_box';
@@ -54,6 +56,7 @@ enum ProductTypes: string
     case TechStickerCollection = 'tech_sticker_collection';
     case SurpriseBox = 'surprise_box';
     case EraserBlister = 'eraser_blister';
+    case CodeCard = 'code_card';
     case Other = 'other';
 
 
