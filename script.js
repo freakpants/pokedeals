@@ -503,10 +503,12 @@ const applyFilters = () => {
 
   const renderShopFilterOptions = () => {
     // Filter shops to include only those with offers
-    const filteredShops = Object.values(shops).filter(shop => {
-      const hasOffers = products.some(product => product.matches.some(match => match.shop_id === shop.id));
-      return hasOffers;
-    });
+    const filteredShops = Object.values(shops)
+      .filter(shop => {
+        const hasOffers = products.some(product => product.matches.some(match => match.shop_id === shop.id));
+        return hasOffers;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     // Calculate offer counts for each shop
     return filteredShops.map(shop => {
