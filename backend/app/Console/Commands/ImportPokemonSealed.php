@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\PokemonHelper;
+use App\Enums\ProductTypes;
 
 class ImportPokemonSealed extends Command
 {
@@ -45,6 +48,7 @@ foreach ($groups as $group) {
 
     $products = $productsResponse->json()['results'] ?? [];
 
+    $variants = [];
     
     foreach ($products as $product) {
         $isCard = false;
@@ -80,9 +84,88 @@ foreach ($groups as $group) {
             'productUrl' => $url,
             'images' => [$image],
         ];
+
+
+        // use the pokemon helper to determine product details
+        $details = PokemonHelper::determineProductDetails($title);
+
+        if ($details['product_type'] !== ProductTypes::Other->value) {
+                // use the clean name with _ as the en_short
+                // replace pokemon tcg in the clean name
+                $product['cleanName'] = str_replace('Pokemon TCG ', '', $product['cleanName']);
+
+                $enShort = $product['cleanName'];
+                // replace spaces in enshort with _
+                $enShort = str_replace(' ', '_', $enShort);
+                // lowercase the enshort
+                $enShort = strtolower($enShort);
+
+                // try the first two words for the en strings
+                $enStrings = explode(' ', $product['cleanName']);
+
+                // if there is something like [Pikachu] in the unclean String use that as the en_string
+                if (is_string($product['name']) && preg_match('/\[(.*?)\]/', $product['name'], $matches)) {
+                    $enStrings = $matches[1];
+                    // replace the []
+                    $enStrings = str_replace('[', '', $enStrings);
+                    $enStrings = str_replace(']', '', $enStrings);
+                } else {
+
+                    if(count($enStrings) < 2) {
+                        $enStrings = $product['name'];
+                    } else {
+                        // if any of the strings is a year higher than 1999, use all strings up until that point
+                        // check every single string
+                        $foundYear = false;
+                        foreach ($enStrings as $key => $string) {
+                            if (is_numeric($string) && $string > 1999) {
+  
+                                // use all strings up to this key, separated by a space
+                                $enStrings = implode(' ', array_slice($enStrings, 0, $key+1));
+
+                                $foundYear = true;
+                                break;
+                            }
+                        }
+                        if(!$foundYear) {
+                            $enStrings = $enStrings[0] . ' ' . $enStrings[1];
+                        }
+    
+                        
+                    }
+                }
+
+                
+
+                // check if there is a variant with this en_short
+                if (DB::table('pokemon_product_variants')->where('en_short', $enShort)->exists()) {
+                    continue;
+                }
+
+                // if the en_string is only "Back to", skip this variant
+                if ($enStrings === 'Back to') {
+                    continue;
+                }
+
+                $variants[] = [
+                    'product_type' => $details['product_type'],
+                    'en_short' => $enShort,
+                    'de_strings' => json_encode([]),
+                    'en_strings' => json_encode([$enStrings]),
+                    'en_name' => $title
+                ];
+            }
         
         $sealedProducts[] = $productData;
     }
+
+
+     // save the variants
+        foreach ($variants as $variant) {
+            if (!DB::table('pokemon_product_variants')->where('en_short', $variant['en_short'])->exists()) {
+                DB::table('pokemon_product_variants')->insert($variant);
+            }
+        } 
 }
 
 $this->output->progressFinish();

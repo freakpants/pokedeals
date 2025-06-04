@@ -50,6 +50,8 @@ enum ProductTypes: string
     case BattleDeck = 'battle_deck';
     case PremiumFigureCollection = 'premium_figure_collection';
     case PosterCollection = 'poster_collection';
+    case PocketPortfolio = 'pocket_portfolio';
+    case MiniPortfolio = 'mini_portfolio';
     case BinderCollection = 'binder_collection';
     case SpecialIllustrationCollection = 'special_illustration_collection';
     case IllustrationCollection = 'illustration_collection';
@@ -57,6 +59,8 @@ enum ProductTypes: string
     case SurpriseBox = 'surprise_box';
     case EraserBlister = 'eraser_blister';
     case CodeCard = 'code_card';
+    case DeckBox = 'deck_box';
+    case TournamentCollectionBox = 'tournament_collection_box';
     case Other = 'other';
 
 

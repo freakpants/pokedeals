@@ -30,6 +30,10 @@ class PokemonHelper
 
     public static function determineProductDetails(string $title, ?string $variant_title = null): array
     {
+        if (!self::$sets || !self::$variants) {
+            new self(); // triggers __construct to populate all static variables
+        }
+
         // make sure the static variables don't have anything saved
         self::$product_type = ProductTypes::Other;
         self::$language = '';
@@ -160,7 +164,7 @@ class PokemonHelper
 
         // if the language is japanese, and the type is booster box, it should be a japanese booster box
         if (self::$product_type === 'display_box' && self::$language === 'ja') {
-            self::$product_type = 'japanese_display_box';
+            self::$product_type = ProductTypes::JapaneseDisplayBox;
         }
 
         // check if title contains numberx 
@@ -369,13 +373,17 @@ class PokemonHelper
             'ultra premium collection','Ultra-Premium-Kollektion','Ultra Premium Kollektion', 'Ultra Premium Glurak Kollektion'],
             ProductTypes::SuperPremiumCollection->value => ['Super Premium-Kollektion','Super Premium Coll.','super-premium collection', 'super premium collection'],
             ProductTypes::PremiumFigureCollection->value => ['premium figure collection'],
+            ProductTypes::DeckBox->value => ['deck box', 'deckbox', 'Deckbox', 'Deck Box'],
+            ProductTypes::TournamentCollectionBox->value => ['tournament collection box', 'tournament collection box', 'tournament collection box', 'Turnier-Kollektion Box', 'Turnier-Kollektion-Box'],
             ProductTypes::PremiumCollection->value => ['premium collection', 'premium playmat collection', 'Morpeko V-UNION Playmat Collection', 'Morpeko V-Union Collection', 'Premium Kollektion', 'Premium-Kollektion', 'Premium' ],
             ProductTypes::SpecialCollection->value => ['Spezial-Kollektion', 'special collection', 'Regieleki V Box', 'Regidrago V Box'],
             ProductTypes::BattleDeck->value => ['battle deck'],
             ProductTypes::BuildBattleStadium->value => ['build & battle stadium', 'battle stadium'],
             ProductTypes::BuildBattleBox->value => ['build & battle box', 'Build & Battle Kit', 'battle box'],
             ProductTypes::PosterCollection->value => ['poster collection', 'Poster Kollektion', 'Poster-Kollektion'],
-            ProductTypes::BinderCollection->value => ['binder collection', 'Binder Kollektion', 'Ordner Kollektion', '9-Pocket Portfolio'],
+            ProductTypes::PocketPortfolio->value => ['Pocket Portfolio'],
+            ProductTypes::MiniPortfolio->value => ['mini portfolio', 'Mini Portfolio'],
+            ProductTypes::BinderCollection->value => ['binder collection', 'Binder Kollektion', 'Ordner Kollektion'],
             ProductTypes::PinCollection->value => ['pin collection', 'Pin - Kollektion'],
             ProductTypes::SpecialIllustrationCollection->value => ['special illustration collection', 'Spezial-Illustrations-Kollektion', 'Spezial Illustration Rare Kollektion'],
             ProductTypes::IllustrationCollection->value => ['illustration collection', 'Illustrations-Kollektion', 'Illustration Rare Box', 'Illustration Rare Kollektion', 'Illustrations Kollektion'],
@@ -385,6 +393,7 @@ class PokemonHelper
             ProductTypes::SurpriseBox->value => ['surprise box', 'Überraschungsbox'],
             ProductTypes::Collection->value => ['collection', 'Kollektion'],
             ProductTypes::ExBox->value => ['ex box', 'ex Kollektion', 'ex-box'],
+            
         ];
 
         // Normalize titles for consistent matching
@@ -419,18 +428,22 @@ class PokemonHelper
             }
         }
 
-        if ($match) {
-            return;
-        }
-
         if (
             preg_match('/\b[A-Z]{2,4}\s?\d{1,3}\b/', $normalizedTitle) ||  // e.g. LOR136
             preg_match('/\d{1,3}\/\d{1,3}/', $normalizedTitle) ||          // e.g. 130/196
-            preg_match('/\b(NM|LP|MP|HP|DMG)\b/i', $normalizedTitle)       // Card conditions
+            preg_match('/\b(NM|LP|MP|HP|DMG)\b/i', $normalizedTitle) ||      // Card conditions
+            preg_match('/\b(holo|reverse holo)\b/i', $normalizedTitle) // Holo or Reverse Holo
+
         ) {
             self::$product_type = ProductTypes::SingleCard;
             return;
         }
+
+        if ($match) {
+            return;
+        }
+
+
 
         // Default to "Other" if no match is found
         self::$product_type = ProductTypes::Other;

@@ -303,6 +303,30 @@ class ProductTypesSeeder extends Seeder
                 'en_name' => 'Code Card',
             ],
             [
+                'product_type' => 'deck_box',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Deck Box',
+            ],
+            [
+                'product_type' => 'pocket_portfolio',
+                'pack_count' => 0,
+                'mixed_sets' => true,
+                'en_name' => 'Pocket Portfolio',
+            ],
+            [
+                'product_type' => 'mini_portfolio',
+                'pack_count' => 1,
+                'mixed_sets' => true,
+                'en_name' => 'Mini Portfolio',
+            ],
+            [
+                'product_type' => 'tournament_collection_box',
+                'pack_count' => 7,
+                'mixed_sets' => true,
+                'en_name' => 'Tournament Collection Box',
+            ],
+            [
                 'product_type' => 'premium_collection_case',
                 'pack_count' => 20,
                 'mixed_sets' => true,
