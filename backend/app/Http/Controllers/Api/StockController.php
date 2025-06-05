@@ -15,11 +15,11 @@ class StockController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info('Raw Request Body:', ['body' => $request->getContent()]);
+        // Log::info('Raw Request Body:', ['body' => $request->getContent()]);
 
         $data = $request->json()->all(); // Ensure JSON parsing
 
-        Log::info('Parsed stock data:', ['data' => $data]);
+        // Log::info('Parsed stock data:', ['data' => $data]);
 
         try {
             // Validate the incoming data structure

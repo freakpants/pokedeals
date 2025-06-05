@@ -48,6 +48,16 @@
             @foreach ($products as $product)
                 <li>
                     <a href="{{ $product['url'] }}">{{ $product['title'] }} - {{ $product['price'] }}</a>
+ @if (!empty($product['variants']) && is_array($product['variants']))
+            @foreach ($product['variants'] as $variant)
+                @if (!empty($variant['title']) && (!isset($variant['available']) || $variant['available']))
+                    <div style="font-size: 0.95em; color: #555;">
+                        Variant: {{ $variant['title'] }}
+                    </div>
+                    @break
+                @endif
+            @endforeach
+        @endif
                     @if (!empty($product['largest_image_url']))
                         <img src="{{ $product['largest_image_url'] }}" />
                     @endif
