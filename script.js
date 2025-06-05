@@ -40,6 +40,277 @@ const parseQueryParams = () => {
   };
 };
 
+const LoginForm = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [showResetModal, setShowResetModal] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('https://pokeapi.freakpants.ch/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('auth_token', data.token);
+        onLogin(data.token);
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Server error');
+    }
+  };
+
+  return React.createElement(
+    'div',
+    {
+      style: {
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        backgroundColor: '#121212',
+        padding: '10px 12px',
+        borderRadius: '8px',
+        border: '1px solid #333',
+        zIndex: 1000,
+      }
+    },
+    React.createElement('form', {
+      onSubmit: handleLogin,
+      style: { display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }
+    },
+      React.createElement('input', {
+        type: 'email',
+        placeholder: 'Email',
+        value: email,
+        onChange: (e) => setEmail(e.target.value),
+        required: true,
+        style: {
+          padding: '6px 10px',
+          borderRadius: '5px',
+          border: '1px solid #444',
+          backgroundColor: '#222',
+          color: '#fff',
+          height: '32px'
+        }
+      }),
+      React.createElement('input', {
+        type: 'password',
+        placeholder: 'Password',
+        value: password,
+        onChange: (e) => setPassword(e.target.value),
+        required: true,
+        style: {
+          padding: '6px 10px',
+          borderRadius: '5px',
+          border: '1px solid #444',
+          backgroundColor: '#222',
+          color: '#fff',
+          height: '32px'
+        }
+      }),
+      React.createElement('button', {
+        type: 'submit',
+        style: {
+          padding: '6px 16px',
+          borderRadius: '5px',
+          border: 'none',
+          backgroundColor: '#1976d2',
+          color: '#fff',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          height: '32px'
+        }
+      }, 'Login')
+    ),
+    React.createElement('a', {
+      href: '#',
+      onClick: (e) => { e.preventDefault(); setShowResetModal(true); },
+      style: {
+        color: '#90caf9',
+        fontSize: '0.8rem',
+        marginTop: '4px',
+        textDecoration: 'underline',
+        alignSelf: 'flex-end'
+      }
+    }, 'Forgot password?'),
+    error && React.createElement('div', {
+      style: { color: 'red', marginTop: '4px', width: '100%', textAlign: 'right' }
+    }, error),
+    React.createElement(ForgotPasswordModal, {
+      open: showResetModal,
+      onClose: () => setShowResetModal(false)
+    })
+  );
+};
+
+
+const ForgotPasswordModal = ({ open, onClose }) => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('');
+    setError('');
+    try {
+      const res = await fetch('https://pokeapi.freakpants.ch/api/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus('If this email exists, a reset link has been sent.');
+      } else {
+        setError(data.message || 'Request failed.');
+      }
+    } catch (err) {
+      setError('Server error.');
+    }
+  };
+
+  if (!open) return null;
+
+  return React.createElement(
+    'div',
+    {
+      style: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2000,
+      }
+    },
+    React.createElement(
+      'div',
+      {
+        style: {
+          backgroundColor: '#1e1e1e',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '1px solid #333',
+          width: '300px',
+          color: '#fff',
+        }
+      },
+      React.createElement('h3', null, 'Reset Password'),
+      React.createElement('form', { onSubmit: handleSubmit, style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+        React.createElement('input', {
+          type: 'email',
+          value: email,
+          onChange: (e) => setEmail(e.target.value),
+          placeholder: 'Your email',
+          required: true,
+          style: {
+            padding: '6px 10px',
+            borderRadius: '5px',
+            border: '1px solid #444',
+            backgroundColor: '#222',
+            color: '#fff',
+          }
+        }),
+        React.createElement('button', {
+          type: 'submit',
+          style: {
+            padding: '8px 12px',
+            borderRadius: '5px',
+            border: 'none',
+            backgroundColor: '#1976d2',
+            color: '#fff',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+          }
+        }, 'Send Reset Link')
+      ),
+      status && React.createElement('div', { style: { color: '#90caf9', marginTop: '8px' } }, status),
+      error && React.createElement('div', { style: { color: 'red', marginTop: '8px' } }, error),
+      React.createElement('button', {
+        onClick: onClose,
+        style: {
+          marginTop: '12px',
+          background: 'none',
+          border: 'none',
+          color: '#90caf9',
+          textDecoration: 'underline',
+          cursor: 'pointer',
+        }
+      }, 'Close')
+    )
+  );
+};
+
+const ResetPasswordForm = ({ token, email }) => {
+  const [password, setPassword] = React.useState('');
+  const [password_confirmation, setPasswordConfirmation] = React.useState('');
+  const [success, setSuccess] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleReset = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const res = await fetch('https://pokeapi.freakpants.ch/api/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ token, email, password, password_confirmation })
+      });
+
+      if (res.ok) {
+        setSuccess(true);
+      } else {
+        const data = await res.json();
+        setError(data.message || 'Failed to reset password');
+      }
+    } catch (err) {
+      setError('Server error');
+    }
+  };
+
+  if (success) {
+    return React.createElement('p', { style: { color: 'lightgreen' } }, 'Password reset! You can now log in.');
+  }
+
+  return React.createElement('form', { onSubmit: handleReset, style: { maxWidth: '400px', margin: '2rem auto' } },
+    React.createElement('h2', null, 'Reset Password'),
+    error && React.createElement('p', { style: { color: 'red' } }, error),
+    React.createElement('input', {
+      type: 'password',
+      placeholder: 'New password',
+      value: password,
+      onChange: (e) => setPassword(e.target.value),
+      required: true
+    }),
+    React.createElement('input', {
+      type: 'password',
+      placeholder: 'Confirm password',
+      value: password_confirmation,
+      onChange: (e) => setPasswordConfirmation(e.target.value),
+      required: true
+    }),
+    React.createElement('button', { type: 'submit' }, 'Reset Password')
+  );
+};
+
+
+
+
 const updateUrlParams = (filters, sortConfig) => {
   const params = new URLSearchParams();
 
@@ -188,6 +459,41 @@ const App = () => {
   const [productCount, setProductCount] = useState(0);
   const [offerCount, setOfferCount] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(null);
+
+  const [authToken, setAuthToken] = useState(localStorage.getItem('auth_token') || '');
+  const [user, setUser] = useState(null);
+
+  
+
+
+  useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await fetch('https://pokeapi.freakpants.ch/api/me', {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${authToken}`
+        }
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch user info');
+    }
+  };
+
+  if (authToken) {
+    fetchUser();
+  }
+}, [authToken]);
+
+const handleLogin = (token) => {
+  setAuthToken(token);
+};
+
+
 
   useEffect(() => {
     fetchInitialData(); // Fetch all data
@@ -692,6 +998,8 @@ const DeleteIcon = (props) =>
     React.createElement('line', { x1: '8', y1: '16', x2: '16', y2: '8', stroke: '#ccc', strokeWidth: '2' })
   );
 
+  
+
   const filtersComponent = React.createElement(
     'div',
     { id: 'filters' },
@@ -881,6 +1189,8 @@ const DeleteIcon = (props) =>
     'div',
     null,
     lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleString('de-DE')}`),
+    !authToken && React.createElement(LoginForm, { onLogin: handleLogin }),
+    authToken && user && React.createElement('div', { style: { color: '#90caf9', marginBottom: '1rem' } }, `Logged in as: ${user.email}`),
     filtersComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),
@@ -888,4 +1198,21 @@ const DeleteIcon = (props) =>
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const pathname = window.location.pathname;
+
+  const match = pathname.match(/^\/reset-password\/([^/]+)$/);
+  const token = match ? match[1] : null;
+  const email = params.get('email');
+
+  const rootElement = document.getElementById('root');
+  const root = ReactDOM.createRoot(rootElement);
+
+  if (token && email) {
+    root.render(React.createElement(ResetPasswordForm, { token, email }));
+  } else {
+    root.render(React.createElement(App));
+  }
+});
