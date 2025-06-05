@@ -1190,8 +1190,46 @@ const DeleteIcon = (props) =>
     null,
     lastUpdated && React.createElement('div', { id: 'last-updated' }, `Last updated at: ${new Date(lastUpdated).toLocaleString('de-DE')}`),
     !authToken && React.createElement(LoginForm, { onLogin: handleLogin }),
-    authToken && user && React.createElement('div', { style: { color: '#90caf9', marginBottom: '1rem' } }, `Logged in as: ${user.email}`),
-    filtersComponent,
+    authToken && user && React.createElement(
+  'div',
+  {
+    style: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      gap: '12px',
+      backgroundColor: '#1e1e1e',
+      border: '1px solid #333',
+      padding: '10px 16px',
+      borderRadius: '8px',
+      margin: '1rem 0',
+      marginRight: '1rem',
+      color: '#90caf9',
+    }
+  },
+  React.createElement('span', null, `Logged in as: ${user.email}`),
+  React.createElement(
+    'button',
+    {
+      onClick: () => {
+        localStorage.removeItem('auth_token');
+        setAuthToken('');
+        setUser(null);
+      },
+      style: {
+        backgroundColor: '#d32f2f',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        padding: '6px 12px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+      }
+    },
+    'Logout'
+  )
+)
+, filtersComponent,
     React.createElement('div', { id: 'result-count' }, `Matched Products: ${productCount}`),
     React.createElement('div', { id: 'offer-count' }, `Offers found for these products: ${offerCount}`),
     React.createElement('div', { id: 'product-list' }, filteredProducts.map(renderProductCard))
