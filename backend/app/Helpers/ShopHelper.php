@@ -89,7 +89,7 @@ if ($details['product_type'] === \App\Enums\ProductTypes::Other && preg_match('/
             $filteredProducts[] = $product;
         } else {
             $discardedCount++;
-            $this->command->warn("Discarded product: {$product['title']} | Category detected: {$category}");
+            // $this->command->warn("Discarded product: {$product['title']} | Category detected: {$category}");
         }
     }
 

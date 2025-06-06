@@ -25,4 +25,9 @@ class ExternalShop extends Model
     {
         return $this->hasMany(ExternalProduct::class, 'shop_id');
     }
+
+    public function usersToNotify()
+{
+    return $this->belongsToMany(User::class, 'external_shop_user_notifications');
+}
 }

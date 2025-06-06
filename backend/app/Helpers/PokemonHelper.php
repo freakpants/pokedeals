@@ -341,7 +341,7 @@ class PokemonHelper
             ProductTypes::EliteTrainerBox->value => ['elite trainer box', 'etb', 'ttb', 'Top-Trainer-Box', 'Trainer Box', 'Elite-Trainer-Box', 'Top-Trainer Box', 'Elite Trainer-Box'],
             ProductTypes::ThreePackBlisterCase->value => ['Three Pack Blister Case'],
             ProductTypes::ThreePackBlister->value => ['Three Pack Blister', '3 Booster Packs', '3-Pack Blister', '3-Pack Booster Blister', '3er-Boosterpack-Blister'],
-            ProductTypes::HalfBoosterBox->value => ['18 Booster Display','half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display', 'Booster Box (18 Boosters)', 'Booster Display (18er)', 'Display Box (18 Packs)'],
+            ProductTypes::HalfBoosterBox->value => ['18 Booster Display','half booster box', 'booster box 18 booster', 'Half Booster Display Box', '18er display', 'Booster Box (18 Boosters)', 'Booster Display (18er)', 'Display Box (18 Packs)', '(18 Pack)'],
             ProductTypes::SleevedBoosterCase->value => ['sleeved booster case', 'Sleeved Booster Display', '24 Booster'],
             ProductTypes::EnhancedDisplayBoxCase->value => ['Enhanced Display Box Case', 'Enhanced Booster Box Case'],
             ProductTypes::DisplayBoxCase->value => ['Booster Display Case', 'Booster Box Case'],
@@ -473,7 +473,7 @@ class PokemonHelper
             'Bilderrahmen', 'engel', 'Servietten', 'Ohrschmuck', 'Kugelschreiber', 'Gürteltasche', 'Teelicht', 'Hochzeits',
             'Schutzengel', 'Wespen Stop', 'Piraten Duell', 'Elfenland', 'Sun Catcher', 'Wetterstein', 'Schürze', 'Party Spiel',
             'LED-Lichter', 'Sparschwein', 'Ich denke an dich', 'Braut-Herz', 'Geschenketasche', 'Feuerzeug', 'Holz-Herz',
-            'Dekorationsherz', 'Poly Gold', 'Crados', 'Secret Lair', 'dragonball', 'metazoo', 'altered','commander', 'karlov','cavenights'
+            'Dekorationsherz', 'Poly Gold', 'Crados', 'Secret Lair', 'dragonball', 'metazoo', 'altered','commander', 'karlov','cavenights', 'toploader'
 
         ];
 

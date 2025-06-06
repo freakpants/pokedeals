@@ -39,27 +39,34 @@
             display: block;
             margin-top: 10px;
         }
+        .variant {
+            font-size: 0.95em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>{{ $subject }}</h1>
         <ul>
-            @foreach ($products as $product)
+            @foreach ($products as $variant)
                 <li>
-                    <a href="{{ $product['url'] }}">{{ $product['title'] }} - {{ $product['price'] }}</a>
- @if (!empty($product['variants']) && is_array($product['variants']))
-            @foreach ($product['variants'] as $variant)
-                @if (!empty($variant['title']) && (!isset($variant['available']) || $variant['available']))
-                    <div style="font-size: 0.95em; color: #555;">
-                        Variant: {{ $variant['title'] }}
-                    </div>
-                    @break
-                @endif
-            @endforeach
-        @endif
-                    @if (!empty($product['largest_image_url']))
-                        <img src="{{ $product['largest_image_url'] }}" />
+                    <a href="{{ $variant['url'] }}">
+                        {{ $variant['product_title'] }}
+                        @if (!empty($variant['title']) && $variant['title'] !== $variant['product_title'])
+                            — {{ $variant['title'] }}
+                        @endif
+                        @if (!empty($variant['price']))
+                            — {{ $variant['price'] }}
+                        @endif
+                    </a>
+
+                    @if (!empty($variant['largest_image_url']))
+                        <img src="{{ $variant['largest_image_url'] }}" alt="Product image">
+                    @endif
+
+                    @if (isset($variant['stock']))
+                        <div class="variant">Stock: {{ $variant['stock'] }}</div>
                     @endif
                 </li>
             @endforeach

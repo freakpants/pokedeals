@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Helpers\ShopHelper;
 use App\Mail\NewProductsMail;
+use App\Models\User;
 
 class CheckShop extends Command
 {
@@ -52,69 +53,78 @@ class CheckShop extends Command
     }
 
     private function scrapeShop($shop, $shopHelper)
-    {
-        $this->info("Checking shop: " . $shop->name);
+{
+    $this->info("Checking shop: " . $shop->name);
 
-        try {
-            $products = $shopHelper->retrieveProductsFromShop($shop);
-        } catch (\Throwable $e) {
-            $this->error("Error retrieving products from {$shop->name}: " . $e->getMessage());
-            return;
-        }
-
-        $positiveStockProducts = collect($products)->filter(fn($product) =>
-            ($product['stock'] ?? 0) > 0 || ($product['available'] ?? false) === true
-        );
-
-        $this->info("Found " . count($products) . " products");
-
-        $ids = collect($products)->pluck('id');
-        $existingProducts = DB::table('external_products')->whereIn('external_id', $ids)->get();
-        $existingIds = $existingProducts->pluck('external_id');
-
-        $newProducts = collect($products)->filter(fn($product) =>
-            !$existingIds->contains($product['id'])
-        );
-
-        $outOfStockProducts = $existingProducts->filter(fn($product) =>
-            $product->stock == 0
-        );
-
-        $inStockProducts = $positiveStockProducts->filter(fn($product) =>
-            $outOfStockProducts->contains('external_id', $product['id'])
-        );
-
-        $this->info("Found " . count($existingProducts) . " existing products");
-        $this->info("Found " . count($outOfStockProducts) . " out-of-stock products");
-        $this->info("Found " . count($inStockProducts) . " back in stock");
-        $this->info("Found " . count($newProducts) . " new products");
-
-        if ($newProducts->isNotEmpty()) {
-            $this->notifyByEmail($newProducts, $shop, 'New Product(s) on ' . ucfirst($shop->name));
-        }
-
-        if ($inStockProducts->isNotEmpty()) {
-            $this->notifyByEmail($inStockProducts, $shop, 'Product(s) back in stock on ' . ucfirst($shop->name));
-        }
-
-        foreach ($products as $product) {
-            if (isset($product['variants'])) {
-                foreach ($product['variants'] as $variant) {
-                    $shopHelper->saveVariant($variant, $shop, $product['url'], $product['title']);
-                }
-            }
-        }
-
-        DB::table('external_shops')
-            ->where('id', $shop->id)
-            ->update(['last_scraped_at' => now()]);
+    try {
+        $products = $shopHelper->retrieveProductsFromShop($shop);
+    } catch (\Throwable $e) {
+        $this->error("Error retrieving products from {$shop->name}: " . $e->getMessage());
+        return;
     }
+
+    $this->info("Found " . count($products) . " products");
+
+    // Flatten all variants into one collection
+    $allVariants = collect();
+    foreach ($products as $product) {
+        foreach ($product['variants'] ?? [] as $variant) {
+            $variant['product_title'] = $product['title'];
+            $variant['url'] = $product['url'];
+            $variant['shop_id'] = $shop->id;
+            $variant['largest_image_url'] = $product['largest_image_url'] ?? null;
+            $allVariants->push($variant);
+        }
+    }
+
+    $variantIds = $allVariants->pluck('id');
+    $existingVariants = DB::table('external_products')
+        ->whereIn('external_id', $variantIds)
+        ->get()
+        ->keyBy('external_id');
+
+    $newVariants = collect();
+    $backInStockVariants = collect();
+
+    foreach ($allVariants as $variant) {
+        $existing = $existingVariants->get($variant['id']);
+        $currentStock = $variant['stock'] ?? 0;
+
+        if (!$existing) {
+            $newVariants->push($variant);
+        } elseif (($existing->stock ?? 0) == 0 && $currentStock > 0) {
+            $backInStockVariants->push($variant);
+        }
+
+        $shopHelper->saveVariant($variant, $shop, $variant['url'], $variant['product_title']);
+    }
+
+    $this->info("Found " . count($existingVariants) . " existing variants");
+    $this->info("Found " . count($newVariants) . " new variants");
+    $this->info("Found " . count($backInStockVariants) . " variants back in stock");
+
+    if ($newVariants->isNotEmpty()) {
+        $this->notifyByEmail($newVariants, $shop, 'New product(s) on ' . ucfirst($shop->name));
+    }
+
+    if ($backInStockVariants->isNotEmpty()) {
+        $this->notifyByEmail($backInStockVariants, $shop, 'Product(s) back in stock on ' . ucfirst($shop->name));
+    }
+
+    DB::table('external_shops')
+        ->where('id', $shop->id)
+        ->update(['last_scraped_at' => now()]);
+}
+
 
     private function notifyByEmail($products, $shop, $subject)
     {
-        $emailAddresses = DB::table('email_addresses')->pluck('email');
-        foreach ($emailAddresses as $email) {
-            Mail::to($email)->send(new NewProductsMail($products, $shop, $subject));
+        $usersToNotify = User::whereHas('notifiedShops', function ($query) use ($shop) {
+            $query->where('external_shop_id', $shop->id);
+        })->get();
+
+        foreach ($usersToNotify as $user) {
+            Mail::to($user->email)->send(new NewProductsMail($products, $shop, $subject));
         }
     }
 }

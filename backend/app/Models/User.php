@@ -53,5 +53,11 @@ class User extends Authenticatable
         $this->notify(new CustomResetPassword($token));
     }
 
+    public function notifiedShops()
+    {
+        return $this->belongsToMany(ExternalShop::class, 'external_shop_user_notifications');
+    }
+
+
     
 }
