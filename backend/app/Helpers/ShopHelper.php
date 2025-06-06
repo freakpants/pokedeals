@@ -57,6 +57,9 @@ class ShopHelper{
             break;
         case 'shopware':
             return $this->retrieveProductsFromShopware($shop);
+        case 'brack':
+            $products = $this->retrieveProductsFromBrack($shop);
+            break;
         default:
             $products = [];
     }
@@ -186,6 +189,7 @@ if ($details['product_type'] === \App\Enums\ProductTypes::Other && preg_match('/
                 $productArray['handle'] = str_replace($shop->base_url, '', $productArray['url']);
                 $productArray['variants'] = [$productArray];
                 $productArray['largest_image_url'] = 'https://wog.ch/' . $product['coverImage'];
+                
                 
                 $products[] = $productArray;
             }
@@ -1065,5 +1069,98 @@ public function retrieveProductsFromShopware($shop)
 
     return $products;
 }
+
+public function retrieveProductsFromBrack($shop)
+{
+    $this->command->info("Starting Brack embedded JSON parsing...");
+
+    $categoryUrls = json_decode($shop->category_urls);
+    $products = [];
+
+    foreach ($categoryUrls as $categoryUrl) {
+        $page = 1;
+        $hasMorePages = true;
+
+        while ($hasMorePages) {
+            $paginatedUrl = $categoryUrl . (str_contains($categoryUrl, '?') ? '&' : '?') . 'p=' . $page;
+            $this->command->info("Fetching page $page: $paginatedUrl");
+
+            $response = Http::get($paginatedUrl);
+            if ($response->failed()) {
+                $this->command->error("Failed to fetch page $page. Status: {$response->status()}");
+                break;
+            }
+
+            $html = $response->body();
+            $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
+
+            $scriptNode = $crawler->filter('script#b2c-search-products');
+            if ($scriptNode->count() === 0) {
+                $this->command->error("Could not find script tag with id 'b2c-search-products'");
+                break;
+            }
+
+            $jsonRaw = $scriptNode->text();
+            $jsonData = json_decode($jsonRaw, true);
+
+            if (!isset($jsonData['productDataMap'])) {
+                $this->command->error("Missing 'productDataMap' in embedded JSON.");
+                break;
+            }
+
+            $productMap = $jsonData['productDataMap'];
+            $this->command->line("Found " . count($productMap) . " products in embedded JSON.");
+
+            $htmlProducts = $crawler->filter('[id^="productlistentry-"]');
+            $this->command->line("Found " . $htmlProducts->count() . " matching product nodes in HTML.");
+
+            $current_products = [];
+
+foreach ($productMap as $externalId => $json) {
+    try {
+        $product = [];
+
+        $product['id'] = $externalId;
+        $product['url'] = $shop->base_url . $json['url'];
+        $product['handle'] = $json['url'];
+        $product['title'] = html_entity_decode($json['description']['nameWithoutManufacturer'] ?? $json['sku'], ENT_QUOTES | ENT_HTML5);
+
+        // Image
+        $images = $json['images'][0]['sizes'] ?? [];
+        $largest = collect($images)->sortByDesc(fn ($img) => strlen($img['src']))->first();
+        $product['largest_image_url'] = $largest ? 'https://www.brack.ch' . $largest['src'] : null;
+
+        // Price
+        $product['price'] = isset($json['price']['priceWithVat']) ? $json['price']['priceWithVat'] / 100 : null;
+
+        // Availability
+        $stock = $json['inventory']['current'] ?? 0;
+        $product['stock'] = $stock;
+        $product['available'] = $stock > 0;
+
+        $product['variants'] = [$product];
+
+        $current_products[] = $product;
+
+        $this->command->line("✔ {$product['title']} ({$product['id']}) | CHF {$product['price']} | Stock: {$stock}");
+    } catch (\Exception $e) {
+        $this->command->warn("Skipped $externalId: " . $e->getMessage());
+    }
+}
+
+
+            $products = array_merge($products, array_filter($current_products));
+
+            // Pagination not currently supported for filtered embedded products
+            $hasMorePages = false;
+            $page++;
+        }
+    }
+
+    return $products;
+}
+
+
+
 
 }

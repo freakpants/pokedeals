@@ -56,6 +56,8 @@ class CheckShop extends Command
 {
     $this->info("Checking shop: " . $shop->name);
 
+    $nowOutOfStockVariants = collect();
+
     try {
         $products = $shopHelper->retrieveProductsFromShop($shop);
     } catch (\Throwable $e) {
@@ -87,21 +89,28 @@ class CheckShop extends Command
     $backInStockVariants = collect();
 
     foreach ($allVariants as $variant) {
-        $existing = $existingVariants->get($variant['id']);
-        $currentStock = $variant['stock'] ?? 0;
+    $existing = $existingVariants->get($variant['id']);
 
-        if (!$existing) {
-            $newVariants->push($variant);
-        } elseif (($existing->stock ?? 0) == 0 && $currentStock > 0) {
+    if (!$existing) {
+        $this->line("🆕 NEW: {$variant['product_title']} ({$variant['id']})");
+        $newVariants->push($variant);
+    } else {
+$this->line('🔍 CHECKING: ' . $variant['product_title'] . ' (' . $variant['id'] . ') | DB Stock: ' . $existing->stock . ', Current: ' . ($variant['stock'] ?? 'n/a'));
+
+        if (($existing->stock ?? 0) == 0 && ($variant['stock'] ?? 0) > 0) {
+            $this->line("🟢 Back in stock: {$variant['product_title']}");
             $backInStockVariants->push($variant);
         }
-
-        $shopHelper->saveVariant($variant, $shop, $variant['url'], $variant['product_title']);
     }
 
-    $this->info("Found " . count($existingVariants) . " existing variants");
-    $this->info("Found " . count($newVariants) . " new variants");
-    $this->info("Found " . count($backInStockVariants) . " variants back in stock");
+    $shopHelper->saveVariant($variant, $shop, $variant['url'], $variant['product_title']);
+}
+
+
+$this->info("Found " . count($existingVariants) . " existing variants");
+$this->info("Found " . count($newVariants) . " new variants");
+$this->info("Found " . count($backInStockVariants) . " variants back in stock");
+$this->info("Marked " . count($nowOutOfStockVariants) . " variants as out of stock");
 
     if ($newVariants->isNotEmpty()) {
         $this->notifyByEmail($newVariants, $shop, 'New product(s) on ' . ucfirst($shop->name));
@@ -110,6 +119,22 @@ class CheckShop extends Command
     if ($backInStockVariants->isNotEmpty()) {
         $this->notifyByEmail($backInStockVariants, $shop, 'Product(s) back in stock on ' . ucfirst($shop->name));
     }
+
+    $allCurrentIds = $allVariants->pluck('id')->all();
+
+$previouslyAvailable = DB::table('external_products')
+    ->where('shop_id', $shop->id)
+    ->whereNotIn('external_id', $allCurrentIds)
+    ->where('stock', '>', 0)
+    ->get();
+
+DB::table('external_products')
+    ->whereIn('id', $previouslyAvailable->pluck('id'))
+    ->update(['stock' => 0]);
+
+foreach ($previouslyAvailable as $variant) {
+    $nowOutOfStockVariants->push($variant);
+}
 
     DB::table('external_shops')
         ->where('id', $shop->id)
